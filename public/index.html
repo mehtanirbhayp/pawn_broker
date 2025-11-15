@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MS and Sons - Pawn Broker System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .header .datetime {
+            font-size: 1em;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: inline-block;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav {
+            background: #34495e;
+            padding: 0;
+        }
+        
+        .nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+        }
+        
+        .nav li {
+            flex: 1;
+        }
+        
+        .nav a {
+            display: block;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.3s;
+            border-right: 1px solid #2c3e50;
+        }
+        
+        .nav a:hover, .nav a.active {
+            background: #2c3e50;
+        }
+        
+        .nav li:last-child a {
+            border-right: none;
+        }
+        
+        .content {
+            padding: 30px;
+            min-height: 500px;
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status.active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status.delivered {
+            background: #cce5ff;
+            color: #004085;
+        }
+        
+        .status.defaulted {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card p {
+            opacity: 0.9;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: auto;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 2px solid #eee;
+            background: #f8f9fa;
+            border-radius: 0 0 15px 15px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            border-bottom: 2px solid #eee;
+            background: #f8f9fa;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            color: #2c3e50;
+        }
+        
+        .close-modal {
+            font-size: 28px;
+            font-weight: bold;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: #000;
+        }
+        
+        .loan-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .detail-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .detail-section h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .detail-item {
+            margin-bottom: 8px;
+        }
+        
+        .detail-item strong {
+            color: #555;
+            display: inline-block;
+            min-width: 120px;
+        }
+        
+        .detail-item span {
+            color: #333;
+        }
+        
+        .modal-footer h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .modal-buttons .btn {
+            min-width: 150px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav ul {
+                flex-direction: column;
+            }
+            
+            .nav a {
+                border-right: none;
+                border-bottom: 1px solid #2c3e50;
+            }
+            
+            .nav li:last-child a {
+                border-bottom: none;
+            }
+            
+            .modal-buttons {
+                flex-direction: column;
+            }
+            
+            .modal-buttons .btn {
+                width: 100%;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+            
+            .modal-footer {
+                padding: 15px 20px;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .login-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .login-overlay.active {
+            display: flex;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .login-card h2 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .login-card p {
+            margin-bottom: 30px;
+            color: #7f8c8d;
+        }
+
+        .login-card .form-group {
+            text-align: left;
+        }
+
+        .login-card button {
+            width: 100%;
+        }
+
+        .logout-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .logout-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* New Loan Form Redesign */
+        .form-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .form-section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .form-section-header h3 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.3em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-section-icon {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .form-section-content {
+            display: grid;
+            gap: 20px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .required-marker {
+            color: #e74c3c;
+            font-size: 16px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .form-actions .btn {
+            min-width: 180px;
+            padding: 14px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .form-actions .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .form-actions .btn-reset {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+        }
+
+        .form-actions .btn-submit {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 300;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1em;
+        }
+
+        @media (max-width: 768px) {
+            .form-section {
+                padding: 20px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-card">
+            <h2>Welcome Back</h2>
+            <p>Please sign in to continue</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginUsername">User ID</label>
+                    <input type="text" id="loginUsername" required placeholder="Enter your user ID">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Enter your password">
+                </div>
+                <button type="submit" class="btn">Login</button>
+                <div id="loginError" class="alert alert-error hidden" style="margin-top: 15px;"></div>
+            </form>
+        </div>
+    </div>
+    <div class="container hidden" id="appContainer">
+        <div class="header">
+            <button id="logoutButton" class="logout-button">Logout</button>
+            <h1>MS and Sons</h1>
+            <p>Digital Pawn Broker Management System</p>
+            <div class="datetime" id="datetime"></div>
+        </div>
+        
+        <nav class="nav">
+            <ul>
+                <li><a href="#" onclick="showSection('dashboard')" class="active">Dashboard</a></li>
+                <li><a href="#" onclick="showSection('new-loan')">New Loan</a></li>
+                <li><a href="#" onclick="showSection('loans')">View Loans</a></li>
+                <li><a href="#" onclick="showSection('receipts')">Receipts</a></li>
+                <li><a href="#" onclick="showSection('master-sheet')">Master Sheet</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content">
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="section active">
+                <h2>Dashboard</h2>
+                <div class="stats-grid" id="statsGrid">
+                    <div class="loading">Loading statistics...</div>
+                </div>
+                
+                <h3>Recent Loans</h3>
+                <div id="recentLoans">
+                    <div class="loading">Loading recent loans...</div>
+                </div>
+            </div>
+            
+            <!-- New Loan Section -->
+            <div id="new-loan" class="section">
+                <h2 class="section-title">✨ Create New Loan</h2>
+                <p class="section-subtitle">Fill in the details below to create a new loan entry</p>
+                
+                <form id="loanForm">
+                    <!-- Company & Item Information Section -->
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <div class="form-section-icon">🏢</div>
+                            <h3>Company & Item Information</h3>
+                        </div>
+                        <div class="form-section-content">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="company">
+                                        Company
+                                        <span class="required-marker">*</span>
+                                    </label>
+                                    <select id="company" required>
+                                        <option value="">Select Company</option>
+                                    </select>
+                                    <div class="form-hint">Choose the company issuing this loan</div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="itemType">
+                                        Item Type
+                                        <span class="required-marker">*</span>
+                                    </label>
+                                    <select id="itemType" required>
+                                        <option value="">Select Type</option>
+                                        <option value="gold">Gold</option>
+                                        <option value="silver">Silver</option>
+                                    </select>
+                                    <div class="form-hint">Select gold or silver</div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="serialNumber">
+                                    Serial Number
+                                    <span class="required-marker">*</span>
+                                </label>
+                                <input type="text" id="serialNumber" required placeholder="Enter serial number issued by company">
+                                <div class="form-hint">Unique serial number assigned by the company</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer Information Section -->
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <div class="form-section-icon">👤</div>
+                            <h3>Customer Information</h3>
+                        </div>
+                        <div class="form-section-content">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="customerName">
+                                        Customer Name
+                                        <span class="required-marker">*</span>
+                                    </label>
+                                    <input type="text" id="customerName" required placeholder="Enter customer full name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fatherName">Father/Husband Name</label>
+                                    <input type="text" id="fatherName" placeholder="Enter father or husband name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="address">
+                                    Address
+                                    <span class="required-marker">*</span>
+                                </label>
+                                <textarea id="address" rows="3" required placeholder="Enter complete address"></textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="occupation">Occupation</label>
+                                    <input type="text" id="occupation" placeholder="Enter occupation">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cellNumber">Cell Number</label>
+                                    <input type="tel" id="cellNumber" placeholder="Enter contact number">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loan Details Section -->
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <div class="form-section-icon">💰</div>
+                            <h3>Loan Details</h3>
+                        </div>
+                        <div class="form-section-content">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="loanAmount">
+                                        Loan Amount (₹)
+                                        <span class="required-marker">*</span>
+                                    </label>
+                                    <input type="number" id="loanAmount" step="0.01" required placeholder="0.00">
+                                    <div class="form-hint">Enter the loan amount in rupees</div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="itemWeight">
+                                        Item Weight (grams)
+                                        <span class="required-marker">*</span>
+                                    </label>
+                                    <input type="number" id="itemWeight" step="0.001" required placeholder="0.000">
+                                    <div class="form-hint">Weight of the pledged item in grams</div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="itemDescription">
+                                    Item Description
+                                    <span class="required-marker">*</span>
+                                </label>
+                                <textarea id="itemDescription" rows="3" required placeholder="Describe the item being pledged (e.g., gold chain, silver coins, etc.)"></textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="loanDate">Loan Date</label>
+                                    <input type="date" id="loanDate">
+                                    <div class="form-hint">Date when the loan is issued</div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="interestRate">Interest Rate (% per month)</label>
+                                    <input type="number" id="interestRate" step="0.01" value="2.0" placeholder="2.0">
+                                    <div class="form-hint">Monthly interest rate percentage</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="reset" class="btn btn-reset">Reset Form</button>
+                        <button type="submit" class="btn btn-submit">Create Loan</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Loans Section -->
+            <div id="loans" class="section">
+                <h2>View Loans</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="filterCompany">Filter by Company</label>
+                        <select id="filterCompany">
+                            <option value="">All Companies</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="filterStatus">Filter by Status</label>
+                        <select id="filterStatus">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="defaulted">Defaulted</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="loanSearch">Search Loans</label>
+                        <input type="text" id="loanSearch" placeholder="Serial number, customer name, or phone">
+                    </div>
+                    <div class="form-group" style="align-self: flex-end;">
+                        <button type="button" class="btn" onclick="loadLoans()">Search</button>
+                    </div>
+                </div>
+
+                <button onclick="loadLoans()" class="btn">Load Loans</button>
+                
+                <div id="loansTable">
+                    <div class="loading">Click "Load Loans" to view data</div>
+                </div>
+            </div>
+            
+            <!-- Receipts Section -->
+            <div id="receipts" class="section">
+                <h2>Receipts</h2>
+                <div class="form-group">
+                    <label for="receiptLoanId">Loan ID</label>
+                    <input type="number" id="receiptLoanId" placeholder="Enter Loan ID">
+                    <button onclick="generateReceipt()" class="btn">Generate Receipt</button>
+                </div>
+                
+                <div id="receiptResult"></div>
+            </div>
+            
+            <!-- Master Sheet Section -->
+            <div id="master-sheet" class="section">
+                <h2>Master Sheet</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="msCompany">Company</label>
+                        <select id="msCompany">
+                            <option value="">Select Company</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="msStatus">Status</label>
+                        <select id="msStatus">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="defaulted">Defaulted</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <input type="date" id="startDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">End Date</label>
+                        <input type="date" id="endDate">
+                    </div>
+                </div>
+                
+                <button onclick="loadMasterSheet()" class="btn">Load Master Sheet</button>
+                <button onclick="exportMasterSheet()" class="btn btn-success">Export to Excel</button>
+                
+                <div id="masterSheetResult"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loan Details Modal -->
+    <div id="loanDetailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Loan Details</h2>
+                <span class="close-modal" onclick="closeLoanDetails()">&times;</span>
+            </div>
+            <div class="modal-body" id="loanDetailsContent">
+                <div class="loading">Loading loan details...</div>
+            </div>
+            <div class="modal-footer" id="loanDetailsFooter" style="display: none;">
+                <h3>Actions</h3>
+                <div class="modal-buttons" id="loanDetailsButtons">
+                    <!-- Buttons will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let companies = [];
+        let appInitialized = false;
+
+        function getAuthToken() {
+            return localStorage.getItem('authToken');
+        }
+
+        function setAuthToken(token) {
+            localStorage.setItem('authToken', token);
+        }
+
+        function clearAuthToken() {
+            localStorage.removeItem('authToken');
+        }
+
+        function showLoginOverlay(message = '') {
+            const overlay = document.getElementById('loginOverlay');
+            const appContainer = document.getElementById('appContainer');
+            overlay.classList.add('active');
+            appContainer.classList.add('hidden');
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.reset();
+            }
+
+            if (message) {
+                showLoginError(message);
+            } else {
+                hideLoginError();
+            }
+        }
+
+        function hideLoginOverlay() {
+            const overlay = document.getElementById('loginOverlay');
+            overlay.classList.remove('active');
+            hideLoginError();
+        }
+
+        function showAppContainer() {
+            document.getElementById('appContainer').classList.remove('hidden');
+        }
+
+        function hideAppContainer() {
+            document.getElementById('appContainer').classList.add('hidden');
+        }
+
+        function handleUnauthorized() {
+            clearAuthToken();
+            hideAppContainer();
+            showLoginOverlay('Session expired. Please login again.');
+            showAlert('Session expired. Please login again.', 'error');
+            throw new Error('Unauthorized');
+        }
+
+        async function authFetch(url, options = {}) {
+            const token = getAuthToken();
+            const fetchOptions = {
+                ...options,
+                headers: {
+                    ...(options.headers || {})
+                }
+            };
+
+            if (token) {
+                fetchOptions.headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            const response = await fetch(url, fetchOptions);
+
+            if (response.status === 401) {
+                handleUnauthorized();
+            }
+
+            return response;
+        }
+
+        async function initializeApp() {
+            if (appInitialized) {
+                await loadDashboard();
+                return;
+            }
+
+            appInitialized = true;
+
+            await loadCompanies();
+            await loadDashboard();
+            setDefaultDate();
+
+            const form = document.getElementById('loanForm');
+            if (form) {
+                console.log('Loan form found');
+            } else {
+                console.error('Loan form not found!');
+            }
+        }
+
+        function setupLoginHandling() {
+            const loginForm = document.getElementById('loginForm');
+            loginForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                await login();
+            });
+
+            const logoutButton = document.getElementById('logoutButton');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', logout);
+            }
+        }
+
+        async function login() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!username || !password) {
+                showLoginError('Please enter your user ID and password');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    showLoginError(data.error || 'Invalid credentials');
+                    return;
+                }
+
+                setAuthToken(data.data.token);
+                hideLoginOverlay();
+                showAppContainer();
+                await initializeApp();
+                document.getElementById('loginForm').reset();
+            } catch (error) {
+                console.error('Login error:', error);
+                showLoginError('Unable to login. Please try again.');
+            }
+        }
+
+        async function logout() {
+            try {
+                await authFetch('/api/auth/logout', { method: 'POST' });
+            } catch (error) {
+                console.warn('Logout request failed:', error);
+            } finally {
+                clearAuthToken();
+                appInitialized = false;
+                showLoginOverlay();
+            }
+        }
+
+        function showLoginError(message) {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+
+        function hideLoginError() {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.textContent = '';
+            errorDiv.classList.add('hidden');
+        }
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            setupLoginHandling();
+
+            if (getAuthToken()) {
+                try {
+                    showAppContainer();
+                    hideLoginOverlay();
+                    await initializeApp();
+                } catch (error) {
+                    console.error('Initialization error:', error);
+                    handleUnauthorized();
+                }
+            } else {
+                showLoginOverlay();
+            }
+        });
+        
+        function setDefaultDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('loanDate').value = today;
+        }
+        
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked nav link
+            event.target.classList.add('active');
+            
+            // Load section-specific data
+            if (sectionId === 'dashboard') {
+                loadDashboard();
+            } else if (sectionId === 'loans') {
+                loadLoans();
+            } else if (sectionId === 'new-loan') {
+                setDefaultDate();
+            }
+        }
+        
+        async function loadCompanies() {
+            try {
+                const response = await authFetch('/api/companies');
+                const data = await response.json();
+                
+                if (data.success) {
+                    companies = data.data;
+                    
+                    // Populate company dropdowns
+                    const companySelects = ['company', 'filterCompany', 'msCompany'];
+                    companySelects.forEach(selectId => {
+                        const select = document.getElementById(selectId);
+                        select.innerHTML = '<option value="">Select Company</option>';
+                        companies.forEach(company => {
+                            const option = document.createElement('option');
+                            option.value = company.id;
+                            option.textContent = company.name;
+                            select.appendChild(option);
+                        });
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading companies:', error);
+                showAlert('Error loading companies', 'error');
+            }
+        }
+        
+        async function loadDashboard() {
+            try {
+                const statsGrid = document.getElementById('statsGrid');
+                const recentLoans = document.getElementById('recentLoans');
+                
+                // Load company statistics
+                let totalStats = { totalLoans: 0, totalAmount: 0, totalWeight: 0, activeLoans: 0 };
+                
+                for (const company of companies) {
+                    const response = await authFetch(`/api/companies/${company.id}/stats`);
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        const stats = data.data;
+                        totalStats.totalLoans += stats.totalLoans;
+                        totalStats.totalAmount += stats.totalAmount;
+                        totalStats.totalWeight += stats.totalWeight;
+                        totalStats.activeLoans += stats.activeLoans;
+                    }
+                }
+                
+                // Display statistics
+                statsGrid.innerHTML = `
+                    <div class="stat-card">
+                        <h3>${totalStats.totalLoans}</h3>
+                        <p>Total Loans</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>₹${totalStats.totalAmount.toFixed(2)}</h3>
+                        <p>Total Amount</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>${totalStats.totalWeight.toFixed(3)}g</h3>
+                        <p>Total Weight</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>${totalStats.activeLoans}</h3>
+                        <p>Active Loans</p>
+                    </div>
+                `;
+                
+                // Load recent loans
+                const loansResponse = await authFetch('/api/loans?limit=10');
+                const loansData = await loansResponse.json();
+                
+                if (loansData.success) {
+                    const loans = loansData.data.loans;
+                    if (loans.length > 0) {
+                        recentLoans.innerHTML = `
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Serial No</th>
+                                        <th>Customer</th>
+                                        <th>Company</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${loans.map(loan => `
+                                        <tr>
+                                            <td>${loan.serial_number}</td>
+                                            <td>${loan.customer_name}</td>
+                                            <td>${loan.company_name}</td>
+                                            <td>₹${parseFloat(loan.loan_amount).toFixed(2)}</td>
+                                            <td><span class="status ${loan.status}">${loan.status}</span></td>
+                                            <td>${new Date(loan.loan_date).toLocaleDateString()}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        `;
+                    } else {
+                        recentLoans.innerHTML = '<p>No loans found</p>';
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showAlert('Error loading dashboard data', 'error');
+            }
+        }
+        
+        // Loan form reset handler
+        document.getElementById('loanForm').addEventListener('reset', function() {
+            setTimeout(() => {
+                setDefaultDate();
+            }, 0);
+        });
+
+        // Loan form submission
+        document.getElementById('loanForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log('Form submitted');
+            
+            const formData = {
+                serialNumber: document.getElementById('serialNumber').value,
+                companyId: document.getElementById('company').value,
+                customerName: document.getElementById('customerName').value,
+                fatherName: document.getElementById('fatherName').value,
+                husbandName: '', // This will be handled by the backend
+                address: document.getElementById('address').value,
+                occupation: document.getElementById('occupation').value,
+                cellNumber: document.getElementById('cellNumber').value,
+                loanAmount: document.getElementById('loanAmount').value,
+                itemWeight: document.getElementById('itemWeight').value,
+                itemDescription: document.getElementById('itemDescription').value,
+                itemType: document.getElementById('itemType').value,
+                loanDate: document.getElementById('loanDate').value,
+                interestRate: document.getElementById('interestRate').value
+            };
+            
+            console.log('Form data:', formData);
+            
+            // Validate required fields
+            if (!formData.serialNumber || !formData.companyId || !formData.customerName || !formData.address || 
+                !formData.loanAmount || !formData.itemWeight || !formData.itemDescription || !formData.itemType) {
+                showAlert('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            try {
+                console.log('Sending request to /api/loans');
+                const response = await authFetch('/api/loans', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                if (data.success) {
+                    showAlert('Loan created successfully!', 'success');
+                    document.getElementById('loanForm').reset();
+                    setDefaultDate();
+                } else {
+                    showAlert(data.error || 'Error creating loan', 'error');
+                }
+            } catch (error) {
+                console.error('Error creating loan:', error);
+                showAlert('Error creating loan: ' + error.message, 'error');
+            }
+        });
+        
+        async function loadLoans() {
+            try {
+                const companyId = document.getElementById('filterCompany').value;
+                const status = document.getElementById('filterStatus').value;
+                const searchTerm = document.getElementById('loanSearch') ? document.getElementById('loanSearch').value.trim() : '';
+                
+                let url = '/api/loans?limit=100';
+                if (companyId) url += `&companyId=${companyId}`;
+                if (status) url += `&status=${status}`;
+                if (searchTerm) url += `&search=${encodeURIComponent(searchTerm)}`;
+                
+                const loansTable = document.getElementById('loansTable');
+                loansTable.innerHTML = '<div class="loading">Searching loans...</div>';
+
+                const response = await authFetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const loans = data.data.loans;
+                    let filteredLoans = loans;
+
+                    if (searchTerm) {
+                        const searchLower = searchTerm.toLowerCase();
+                        filteredLoans = loans.filter(loan => {
+                            const serialMatch = loan.serial_number && loan.serial_number.toLowerCase().includes(searchLower);
+                            const nameMatch = loan.customer_name && loan.customer_name.toLowerCase().includes(searchLower);
+                            const phoneMatch = loan.cell_number && loan.cell_number.toLowerCase().includes(searchLower);
+                            return serialMatch || nameMatch || phoneMatch;
+                        });
+                    }
+                    
+                    if (filteredLoans.length > 0) {
+                        loansTable.innerHTML = `
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Serial No</th>
+                                        <th>Customer</th>
+                                        <th>Company</th>
+                                        <th>Amount</th>
+                                        <th>Weight</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${filteredLoans.map(loan => `
+                                        <tr>
+                                            <td>${loan.serial_number}</td>
+                                            <td>${loan.customer_name}</td>
+                                            <td>${loan.company_name}</td>
+                                            <td>₹${parseFloat(loan.loan_amount).toFixed(2)}</td>
+                                            <td>${parseFloat(loan.item_weight).toFixed(3)}g</td>
+                                            <td>${loan.item_type.toUpperCase()}</td>
+                                            <td><span class="status ${loan.status}">${loan.status}</span></td>
+                                            <td>${new Date(loan.loan_date).toLocaleDateString()}</td>
+                                            <td>
+                                                <button onclick="viewLoanDetails(${loan.id})" class="btn" style="padding: 5px 10px; font-size: 12px;">View Details</button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        `;
+                    } else {
+                        loansTable.innerHTML = searchTerm 
+                            ? `<p>No loans found for "<strong>${searchTerm}</strong>"</p>`
+                            : '<p>No loans found</p>';
+                    }
+                } else {
+                    showAlert(data.error || 'Error loading loans', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading loans:', error);
+                showAlert('Error loading loans', 'error');
+            }
+        }
+
+        const loanSearchInput = document.getElementById('loanSearch');
+        if (loanSearchInput) {
+            loanSearchInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    loadLoans();
+                }
+            });
+        }
+        
+        async function deliverLoan(loanId) {
+            if (confirm('Mark this loan as delivered?')) {
+                try {
+                    const response = await authFetch(`/api/loans/${loanId}/deliver`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ deliveredDate: new Date().toISOString().split('T')[0] })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showAlert('Loan marked as delivered', 'success');
+                        loadLoans();
+                    } else {
+                        showAlert(data.error || 'Error delivering loan', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error delivering loan:', error);
+                    showAlert('Error delivering loan', 'error');
+                }
+            }
+        }
+        
+        async function defaultLoan(loanId) {
+            if (confirm('Mark this loan as defaulted?')) {
+                try {
+                    const response = await authFetch(`/api/loans/${loanId}/default`, {
+                        method: 'PATCH'
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showAlert('Loan marked as defaulted', 'success');
+                        loadLoans();
+                    } else {
+                        showAlert(data.error || 'Error defaulting loan', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error defaulting loan:', error);
+                    showAlert('Error defaulting loan', 'error');
+                }
+            }
+        }
+        
+        async function generateReceipt(loanId) {
+            if (!loanId) {
+                loanId = document.getElementById('receiptLoanId').value;
+            }
+            
+            if (!loanId) {
+                showAlert('Please enter a loan ID', 'error');
+                return;
+            }
+            
+            try {
+                const response = await authFetch(`/api/receipts/${loanId}/pdf`, {
+                    headers: {
+                        'Accept': 'application/pdf'
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    showAlert(errorText || 'Error generating receipt', 'error');
+                    return;
+                }
+
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                window.open(url, '_blank');
+                setTimeout(() => URL.revokeObjectURL(url), 60_000);
+                showAlert('Receipt generated successfully!', 'success');
+            } catch (error) {
+                console.error('Error generating receipt:', error);
+                showAlert('Error generating receipt', 'error');
+            }
+        }
+        
+        async function loadMasterSheet() {
+            try {
+                const companyId = document.getElementById('msCompany').value;
+                const status = document.getElementById('msStatus').value;
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                
+                if (!companyId) {
+                    showAlert('Please select a company', 'error');
+                    return;
+                }
+                
+                let url = `/api/master-sheet/${companyId}`;
+                const params = [];
+                
+                if (startDate) params.push(`startDate=${startDate}`);
+                if (endDate) params.push(`endDate=${endDate}`);
+                if (status) params.push(`status=${status}`);
+                
+                if (params.length > 0) {
+                    url += '?' + params.join('&');
+                }
+                
+                const response = await authFetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const { loans, summary } = data.data;
+                    const resultDiv = document.getElementById('masterSheetResult');
+                    
+                    resultDiv.innerHTML = `
+                        <h3>Summary</h3>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h3>${summary.totalLoans}</h3>
+                                <p>Total Loans</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>₹${summary.totalAmount.toFixed(2)}</h3>
+                                <p>Total Amount</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>${summary.totalWeight.toFixed(3)}g</h3>
+                                <p>Total Weight</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>${summary.activeLoans}</h3>
+                                <p>Active Loans</p>
+                            </div>
+                        </div>
+                        
+                        <h3>Loans</h3>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Serial No</th>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>Amount</th>
+                                    <th>Weight</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${loans.map(loan => `
+                                    <tr>
+                                        <td>${loan.serial_number}</td>
+                                        <td>${new Date(loan.loan_date).toLocaleDateString()}</td>
+                                        <td>${loan.customer_name}</td>
+                                        <td>₹${parseFloat(loan.loan_amount).toFixed(2)}</td>
+                                        <td>${parseFloat(loan.item_weight).toFixed(3)}g</td>
+                                        <td>${loan.item_type.toUpperCase()}</td>
+                                        <td><span class="status ${loan.status}">${loan.status}</span></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    showAlert(data.error || 'Error loading master sheet', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading master sheet:', error);
+                showAlert('Error loading master sheet', 'error');
+            }
+        }
+        
+        async function exportMasterSheet() {
+            try {
+                const companyId = document.getElementById('msCompany').value;
+                const status = document.getElementById('msStatus').value;
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                
+                if (!companyId) {
+                    showAlert('Please select a company', 'error');
+                    return;
+                }
+                
+                let url = `/api/master-sheet/${companyId}/export`;
+                const params = [];
+                
+                if (startDate) params.push(`startDate=${startDate}`);
+                if (endDate) params.push(`endDate=${endDate}`);
+                if (status) params.push(`status=${status}`);
+                
+                if (params.length > 0) {
+                    url += '?' + params.join('&');
+                }
+
+                const response = await authFetch(url);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    showAlert(errorText || 'Error exporting master sheet', 'error');
+                    return;
+                }
+
+                const blob = await response.blob();
+                const downloadUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = 'master-sheet.xlsx';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(() => URL.revokeObjectURL(downloadUrl), 60_000);
+
+                showAlert('Excel file downloaded successfully!', 'success');
+            } catch (error) {
+                console.error('Error exporting master sheet:', error);
+                showAlert('Error exporting master sheet', 'error');
+            }
+        }
+        
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            
+            // Insert at the top of the content area
+            const content = document.querySelector('.content');
+            content.insertBefore(alertDiv, content.firstChild);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+        
+        // Update date and time display
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            };
+            const dateTimeString = now.toLocaleString('en-US', options);
+            document.getElementById('datetime').textContent = dateTimeString;
+        }
+        
+        // Update immediately and then every second
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+        
+        // View loan details modal functions
+        async function viewLoanDetails(loanId) {
+            const modal = document.getElementById('loanDetailsModal');
+            const content = document.getElementById('loanDetailsContent');
+            const footer = document.getElementById('loanDetailsFooter');
+            const buttons = document.getElementById('loanDetailsButtons');
+            
+            // Show modal
+            modal.classList.add('active');
+            content.innerHTML = '<div class="loading">Loading loan details...</div>';
+            footer.style.display = 'none';
+            
+            try {
+                const response = await authFetch(`/api/loans/${loanId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const loan = data.data;
+                    content.innerHTML = generateLoanDetailsHTML(loan);
+                    buttons.innerHTML = generateLoanButtonsHTML(loan);
+                    footer.style.display = 'block';
+                } else {
+                    content.innerHTML = '<div class="alert alert-error">Error loading loan details</div>';
+                }
+            } catch (error) {
+                console.error('Error loading loan details:', error);
+                content.innerHTML = '<div class="alert alert-error">Error loading loan details</div>';
+            }
+        }
+        
+        function generateLoanDetailsHTML(loan) {
+            return `
+                <div class="loan-details-grid">
+                    <div class="detail-section">
+                        <h3>Loan Information</h3>
+                        <div class="detail-item">
+                            <strong>Serial Number:</strong>
+                            <span>${loan.serial_number}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Loan ID:</strong>
+                            <span>${loan.id}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Company:</strong>
+                            <span>${loan.company_name}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Loan Date:</strong>
+                            <span>${new Date(loan.loan_date).toLocaleDateString()}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Status:</strong>
+                            <span class="status ${loan.status}">${loan.status.toUpperCase()}</span>
+                        </div>
+                        ${loan.delivered_date ? `
+                        <div class="detail-item">
+                            <strong>Delivered Date:</strong>
+                            <span>${new Date(loan.delivered_date).toLocaleDateString()}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3>Loan Amount & Item</h3>
+                        <div class="detail-item">
+                            <strong>Loan Amount:</strong>
+                            <span>₹${parseFloat(loan.loan_amount).toFixed(2)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Item Type:</strong>
+                            <span>${loan.item_type.toUpperCase()}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Item Weight:</strong>
+                            <span>${parseFloat(loan.item_weight).toFixed(3)} grams</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Item Description:</strong>
+                            <span>${loan.item_description}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Interest Rate:</strong>
+                            <span>${parseFloat(loan.interest_rate).toFixed(2)}% per month</span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3>Customer Information</h3>
+                        <div class="detail-item">
+                            <strong>Name:</strong>
+                            <span>${loan.customer_name}</span>
+                        </div>
+                        ${loan.father_name ? `
+                        <div class="detail-item">
+                            <strong>Father's Name:</strong>
+                            <span>${loan.father_name}</span>
+                        </div>
+                        ` : ''}
+                        ${loan.husband_name ? `
+                        <div class="detail-item">
+                            <strong>Husband's Name:</strong>
+                            <span>${loan.husband_name}</span>
+                        </div>
+                        ` : ''}
+                        <div class="detail-item">
+                            <strong>Address:</strong>
+                            <span>${loan.address}</span>
+                        </div>
+                        ${loan.occupation ? `
+                        <div class="detail-item">
+                            <strong>Occupation:</strong>
+                            <span>${loan.occupation}</span>
+                        </div>
+                        ` : ''}
+                        ${loan.cell_number ? `
+                        <div class="detail-item">
+                            <strong>Contact:</strong>
+                            <span>${loan.cell_number}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function generateLoanButtonsHTML(loan) {
+            return `
+                <button onclick="generateReceipt(${loan.id})" class="btn btn-secondary">Generate Receipt</button>
+                ${loan.status === 'active' ? `
+                <button onclick="deliverLoan(${loan.id}); closeLoanDetails();" class="btn btn-success">Mark as Delivered</button>
+                <button onclick="defaultLoan(${loan.id}); closeLoanDetails();" class="btn btn-danger">Mark as Defaulted</button>
+                ` : ''}
+                <button onclick="deleteLoan(${loan.id})" class="btn btn-danger">Delete Permanently</button>
+            `;
+        }
+
+        async function deleteLoan(loanId) {
+            if (!confirm('This action will permanently delete the loan record. This cannot be undone. Continue?')) {
+                return;
+            }
+
+            try {
+                const response = await authFetch(`/api/loans/${loanId}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('Loan deleted permanently', 'success');
+                    closeLoanDetails();
+                    loadLoans();
+                    loadDashboard();
+                } else {
+                    showAlert(data.error || 'Error deleting loan', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting loan:', error);
+                showAlert('Error deleting loan', 'error');
+            }
+        }
+        
+        function closeLoanDetails() {
+            const modal = document.getElementById('loanDetailsModal');
+            const footer = document.getElementById('loanDetailsFooter');
+            modal.classList.remove('active');
+            footer.style.display = 'none';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('loanDetailsModal');
+            if (event.target === modal) {
+                closeLoanDetails();
+            }
+        }
+    </script>
+</body>
+</html>

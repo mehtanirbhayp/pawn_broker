@@ -1,0 +1,108 @@
+====================================================================
+    QUICK BACKUP & RECOVERY GUIDE - PAWN BROKER SYSTEM
+====================================================================
+
+⚡ AUTOMATIC BACKUPS RUNNING ⚡
+- Backups created automatically every 6 hours
+- Daily backup at 3:00 AM
+- Stored in: backups/ folder
+
+⚠️ CRITICAL: Copy backups to USB/Cloud daily!
+
+====================================================================
+    CREATE MANUAL BACKUP
+====================================================================
+
+Option 1 - Via Browser/API:
+  http://localhost:3000/api/backup/create
+
+Option 2 - Via Command:
+  npm run backup
+
+Option 3 - Manual Copy:
+  1. Stop server (Ctrl+C)
+  2. Copy: database/pawn_broker.db
+  3. Paste to: USB drive or cloud
+  4. Restart server: npm start
+
+====================================================================
+    RECOVER DATA AFTER CRASH
+====================================================================
+
+Step 1: Check if database exists
+  Location: database/pawn_broker.db
+
+Step 2: If database is missing or corrupted:
+  1. Look for backups in: backups/ folder
+  2. Find the most recent backup file
+  3. Copy backup file
+  4. Rename it to: pawn_broker.db
+  5. Paste into: database/ folder
+
+Step 3: Restart server
+  npm start
+
+Step 4: Verify data
+  Visit: http://localhost:3000
+  Check your loans and customers
+
+====================================================================
+    EMERGENCY CHECKLIST
+====================================================================
+
+□ Database file lost?
+   → Check backups/ folder
+□ No recent backups?
+   → Check USB drives
+□ Still no backup?
+   → Check cloud storage (Google Drive, etc.)
+□ Disk failed?
+   → Check Windows Previous Versions
+     Right-click → Properties → Previous Versions
+
+====================================================================
+    COPY BACKUP TO EXTERNAL LOCATION
+====================================================================
+
+ALWAYS DO THIS DAILY:
+
+1. Open File Explorer
+2. Go to: C:\Users\nirbh\Desktop\Pawn_broker\backups
+3. Copy the LATEST backup file
+4. Paste to ONE or MORE of these:
+   ✓ USB Drive
+   ✓ Google Drive / Dropbox
+   ✓ External Hard Drive
+   ✓ Email to yourself
+
+====================================================================
+    BACKUP API ENDPOINTS
+====================================================================
+
+List backups:
+  GET  http://localhost:3000/api/backup/list
+
+Create backup:
+  POST http://localhost:3000/api/backup/create
+
+Restore backup:
+  POST http://localhost:3000/api/backup/restore
+  Body: {"backupPath": "./backups/filename.db"}
+
+Download backup:
+  GET  http://localhost:3000/api/backup/download/filename.db
+
+====================================================================
+    REMEMBER
+====================================================================
+
+✓ Automatic backups run every 6 hours
+✓ Still COPY to USB/Cloud daily
+✓ Keep multiple backup versions
+✓ Test restore monthly
+✓ Never store backups only on same computer
+
+For detailed guide, see: BACKUP_RECOVERY.md
+
+====================================================================
+
