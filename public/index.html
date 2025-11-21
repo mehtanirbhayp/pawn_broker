@@ -490,47 +490,47 @@
         /* New Loan Form Redesign */
         .form-section {
             background: #f8f9fa;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 25px;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
             border: 1px solid #e9ecef;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .form-section-header {
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
             border-bottom: 2px solid #667eea;
         }
 
         .form-section-header h3 {
             margin: 0;
             color: #2c3e50;
-            font-size: 1.3em;
+            font-size: 1.1em;
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .form-section-icon {
-            width: 35px;
-            height: 35px;
+            width: 28px;
+            height: 28px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 8px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 18px;
+            font-size: 14px;
             font-weight: bold;
         }
 
         .form-section-content {
             display: grid;
-            gap: 20px;
+            gap: 12px;
         }
 
         .form-group {
@@ -540,24 +540,24 @@
         .form-group label {
             display: flex;
             align-items: center;
-            gap: 5px;
-            margin-bottom: 8px;
+            gap: 4px;
+            margin-bottom: 5px;
             font-weight: 600;
             color: #2c3e50;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .required-marker {
             color: #e74c3c;
-            font-size: 16px;
+            font-size: 14px;
         }
 
         .form-group input, .form-group select, .form-group textarea {
             width: 100%;
-            padding: 14px 16px;
+            padding: 10px 12px;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 15px;
+            border-radius: 6px;
+            font-size: 14px;
             transition: all 0.3s;
             background: white;
         }
@@ -570,30 +570,30 @@
 
         .form-group textarea {
             resize: vertical;
-            min-height: 80px;
+            min-height: 60px;
         }
 
         .form-actions {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             justify-content: center;
-            margin-top: 30px;
-            padding-top: 25px;
+            margin-top: 20px;
+            padding-top: 15px;
             border-top: 2px solid #e9ecef;
         }
 
         .form-actions .btn {
-            min-width: 180px;
-            padding: 14px 30px;
-            font-size: 16px;
+            min-width: 150px;
+            padding: 12px 25px;
+            font-size: 15px;
             font-weight: 600;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 6px;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.1);
         }
 
         .form-actions .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
         }
 
         .form-actions .btn-reset {
@@ -605,26 +605,26 @@
         }
 
         .form-hint {
-            font-size: 12px;
+            font-size: 11px;
             color: #7f8c8d;
-            margin-top: 5px;
+            margin-top: 3px;
             font-style: italic;
         }
 
         .section-title {
-            font-size: 2em;
+            font-size: 1.6em;
             color: #2c3e50;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 300;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .section-subtitle {
             color: #7f8c8d;
-            margin-bottom: 30px;
-            font-size: 1em;
+            margin-bottom: 20px;
+            font-size: 0.9em;
         }
 
         @media (max-width: 768px) {
@@ -678,7 +678,7 @@
                 <li><a href="#" onclick="showSection('dashboard')" class="active">Dashboard</a></li>
                 <li><a href="#" onclick="showSection('new-loan')">New Loan</a></li>
                 <li><a href="#" onclick="showSection('loans')">View Loans</a></li>
-                <li><a href="#" onclick="showSection('receipts')">Receipts</a></li>
+                <li><a href="#" onclick="showSection('mailing-label')">Mailing Label</a></li>
                 <li><a href="#" onclick="showSection('master-sheet')">Master Sheet</a></li>
             </ul>
         </nav>
@@ -770,7 +770,17 @@
                                     Address
                                     <span class="required-marker">*</span>
                                 </label>
-                                <textarea id="address" rows="3" required placeholder="Enter complete address"></textarea>
+                                <textarea id="address" rows="2" required placeholder="Enter complete address"></textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="post">Post</label>
+                                    <input type="text" id="post" placeholder="Enter post">
+                                </div>
+                                <div class="form-group">
+                                    <label for="pinCode">Pin Code</label>
+                                    <input type="text" id="pinCode" placeholder="Enter pin code">
+                                </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
@@ -815,7 +825,7 @@
                                     Item Description
                                     <span class="required-marker">*</span>
                                 </label>
-                                <textarea id="itemDescription" rows="3" required placeholder="Describe the item being pledged (e.g., gold chain, silver coins, etc.)"></textarea>
+                                <textarea id="itemDescription" rows="2" required placeholder="Describe the item being pledged (e.g., gold chain, silver coins, etc.)"></textarea>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
@@ -878,16 +888,29 @@
                 </div>
             </div>
             
-            <!-- Receipts Section -->
-            <div id="receipts" class="section">
-                <h2>Receipts</h2>
-                <div class="form-group">
-                    <label for="receiptLoanId">Loan ID</label>
-                    <input type="number" id="receiptLoanId" placeholder="Enter Loan ID">
-                    <button onclick="generateReceipt()" class="btn">Generate Receipt</button>
+            <!-- Mailing Label Section -->
+            <div id="mailing-label" class="section">
+                <h2 class="section-title">📮 Mailing Label</h2>
+                <p class="section-subtitle">Generate mailing labels for loan records</p>
+                
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <div class="form-section-icon">🔍</div>
+                        <h3>Search Loans</h3>
+                    </div>
+                    <div class="form-section-content">
+                        <div class="form-group">
+                            <label for="mailingLabelLoanId">Loan IDs or Serial Numbers</label>
+                            <textarea id="mailingLabelLoanId" rows="4" placeholder="Enter Loan IDs or Serial Numbers (one per line or comma-separated)"></textarea>
+                            <div class="form-hint">Enter multiple loan IDs or serial numbers, one per line or separated by commas</div>
+                        </div>
+                        <div class="form-actions">
+                            <button onclick="generateMailingLabel()" class="btn btn-submit">Generate Mailing Labels</button>
+                        </div>
+                    </div>
                 </div>
                 
-                <div id="receiptResult"></div>
+                <div id="mailingLabelResult"></div>
             </div>
             
             <!-- Master Sheet Section -->
@@ -1299,6 +1322,8 @@
                 fatherName: document.getElementById('fatherName').value,
                 husbandName: '', // This will be handled by the backend
                 address: document.getElementById('address').value,
+                post: document.getElementById('post').value,
+                pinCode: document.getElementById('pinCode').value,
                 occupation: document.getElementById('occupation').value,
                 cellNumber: document.getElementById('cellNumber').value,
                 loanAmount: document.getElementById('loanAmount').value,
@@ -1483,38 +1508,336 @@
             }
         }
         
-        async function generateReceipt(loanId) {
-            if (!loanId) {
-                loanId = document.getElementById('receiptLoanId').value;
+        async function generateMailingLabel(loanId) {
+            // If loanId is provided (from modal), use it directly
+            if (loanId) {
+                try {
+                    const response = await authFetch(`/api/loans/${loanId}`);
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Switch to mailing label section first
+                        document.querySelectorAll('.section').forEach(section => {
+                            section.classList.remove('active');
+                        });
+                        document.querySelectorAll('.nav a').forEach(link => {
+                            link.classList.remove('active');
+                        });
+                        document.getElementById('mailing-label').classList.add('active');
+                        document.querySelectorAll('.nav a').forEach(link => {
+                            if (link.getAttribute('onclick') && link.getAttribute('onclick').includes('mailing-label')) {
+                                link.classList.add('active');
+                            }
+                        });
+                        
+                        displayMailingLabels([data.data]);
+                        closeLoanDetails();
+                        return;
+                    } else {
+                        showAlert(data.error || 'Error loading loan', 'error');
+                        return;
+                    }
+                } catch (error) {
+                    console.error('Error generating mailing label:', error);
+                    showAlert('Error generating mailing label', 'error');
+                    return;
+                }
             }
             
-            if (!loanId) {
-                showAlert('Please enter a loan ID', 'error');
+            // Otherwise, get from input field
+            const inputValue = document.getElementById('mailingLabelLoanId').value.trim();
+            
+            if (!inputValue) {
+                showAlert('Please enter Loan IDs or Serial Numbers', 'error');
                 return;
             }
             
-            try {
-                const response = await authFetch(`/api/receipts/${loanId}/pdf`, {
-                    headers: {
-                        'Accept': 'application/pdf'
-                    }
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    showAlert(errorText || 'Error generating receipt', 'error');
-                    return;
-                }
-
-                const blob = await response.blob();
-                const url = URL.createObjectURL(blob);
-                window.open(url, '_blank');
-                setTimeout(() => URL.revokeObjectURL(url), 60_000);
-                showAlert('Receipt generated successfully!', 'success');
-            } catch (error) {
-                console.error('Error generating receipt:', error);
-                showAlert('Error generating receipt', 'error');
+            // Parse input - support both comma-separated and line-separated
+            const identifiers = inputValue
+                .split(/[,\n]/)
+                .map(id => id.trim())
+                .filter(id => id.length > 0);
+            
+            if (identifiers.length === 0) {
+                showAlert('Please enter at least one Loan ID or Serial Number', 'error');
+                return;
             }
+            
+            const resultDiv = document.getElementById('mailingLabelResult');
+            resultDiv.innerHTML = '<div class="loading">Loading loans...</div>';
+            
+            try {
+                const loans = [];
+                const errors = [];
+                
+                // Fetch all loans
+                for (const identifier of identifiers) {
+                    try {
+                        // Try to fetch by ID first
+                        let response = await authFetch(`/api/loans/${identifier}`);
+                        
+                        // If not found by ID, try searching by serial number
+                        if (!response.ok) {
+                            const searchResponse = await authFetch(`/api/loans?search=${encodeURIComponent(identifier)}&limit=1`);
+                            const searchData = await searchResponse.json();
+                            
+                            if (searchData.success && searchData.data.loans.length > 0) {
+                                loans.push(searchData.data.loans[0]);
+                            } else {
+                                errors.push(`Not found: ${identifier}`);
+                            }
+                        } else {
+                            const data = await response.json();
+                            if (data.success) {
+                                loans.push(data.data);
+                            } else {
+                                errors.push(`Error loading: ${identifier}`);
+                            }
+                        }
+                    } catch (error) {
+                        errors.push(`Error loading: ${identifier}`);
+                    }
+                }
+                
+                if (loans.length > 0) {
+                    displayMailingLabels(loans);
+                    if (errors.length > 0) {
+                        showAlert(`Generated ${loans.length} label(s). ${errors.length} error(s): ${errors.join(', ')}`, 'error');
+                    }
+                } else {
+                    showAlert('No loans found. ' + (errors.length > 0 ? errors.join(', ') : ''), 'error');
+                    resultDiv.innerHTML = '';
+                }
+            } catch (error) {
+                console.error('Error generating mailing labels:', error);
+                showAlert('Error generating mailing labels', 'error');
+                resultDiv.innerHTML = '';
+            }
+        }
+        
+        // Store loans data globally for print function
+        let currentMailingLabelLoans = [];
+        
+        function displayMailingLabels(loans) {
+            const resultDiv = document.getElementById('mailingLabelResult');
+            currentMailingLabelLoans = loans; // Store for print function
+            
+            const labelsHTML = loans.map(loan => {
+                // Format date
+                const loanDate = new Date(loan.loan_date).toLocaleDateString();
+                
+                // Get father/husband name
+                const fatherHusbandName = loan.father_name || loan.husband_name || '';
+                
+                // Format phone number
+                const phoneNumber = loan.cell_number || 'N/A';
+                
+                return `
+                    <div style="background: white; padding: 5px; border-radius: 4px; border: 1px solid #e0e0e0; font-family: 'Courier New', monospace; line-height: 1.1; margin-bottom: 20px; page-break-inside: avoid;">
+                        <div style="font-weight: bold; font-size: 16px; margin-bottom: 2px; padding-bottom: 2px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; width: 100%;">
+                            <span>₹${parseFloat(loan.loan_amount).toFixed(2)}</span>
+                            <span>${loanDate}</span>
+                            <span>${loan.serial_number}</span>
+                        </div>
+                        <div style="margin-bottom: 1px; font-size: 15px;">
+                            ${loan.customer_name}
+                        </div>
+                        <div style="margin-bottom: 1px; font-size: 15px;">
+                            ${fatherHusbandName || 'N/A'}
+                        </div>
+                        <div style="margin-bottom: 1px; font-size: 15px;">
+                            ${loan.address}
+                        </div>
+                        <div style="font-size: 15px;">
+                            ${phoneNumber}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            resultDiv.innerHTML = `
+                <div class="form-section" style="margin-top: 30px;">
+                    <div class="form-section-header">
+                        <div class="form-section-icon">📮</div>
+                        <h3>Mailing Labels (${loans.length})</h3>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+                        ${labelsHTML}
+                    </div>
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button onclick="printMailingLabel()" class="btn btn-submit">Print All Mailing Labels</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function printMailingLabel() {
+            if (!currentMailingLabelLoans || currentMailingLabelLoans.length === 0) {
+                showAlert('No mailing labels to print', 'error');
+                return;
+            }
+            
+            // Format loans for printing
+            const formattedLoans = currentMailingLabelLoans.map(loan => {
+                const loanDate = new Date(loan.loan_date).toLocaleDateString();
+                const fatherHusbandName = loan.father_name || loan.husband_name || '';
+                const phoneNumber = loan.cell_number || 'N/A';
+                
+                return {
+                    amount: parseFloat(loan.loan_amount).toFixed(2),
+                    date: loanDate,
+                    serial: loan.serial_number,
+                    name: loan.customer_name,
+                    fatherHusband: fatherHusbandName || 'N/A',
+                    address: loan.address,
+                    phone: phoneNumber
+                };
+            });
+            
+            // Group labels into rows of 2
+            const labelsPerRow = 2;
+            const rows = [];
+            for (let i = 0; i < formattedLoans.length; i += labelsPerRow) {
+                rows.push(formattedLoans.slice(i, i + labelsPerRow));
+            }
+            
+            const rowsHTML = rows.map(row => {
+                const labelsHTML = row.map(loan => {
+                    return `
+                        <div class="mailing-label">
+                            <div class="header-row">
+                                <span>₹${loan.amount}</span>
+                                <span>${loan.date}</span>
+                                <span>${loan.serial}</span>
+                            </div>
+                            <div class="row">${loan.name}</div>
+                            <div class="row">${loan.fatherHusband}</div>
+                            <div class="row">${loan.address}</div>
+                            <div class="row">${loan.phone}</div>
+                        </div>
+                    `;
+                }).join('');
+                // Fill empty slot if row has only 1 label
+                const emptySlots = labelsPerRow - row.length;
+                const emptyHTML = Array(emptySlots).fill('<div class="mailing-label empty"></div>').join('');
+                return `<div class="label-row">${labelsHTML}${emptyHTML}</div>`;
+            }).join('');
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Mailing Labels</title>
+                        <style>
+                            @page {
+                                size: A4 landscape;
+                                margin: 0.25in;
+                            }
+                            body {
+                                font-family: 'Courier New', monospace;
+                                padding: 0;
+                                margin: 0;
+                                width: 100%;
+                            }
+                            .label-row {
+                                width: 100%;
+                                margin-bottom: 0.1in;
+                                page-break-inside: avoid;
+                                display: flex;
+                                gap: 0.1in;
+                                justify-content: flex-start;
+                            }
+                            .label-row:last-child {
+                                margin-bottom: 0;
+                            }
+                            .mailing-label {
+                                background: white;
+                                padding: 5px;
+                                border-radius: 4px;
+                                border: 1px solid #e0e0e0;
+                                font-family: 'Courier New', monospace;
+                                line-height: 1.1;
+                                width: calc(50% - 0.05in);
+                                max-width: calc(50% - 0.05in);
+                                min-width: calc(50% - 0.05in);
+                                box-sizing: border-box;
+                            }
+                            .mailing-label.empty {
+                                background: transparent;
+                                border: none;
+                            }
+                            .mailing-label .header-row {
+                                font-weight: bold;
+                                font-size: 14px;
+                                margin-bottom: 2px;
+                                padding-bottom: 2px;
+                                border-bottom: 1px solid #333;
+                                display: flex;
+                                justify-content: space-between;
+                                width: 100%;
+                            }
+                            .mailing-label .row {
+                                margin-bottom: 1px;
+                                font-size: 13px;
+                            }
+                            @media print {
+                                @page {
+                                    size: A4 landscape;
+                                    margin: 0.25in;
+                                }
+                                body { 
+                                    margin: 0; 
+                                    padding: 0; 
+                                    width: 100%;
+                                }
+                                .label-row {
+                                    page-break-inside: avoid;
+                                    margin-bottom: 0.1in;
+                                    display: flex;
+                                    gap: 0.1in;
+                                    justify-content: flex-start;
+                                    width: 100%;
+                                }
+                                .label-row:last-child {
+                                    margin-bottom: 0;
+                                }
+                                .mailing-label {
+                                    page-break-inside: avoid;
+                                    width: calc(50% - 0.05in);
+                                    max-width: calc(50% - 0.05in);
+                                    min-width: calc(50% - 0.05in);
+                                    flex: none;
+                                    box-sizing: border-box;
+                                    padding: 5px;
+                                    border-radius: 4px;
+                                    border: 1px solid #e0e0e0;
+                                    line-height: 1.1;
+                                }
+                                .mailing-label.empty {
+                                    background: transparent;
+                                    border: none;
+                                }
+                                .mailing-label .header-row {
+                                    margin-bottom: 2px;
+                                    padding-bottom: 2px;
+                                    border-bottom: 1px solid #333;
+                                }
+                                .mailing-label .row {
+                                    margin-bottom: 1px;
+                                }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        ${rowsHTML}
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+            }, 250);
         }
         
         async function loadMasterSheet() {
@@ -1817,7 +2140,7 @@
         
         function generateLoanButtonsHTML(loan) {
             return `
-                <button onclick="generateReceipt(${loan.id})" class="btn btn-secondary">Generate Receipt</button>
+                <button onclick="generateMailingLabel(${loan.id})" class="btn btn-secondary">Generate Mailing Label</button>
                 ${loan.status === 'active' ? `
                 <button onclick="deliverLoan(${loan.id}); closeLoanDetails();" class="btn btn-success">Mark as Delivered</button>
                 <button onclick="defaultLoan(${loan.id}); closeLoanDetails();" class="btn btn-danger">Mark as Defaulted</button>
