@@ -297,7 +297,7 @@
         }
         
         .modal-footer {
-            padding: 20px 30px;
+            padding: 10px 20px;
             border-top: 2px solid #eee;
             background: #f8f9fa;
             border-radius: 0 0 15px 15px;
@@ -367,23 +367,23 @@
         }
         
         .modal-footer h3 {
-            margin-bottom: 15px;
+            margin-bottom: 8px;
             color: #2c3e50;
             text-align: center;
-            font-size: 1.1em;
+            font-size: 0.95em;
         }
         
         .modal-buttons {
             display: flex;
-            gap: 10px;
+            gap: 6px;
             flex-wrap: wrap;
             justify-content: center;
         }
         
         .modal-buttons .btn {
-            min-width: 150px;
-            padding: 12px 20px;
-            font-size: 14px;
+            min-width: 120px;
+            padding: 8px 12px;
+            font-size: 12px;
             font-weight: 500;
         }
         
@@ -485,6 +485,198 @@
         .logout-button:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: translateY(-1px);
+        }
+
+        /* Hamburger Menu Styles */
+        .hamburger-menu {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 30px;
+            height: 30px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hamburger-menu:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .hamburger-menu span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        .hamburger-menu.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger-menu.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-menu.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        /* Settings Menu */
+        .settings-menu {
+            position: fixed;
+            top: 60px;
+            left: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            min-width: 300px;
+            max-width: 500px;
+            z-index: 99;
+            display: none;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+
+        .settings-menu.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .settings-menu-header {
+            padding: 15px 20px;
+            border-bottom: 2px solid #667eea;
+            background: #f8f9fa;
+        }
+
+        .settings-menu-header h3 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .settings-menu-header .back-button {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0;
+            display: none;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .settings-menu-header .back-button.active {
+            display: flex;
+        }
+
+        .settings-menu-header .back-button:hover {
+            color: #764ba2;
+        }
+
+        .settings-menu-list {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 0;
+        }
+
+        .settings-menu-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #2c3e50;
+            border-left: 3px solid transparent;
+        }
+
+        .settings-menu-item:hover {
+            background: #f8f9fa;
+            border-left-color: #667eea;
+        }
+
+        .settings-menu-item .icon {
+            font-size: 1.2em;
+            width: 24px;
+            text-align: center;
+        }
+
+        .settings-menu-item .label {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .settings-menu-item .arrow {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .settings-content {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            max-height: 500px;
+        }
+
+        .settings-content.active {
+            display: block;
+        }
+
+        .settings-item {
+            margin-bottom: 15px;
+        }
+
+        .settings-item label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9em;
+        }
+
+        .settings-item input {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .settings-item input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .settings-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .settings-actions .btn {
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
         }
 
         /* New Loan Form Redesign */
@@ -627,6 +819,59 @@
             font-size: 0.9em;
         }
 
+        /* Pagination Styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            margin-top: 20px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .pagination button,
+        .pagination span {
+            min-width: 36px;
+            height: 36px;
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            color: #667eea;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: #f8f9fa;
+            border-color: #667eea;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination .page-number.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            font-weight: 600;
+        }
+
+        .pagination .ellipsis {
+            cursor: default;
+            border: none;
+            background: transparent;
+        }
+
         @media (max-width: 768px) {
             .form-section {
                 padding: 20px;
@@ -667,10 +912,41 @@
     </div>
     <div class="container hidden" id="appContainer">
         <div class="header">
+            <button id="hamburgerMenu" class="hamburger-menu" onclick="toggleSettingsMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
             <button id="logoutButton" class="logout-button">Logout</button>
             <h1>MS and Sons</h1>
             <p>Digital Pawn Broker Management System</p>
             <div class="datetime" id="datetime"></div>
+        </div>
+        
+        <div id="settingsMenu" class="settings-menu">
+            <div class="settings-menu-header">
+                <button class="back-button" onclick="showSettingsMenu()">
+                    <span>←</span>
+                    <span>Back</span>
+                </button>
+                <h3>⚙️ Settings</h3>
+            </div>
+            <div id="settingsMenuList" class="settings-menu-list">
+                <div class="settings-menu-item" onclick="showSettingsContent('prefixes')">
+                    <span class="icon">🔤</span>
+                    <span class="label">Serial Number Prefixes</span>
+                    <span class="arrow">→</span>
+                </div>
+                <div class="settings-menu-item" onclick="showSettingsContent('columns')">
+                    <span class="icon">📊</span>
+                    <span class="label">Table Columns</span>
+                    <span class="arrow">→</span>
+                </div>
+                <!-- Add more menu items here in the future -->
+            </div>
+            <div id="settingsContent" class="settings-content">
+                <div class="loading">Loading settings...</div>
+            </div>
         </div>
         
         <nav class="nav">
@@ -702,7 +978,7 @@
                 <h2 class="section-title">✨ Create New Loan</h2>
                 <p class="section-subtitle">Fill in the details below to create a new loan entry</p>
                 
-                <form id="loanForm">
+                <form id="loanForm" autocomplete="off" novalidate>
                     <!-- Company & Item Information Section -->
                     <div class="form-section">
                         <div class="form-section-header">
@@ -710,7 +986,7 @@
                             <h3>Company & Item Information</h3>
                         </div>
                         <div class="form-section-content">
-                            <div class="form-row">
+                            <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
                                 <div class="form-group">
                                     <label for="company">
                                         Company
@@ -733,14 +1009,14 @@
                                     </select>
                                     <div class="form-hint">Select gold or silver</div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="serialNumber">
-                                    Serial Number
-                                    <span class="required-marker">*</span>
-                                </label>
-                                <input type="text" id="serialNumber" required placeholder="Enter serial number issued by company">
-                                <div class="form-hint">Unique serial number assigned by the company</div>
+                                <div class="form-group">
+                                    <label for="serialNumber">
+                                        Serial Number
+                                        <span class="required-marker">*</span>
+                                    </label>
+                                    <input type="text" id="serialNumber" required placeholder="Enter serial number issued by company" autocomplete="new-password">
+                                    <div class="form-hint">Unique serial number assigned by the company</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -752,44 +1028,49 @@
                             <h3>Customer Information</h3>
                         </div>
                         <div class="form-section-content">
-                            <div class="form-row">
+                            <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
                                 <div class="form-group">
                                     <label for="customerName">
                                         Customer Name
                                         <span class="required-marker">*</span>
                                     </label>
-                                    <input type="text" id="customerName" required placeholder="Enter customer full name">
+                                    <input type="text" id="customerName" required placeholder="Enter customer full name" autocomplete="new-password">
                                 </div>
                                 <div class="form-group">
                                     <label for="fatherName">Father/Husband Name</label>
-                                    <input type="text" id="fatherName" placeholder="Enter father or husband name">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="address">
-                                    Address
-                                    <span class="required-marker">*</span>
-                                </label>
-                                <textarea id="address" rows="2" required placeholder="Enter complete address"></textarea>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="post">Post</label>
-                                    <input type="text" id="post" placeholder="Enter post">
-                                </div>
-                                <div class="form-group">
-                                    <label for="pinCode">Pin Code</label>
-                                    <input type="text" id="pinCode" placeholder="Enter pin code">
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="occupation">Occupation</label>
-                                    <input type="text" id="occupation" placeholder="Enter occupation">
+                                    <input type="text" id="fatherName" placeholder="Enter father or husband name" autocomplete="new-password">
                                 </div>
                                 <div class="form-group">
                                     <label for="cellNumber">Cell Number</label>
-                                    <input type="tel" id="cellNumber" placeholder="Enter contact number">
+                                    <input type="tel" id="cellNumber" placeholder="Enter contact number" autocomplete="new-password">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="address">
+                                        Address
+                                        <span class="required-marker">*</span>
+                                    </label>
+                                    <textarea id="address" rows="2" required placeholder="Enter complete address" autocomplete="new-password"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="aadharNumber">Aadhar Number</label>
+                                    <input type="text" id="aadharNumber" placeholder="Enter Aadhar number" autocomplete="new-password" maxlength="12" pattern="[0-9]{12}">
+                                    <div class="form-hint">12-digit Aadhar number (optional)</div>
+                                </div>
+                            </div>
+                            <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
+                                <div class="form-group">
+                                    <label for="occupation">Occupation</label>
+                                    <input type="text" id="occupation" placeholder="Enter occupation" autocomplete="new-password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="post">Post</label>
+                                    <input type="text" id="post" placeholder="Enter post" autocomplete="new-password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="pinCode">Pin Code</label>
+                                    <input type="text" id="pinCode" placeholder="Enter pin code" autocomplete="new-password">
                                 </div>
                             </div>
                         </div>
@@ -802,13 +1083,13 @@
                             <h3>Loan Details</h3>
                         </div>
                         <div class="form-section-content">
-                            <div class="form-row">
+                            <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
                                 <div class="form-group">
                                     <label for="loanAmount">
                                         Loan Amount (₹)
                                         <span class="required-marker">*</span>
                                     </label>
-                                    <input type="number" id="loanAmount" step="0.01" required placeholder="0.00">
+                                    <input type="number" id="loanAmount" step="0.01" required placeholder="0.00" autocomplete="off">
                                     <div class="form-hint">Enter the loan amount in rupees</div>
                                 </div>
                                 <div class="form-group">
@@ -816,8 +1097,13 @@
                                         Item Weight (grams)
                                         <span class="required-marker">*</span>
                                     </label>
-                                    <input type="number" id="itemWeight" step="0.001" required placeholder="0.000">
+                                    <input type="number" id="itemWeight" step="0.001" required placeholder="0.000" autocomplete="off">
                                     <div class="form-hint">Weight of the pledged item in grams</div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="loanDate">Loan Date</label>
+                                    <input type="date" id="loanDate" autocomplete="off">
+                                    <div class="form-hint">Date when the loan is issued</div>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -825,19 +1111,7 @@
                                     Item Description
                                     <span class="required-marker">*</span>
                                 </label>
-                                <textarea id="itemDescription" rows="2" required placeholder="Describe the item being pledged (e.g., gold chain, silver coins, etc.)"></textarea>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="loanDate">Loan Date</label>
-                                    <input type="date" id="loanDate">
-                                    <div class="form-hint">Date when the loan is issued</div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="interestRate">Interest Rate (% per month)</label>
-                                    <input type="number" id="interestRate" step="0.01" value="2.0" placeholder="2.0">
-                                    <div class="form-hint">Monthly interest rate percentage</div>
-                                </div>
+                                <textarea id="itemDescription" rows="2" required placeholder="Describe the item being pledged (e.g., gold chain, silver coins, etc.)" autocomplete="new-password"></textarea>
                             </div>
                         </div>
                     </div>
@@ -895,8 +1169,49 @@
                 
                 <div class="form-section">
                     <div class="form-section-header">
+                        <div class="form-section-icon">🏢</div>
+                        <h3>Filter by Company</h3>
+                    </div>
+                    <div class="form-section-content">
+                        <div class="form-group">
+                            <label for="mailingLabelCompany">Select Company</label>
+                            <select id="mailingLabelCompany">
+                                <option value="">Select Company</option>
+                            </select>
+                            <div class="form-hint">Select a company to generate mailing labels for all its loans</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="mailingLabelStatus">Filter by Status (Optional)</label>
+                            <select id="mailingLabelStatus">
+                                <option value="">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="delivered">Delivered</option>
+                                <option value="defaulted">Defaulted</option>
+                            </select>
+                            <div class="form-hint">Optionally filter by loan status</div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="mailingLabelStartDate">Start Date (Optional)</label>
+                                <input type="date" id="mailingLabelStartDate">
+                                <div class="form-hint">Filter loans from this date onwards</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="mailingLabelEndDate">End Date (Optional)</label>
+                                <input type="date" id="mailingLabelEndDate">
+                                <div class="form-hint">Filter loans up to this date</div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button onclick="generateMailingLabelByCompany()" class="btn btn-submit">Generate Labels by Company</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section" style="margin-top: 20px;">
+                    <div class="form-section-header">
                         <div class="form-section-icon">🔍</div>
-                        <h3>Search Loans</h3>
+                        <h3>Search by Loan IDs or Serial Numbers</h3>
                     </div>
                     <div class="form-section-content">
                         <div class="form-group">
@@ -964,7 +1279,6 @@
                 <div class="loading">Loading loan details...</div>
             </div>
             <div class="modal-footer" id="loanDetailsFooter" style="display: none;">
-                <h3>Actions</h3>
                 <div class="modal-buttons" id="loanDetailsButtons">
                     <!-- Buttons will be inserted here -->
                 </div>
@@ -975,6 +1289,521 @@
     <script>
         let companies = [];
         let appInitialized = false;
+        let currentLoanDetailsId = null; // Track which loan is currently shown in modal
+        
+        // Pagination state
+        let currentPage = {
+            dashboard: 1,
+            loans: 1,
+            masterSheet: 1
+        };
+        let totalPages = {
+            dashboard: 1,
+            loans: 1,
+            masterSheet: 1
+        };
+        let allLoans = {
+            dashboard: [],
+            loans: [],
+            masterSheet: []
+        };
+
+        // Helper function to format date as dd-mm-yyyy
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return 'N/A';
+            
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            
+            return `${day}-${month}-${year}`;
+        }
+
+        // Pagination Component Function
+        function generatePagination(pageType, currentPageNum, totalPagesNum, onPageChange) {
+            if (totalPagesNum <= 1) return '';
+            
+            let paginationHTML = '<div class="pagination">';
+            
+            // First page button (<<)
+            paginationHTML += `<button onclick="${onPageChange}(1)" ${currentPageNum === 1 ? 'disabled' : ''}>«</button>`;
+            
+            // Previous page button
+            paginationHTML += `<button onclick="${onPageChange}(${currentPageNum - 1})" ${currentPageNum === 1 ? 'disabled' : ''}>‹</button>`;
+            
+            // Page numbers
+            const maxVisible = 10;
+            let startPage = Math.max(1, currentPageNum - 4);
+            let endPage = Math.min(totalPagesNum, startPage + maxVisible - 1);
+            
+            if (endPage - startPage < maxVisible - 1) {
+                startPage = Math.max(1, endPage - maxVisible + 1);
+            }
+            
+            // Show first page if not in range
+            if (startPage > 1) {
+                paginationHTML += `<button onclick="${onPageChange}(1)" class="page-number">1</button>`;
+                if (startPage > 2) {
+                    paginationHTML += `<span class="ellipsis">...</span>`;
+                }
+            }
+            
+            // Show page numbers
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === currentPageNum) {
+                    paginationHTML += `<button class="page-number active" disabled>${i}</button>`;
+                } else {
+                    paginationHTML += `<button onclick="${onPageChange}(${i})" class="page-number">${i}</button>`;
+                }
+            }
+            
+            // Show last page if not in range
+            if (endPage < totalPagesNum) {
+                if (endPage < totalPagesNum - 1) {
+                    paginationHTML += `<span class="ellipsis">...</span>`;
+                }
+                paginationHTML += `<button onclick="${onPageChange}(${totalPagesNum})" class="page-number">${totalPagesNum}</button>`;
+            }
+            
+            // Next page button
+            paginationHTML += `<button onclick="${onPageChange}(${currentPageNum + 1})" ${currentPageNum === totalPagesNum ? 'disabled' : ''}>›</button>`;
+            
+            // Last page button (>>)
+            paginationHTML += `<button onclick="${onPageChange}(${totalPagesNum})" ${currentPageNum === totalPagesNum ? 'disabled' : ''}>»</button>`;
+            
+            paginationHTML += '</div>';
+            return paginationHTML;
+        }
+
+        // Serial Number Prefix Management
+        function getSerialPrefixes() {
+            const stored = localStorage.getItem('serialNumberPrefixes');
+            return stored ? JSON.parse(stored) : {};
+        }
+
+        function saveSerialPrefixes(prefixes) {
+            localStorage.setItem('serialNumberPrefixes', JSON.stringify(prefixes));
+        }
+
+        function getSerialPrefixForCompany(companyId, itemType) {
+            const prefixes = getSerialPrefixes();
+            if (prefixes[companyId]) {
+                if (itemType && prefixes[companyId][itemType]) {
+                    return prefixes[companyId][itemType];
+                }
+                // Fallback to old format for backward compatibility
+                if (typeof prefixes[companyId] === 'string') {
+                    return prefixes[companyId];
+                }
+            }
+            return '';
+        }
+
+        function toggleSettingsMenu() {
+            const menu = document.getElementById('settingsMenu');
+            const hamburger = document.getElementById('hamburgerMenu');
+            
+            if (menu.classList.contains('active')) {
+                menu.classList.remove('active');
+                hamburger.classList.remove('active');
+                showSettingsMenu(); // Reset to menu list when closing
+            } else {
+                menu.classList.add('active');
+                hamburger.classList.add('active');
+                showSettingsMenu(); // Show menu list
+            }
+        }
+
+        function showSettingsMenu() {
+            const menuList = document.getElementById('settingsMenuList');
+            const settingsContent = document.getElementById('settingsContent');
+            const backButton = document.querySelector('.back-button');
+            
+            if (menuList) menuList.style.display = 'flex';
+            if (settingsContent) settingsContent.classList.remove('active');
+            if (backButton) backButton.classList.remove('active');
+        }
+
+        function showSettingsContent(contentType) {
+            const menuList = document.getElementById('settingsMenuList');
+            const settingsContent = document.getElementById('settingsContent');
+            const backButton = document.querySelector('.back-button');
+            
+            if (menuList) menuList.style.display = 'none';
+            if (settingsContent) settingsContent.classList.add('active');
+            if (backButton) backButton.classList.add('active');
+            
+            if (contentType === 'prefixes') {
+                loadPrefixSettings();
+            } else if (contentType === 'columns') {
+                loadColumnSettings();
+            }
+            // Add more content types here in the future
+        }
+        
+        // Column Settings Management - Advanced Customization
+        // All available loan data fields
+        const availableLoanFields = {
+            serial_number: { label: 'Serial Number', getValue: (loan) => {
+                // Try multiple possible field names
+                const value = loan.serial_number || loan.serialNumber || loan['serial_number'] || loan['serialNumber'];
+                if (value !== undefined && value !== null && value !== '') {
+                    return String(value);
+                }
+                return 'N/A';
+            }},
+            customer_name: { label: 'Customer Name', getValue: (loan) => loan.customer_name },
+            company_name: { label: 'Company Name', getValue: (loan) => loan.company_name },
+            loan_amount: { label: 'Loan Amount', getValue: (loan) => `₹${parseFloat(loan.loan_amount).toFixed(2)}` },
+            item_weight: { label: 'Item Weight', getValue: (loan) => `${parseFloat(loan.item_weight).toFixed(3)}g` },
+            item_type: { label: 'Item Type', getValue: (loan) => loan.item_type.toUpperCase() },
+            status: { label: 'Status', getValue: (loan) => `<span class="status ${loan.status}">${loan.status}</span>` },
+            loan_date: { label: 'Loan Date', getValue: (loan) => formatDate(loan.loan_date) },
+            item_description: { label: 'Item Description', getValue: (loan) => loan.item_description || 'N/A' },
+            address: { label: 'Address', getValue: (loan) => loan.address || 'N/A' },
+            cell_number: { label: 'Cell Number', getValue: (loan) => loan.cell_number || 'N/A' },
+            occupation: { label: 'Occupation', getValue: (loan) => loan.occupation || 'N/A' },
+            father_name: { label: 'Father Name', getValue: (loan) => loan.father_name || 'N/A' },
+            husband_name: { label: 'Husband Name', getValue: (loan) => loan.husband_name || 'N/A' },
+            post: { label: 'Post', getValue: (loan) => loan.post || 'N/A' },
+            pin_code: { label: 'Pin Code', getValue: (loan) => loan.pin_code || 'N/A' },
+            aadhar_number: { label: 'Aadhar Number', getValue: (loan) => loan.aadhar_number || 'N/A' },
+            delivered_date: { label: 'Delivered Date', getValue: (loan) => loan.delivered_date ? formatDate(loan.delivered_date) : 'N/A' },
+            id: { label: 'Loan ID', getValue: (loan) => loan.id }
+        };
+        
+        // Default column configuration
+        const defaultColumnConfig = [
+            { field: 'serial_number', header: 'Serial No', visible: true },
+            { field: 'customer_name', header: 'Customer', visible: true },
+            { field: 'company_name', header: 'Company', visible: true },
+            { field: 'loan_amount', header: 'Amount', visible: true },
+            { field: 'item_weight', header: 'Weight', visible: true },
+            { field: 'item_type', header: 'Type', visible: true },
+            { field: 'status', header: 'Status', visible: true },
+            { field: 'loan_date', header: 'Date', visible: true }
+        ];
+        
+        function getColumnConfig() {
+            const stored = localStorage.getItem('loanTableColumnConfig');
+            if (stored) {
+                try {
+                    return JSON.parse(stored);
+                } catch (e) {
+                    return defaultColumnConfig;
+                }
+            }
+            return defaultColumnConfig;
+        }
+        
+        function saveColumnConfig(config) {
+            localStorage.setItem('loanTableColumnConfig', JSON.stringify(config));
+        }
+        
+        function loadColumnSettings() {
+            const settingsContent = document.getElementById('settingsContent');
+            const config = getColumnConfig();
+            
+            let html = '<h4 style="margin: 0 0 20px 0; color: #2c3e50; font-size: 1.1em;">Customize Table Columns</h4>';
+            
+            // Current columns configuration
+            html += '<div style="margin-bottom: 30px;">';
+            html += '<h5 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 1em;">Current Columns (in order)</h5>';
+            html += '<div id="columnList" style="max-height: 300px; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px;">';
+            
+            config.forEach((col, index) => {
+                const fieldInfo = availableLoanFields[col.field];
+                html += `
+                    <div id="col_item_${index}" style="margin-bottom: 10px; padding: 12px; background: #f8f9fa; border-radius: 6px; border: 1px solid #e0e0e0; display: flex; align-items: center; gap: 10px;">
+                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                            <button onclick="moveColumnUp(${index})" ${index === 0 ? 'disabled' : ''} style="background: #667eea; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8em; ${index === 0 ? 'opacity: 0.5; cursor: not-allowed;' : ''}" title="Move up">↑</button>
+                            <button onclick="moveColumnDown(${index})" ${index === config.length - 1 ? 'disabled' : ''} style="background: #667eea; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8em; ${index === config.length - 1 ? 'opacity: 0.5; cursor: not-allowed;' : ''}" title="Move down">↓</button>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <div>
+                                    <label style="font-size: 0.85em; color: #7f8c8d; display: block; margin-bottom: 5px;">Data Field</label>
+                                    <select id="col_field_${index}" onchange="updateColumnField(${index})" style="width: 100%; padding: 6px; border: 2px solid #e0e0e0; border-radius: 4px;">
+                                        ${Object.keys(availableLoanFields).map(field => 
+                                            `<option value="${field}" ${col.field === field ? 'selected' : ''}>${availableLoanFields[field].label}</option>`
+                                        ).join('')}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.85em; color: #7f8c8d; display: block; margin-bottom: 5px;">Column Header</label>
+                                    <input type="text" id="col_header_${index}" value="${col.header}" placeholder="Column name" style="width: 100%; padding: 6px; border: 2px solid #e0e0e0; border-radius: 4px;">
+                                </div>
+                            </div>
+                        </div>
+                        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                            <input type="checkbox" id="col_visible_${index}" ${col.visible ? 'checked' : ''} style="width: 18px; height: 18px;">
+                            <span style="font-size: 0.85em; color: #7f8c8d;">Visible</span>
+                        </label>
+                        <button onclick="removeColumn(${index})" style="background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em;">Remove</button>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            html += '<button onclick="addNewColumn()" style="margin-top: 10px; background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">+ Add Column</button>';
+            html += '</div>';
+            
+            // Available fields reference
+            html += '<div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">';
+            html += '<h5 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 0.95em;">Available Data Fields</h5>';
+            html += '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; font-size: 0.85em; color: #7f8c8d;">';
+            Object.keys(availableLoanFields).forEach(field => {
+                html += `<div style="padding: 5px;">• ${availableLoanFields[field].label}</div>`;
+            });
+            html += '</div>';
+            html += '</div>';
+            
+            html += `
+                <div class="settings-actions">
+                    <button onclick="saveColumnConfigToStorage()" class="btn btn-submit">Save Configuration</button>
+                    <button onclick="resetColumnConfig()" class="btn btn-secondary">Reset to Default</button>
+                    <button onclick="showSettingsMenu()" class="btn btn-secondary">Back</button>
+                </div>
+            `;
+            
+            settingsContent.innerHTML = html;
+        }
+        
+        function addNewColumn() {
+            const config = getColumnConfig();
+            // Add a new column with the first available field
+            const firstField = Object.keys(availableLoanFields)[0];
+            config.push({
+                field: firstField,
+                header: availableLoanFields[firstField].label,
+                visible: true
+            });
+            saveColumnConfig(config);
+            loadColumnSettings();
+        }
+        
+        function removeColumn(index) {
+            if (confirm('Remove this column?')) {
+                const config = getColumnConfig();
+                config.splice(index, 1);
+                saveColumnConfig(config);
+                loadColumnSettings();
+            }
+        }
+        
+        function updateColumnField(index) {
+            const config = getColumnConfig();
+            const select = document.getElementById(`col_field_${index}`);
+            const headerInput = document.getElementById(`col_header_${index}`);
+            const newField = select.value;
+            config[index].field = newField;
+            // Update header to match field label if it hasn't been customized
+            if (headerInput.value === availableLoanFields[config[index].field]?.label || 
+                headerInput.value === '') {
+                headerInput.value = availableLoanFields[newField].label;
+            }
+            config[index].header = headerInput.value;
+            saveColumnConfig(config);
+        }
+        
+        function moveColumnUp(index) {
+            if (index > 0) {
+                const config = getColumnConfig();
+                const temp = config[index];
+                config[index] = config[index - 1];
+                config[index - 1] = temp;
+                saveColumnConfig(config);
+                loadColumnSettings();
+            }
+        }
+        
+        function moveColumnDown(index) {
+            const config = getColumnConfig();
+            if (index < config.length - 1) {
+                const temp = config[index];
+                config[index] = config[index + 1];
+                config[index + 1] = temp;
+                saveColumnConfig(config);
+                loadColumnSettings();
+            }
+        }
+        
+        function saveColumnConfigToStorage() {
+            const config = getColumnConfig();
+            const columnList = document.getElementById('columnList');
+            const columnItems = columnList.querySelectorAll('[id^="col_item_"]');
+            
+            columnItems.forEach((item, index) => {
+                if (config[index]) {
+                    const headerInput = document.getElementById(`col_header_${index}`);
+                    const visibleCheckbox = document.getElementById(`col_visible_${index}`);
+                    
+                    if (headerInput) {
+                        config[index].header = headerInput.value.trim() || availableLoanFields[config[index].field].label;
+                    }
+                    if (visibleCheckbox) {
+                        config[index].visible = visibleCheckbox.checked;
+                    }
+                }
+            });
+            
+            saveColumnConfig(config);
+            showAlert('Column configuration saved successfully!', 'success');
+            
+            // Refresh the loans table if we're on the loans page
+            if (document.getElementById('loans').classList.contains('active')) {
+                displayLoans();
+            }
+        }
+        
+        function resetColumnConfig() {
+            if (confirm('Reset all columns to default configuration? This will remove all customizations.')) {
+                localStorage.removeItem('loanTableColumnConfig');
+                loadColumnSettings();
+                showAlert('Column configuration reset to default', 'success');
+            }
+        }
+
+        function loadPrefixSettings() {
+            const settingsContent = document.getElementById('settingsContent');
+            const prefixes = getSerialPrefixes();
+            
+            if (companies.length === 0) {
+                settingsContent.innerHTML = '<div class="loading">Loading companies...</div>';
+                return;
+            }
+            
+            let html = '<h4 style="margin: 0 0 20px 0; color: #2c3e50; font-size: 1.1em;">Serial Number Prefixes</h4>';
+            html += '<p style="margin: 0 0 20px 0; color: #7f8c8d; font-size: 0.9em;">Configure serial number prefixes for each company and item type.</p>';
+            html += '<div style="max-height: 400px; overflow-y: auto;">';
+            companies.forEach(company => {
+                const companyPrefixes = prefixes[company.id] || {};
+                const goldPrefix = typeof companyPrefixes === 'string' ? companyPrefixes : (companyPrefixes.gold || '');
+                const silverPrefix = typeof companyPrefixes === 'string' ? '' : (companyPrefixes.silver || '');
+                
+                html += `
+                    <div class="settings-item" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">
+                        <label style="font-weight: 600; margin-bottom: 10px; display: block; color: #2c3e50;">${company.name}</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div>
+                                <label style="font-size: 0.85em; color: #7f8c8d; margin-bottom: 5px; display: block;">Gold Prefix</label>
+                                <input type="text" 
+                                       id="prefix_${company.id}_gold" 
+                                       value="${goldPrefix}" 
+                                       placeholder="e.g., DC-" 
+                                       maxlength="20"
+                                       style="width: 100%; padding: 8px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 0.85em; color: #7f8c8d; margin-bottom: 5px; display: block;">Silver Prefix</label>
+                                <input type="text" 
+                                       id="prefix_${company.id}_silver" 
+                                       value="${silverPrefix}" 
+                                       placeholder="e.g., DS-" 
+                                       maxlength="20"
+                                       style="width: 100%; padding: 8px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            html += `
+                <div class="settings-actions">
+                    <button onclick="saveSettings()" class="btn btn-submit">Save Settings</button>
+                    <button onclick="showSettingsMenu()" class="btn btn-secondary">Back</button>
+                </div>
+            `;
+            
+            settingsContent.innerHTML = html;
+        }
+
+        function saveSettings() {
+            const prefixes = {};
+            companies.forEach(company => {
+                const goldInput = document.getElementById(`prefix_${company.id}_gold`);
+                const silverInput = document.getElementById(`prefix_${company.id}_silver`);
+                
+                const goldPrefix = goldInput ? goldInput.value.trim() : '';
+                const silverPrefix = silverInput ? silverInput.value.trim() : '';
+                
+                if (goldPrefix || silverPrefix) {
+                    prefixes[company.id] = {};
+                    if (goldPrefix) {
+                        prefixes[company.id].gold = goldPrefix;
+                    }
+                    if (silverPrefix) {
+                        prefixes[company.id].silver = silverPrefix;
+                    }
+                }
+            });
+            
+            saveSerialPrefixes(prefixes);
+            showAlert('Settings saved successfully!', 'success');
+            
+            // Update the serial number field if a company and item type are already selected
+            const companySelect = document.getElementById('company');
+            const itemTypeSelect = document.getElementById('itemType');
+            if (companySelect && companySelect.value && itemTypeSelect && itemTypeSelect.value) {
+                updateSerialNumberPrefix(companySelect.value, itemTypeSelect.value);
+            }
+        }
+
+        function updateSerialNumberPrefix(companyId, itemType) {
+            const serialNumberInput = document.getElementById('serialNumber');
+            if (!serialNumberInput) return;
+            
+            const prefix = getSerialPrefixForCompany(companyId, itemType);
+            
+            if (prefix) {
+                // Only set prefix if the field is empty or already contains just the prefix
+                if (!serialNumberInput.value || serialNumberInput.value === prefix) {
+                    serialNumberInput.value = prefix;
+                    serialNumberInput.focus();
+                    serialNumberInput.setSelectionRange(prefix.length, prefix.length);
+                }
+            } else {
+                // If no prefix and serial number is empty or just contains a prefix from another company/item type, clear it
+                const prefixes = getSerialPrefixes();
+                let hasAnyPrefix = false;
+                
+                // Check all company prefixes (both old format and new format)
+                Object.keys(prefixes).forEach(cId => {
+                    const companyPrefix = prefixes[cId];
+                    if (typeof companyPrefix === 'string') {
+                        if (serialNumberInput.value === companyPrefix) {
+                            hasAnyPrefix = true;
+                        }
+                    } else {
+                        if (companyPrefix.gold && serialNumberInput.value === companyPrefix.gold) {
+                            hasAnyPrefix = true;
+                        }
+                        if (companyPrefix.silver && serialNumberInput.value === companyPrefix.silver) {
+                            hasAnyPrefix = true;
+                        }
+                    }
+                });
+                
+                if (hasAnyPrefix) {
+                    serialNumberInput.value = '';
+                }
+            }
+        }
+
+        // Close settings menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const settingsMenu = document.getElementById('settingsMenu');
+            const hamburgerMenu = document.getElementById('hamburgerMenu');
+            
+            if (settingsMenu && settingsMenu.classList.contains('active')) {
+                if (!settingsMenu.contains(event.target) && !hamburgerMenu.contains(event.target)) {
+                    settingsMenu.classList.remove('active');
+                    hamburgerMenu.classList.remove('active');
+                }
+            }
+        });
 
         function getAuthToken() {
             return localStorage.getItem('authToken');
@@ -1142,6 +1971,104 @@
             errorDiv.classList.add('hidden');
         }
 
+        // Function to disable autocomplete on all form fields
+        function disableAutocomplete() {
+            const loanForm = document.getElementById('loanForm');
+            if (loanForm) {
+                // Set form autocomplete to off
+                loanForm.setAttribute('autocomplete', 'off');
+                loanForm.setAttribute('data-form-type', 'other');
+                
+                const inputs = loanForm.querySelectorAll('input, textarea');
+                inputs.forEach((input, index) => {
+                    // Skip hidden fields and buttons
+                    if (input.type === 'hidden' || input.type === 'submit' || input.type === 'button') {
+                        return;
+                    }
+                    
+                    // For text inputs and textareas
+                    if (input.type === 'text' || input.type === 'tel' || input.tagName === 'TEXTAREA') {
+                        // Multiple autocomplete values to confuse Chrome
+                        input.setAttribute('autocomplete', 'new-password');
+                        input.setAttribute('data-lpignore', 'true');
+                        input.setAttribute('data-form-type', 'other');
+                        input.setAttribute('autocapitalize', 'off');
+                        input.setAttribute('autocorrect', 'off');
+                        input.setAttribute('spellcheck', 'false');
+                        
+                        // Aggressive readonly trick
+                        input.setAttribute('readonly', 'readonly');
+                        
+                        // Remove readonly on multiple events - immediate removal
+                        const removeReadonly = function() {
+                            if (input.hasAttribute('readonly')) {
+                                input.removeAttribute('readonly');
+                            }
+                        };
+                        
+                        // Immediate removal on any interaction
+                        input.addEventListener('focus', removeReadonly, { once: false });
+                        input.addEventListener('mousedown', removeReadonly, { once: false });
+                        input.addEventListener('touchstart', removeReadonly, { once: false });
+                        input.addEventListener('click', removeReadonly, { once: false });
+                        input.addEventListener('keydown', removeReadonly, { once: false });
+                        input.addEventListener('keyup', removeReadonly, { once: false });
+                        
+                        // Clear any autofill on input
+                        input.addEventListener('input', function() {
+                            if (this.hasAttribute('readonly')) {
+                                this.removeAttribute('readonly');
+                            }
+                        });
+                        
+                        // Force remove readonly after a short delay to ensure it's removed
+                        setTimeout(() => {
+                            if (input.hasAttribute('readonly')) {
+                                input.removeAttribute('readonly');
+                            }
+                        }, 100);
+                    } 
+                    // For number and date inputs
+                    else if (input.type === 'number' || input.type === 'date') {
+                        input.setAttribute('autocomplete', 'off');
+                        input.setAttribute('data-lpignore', 'true');
+                        input.setAttribute('data-form-type', 'other');
+                    }
+                    
+                    // Add a unique name attribute to prevent Chrome from recognizing patterns
+                    if (!input.name) {
+                        input.setAttribute('name', `field_${Date.now()}_${index}`);
+                    }
+                });
+                
+                // Add hidden dummy fields to confuse autofill
+                const dummyFields = ['email', 'username', 'password', 'name', 'address'];
+                dummyFields.forEach(field => {
+                    const dummy = document.createElement('input');
+                    dummy.type = 'text';
+                    dummy.style.display = 'none';
+                    dummy.setAttribute('tabindex', '-1');
+                    dummy.setAttribute('autocomplete', 'off');
+                    dummy.setAttribute('name', field);
+                    loanForm.insertBefore(dummy, loanForm.firstChild);
+                });
+                
+                // Re-apply autocomplete prevention on form focus
+                loanForm.addEventListener('focusin', function(e) {
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                        const input = e.target;
+                        if (input.type === 'text' || input.type === 'tel' || input.tagName === 'TEXTAREA') {
+                            input.setAttribute('autocomplete', 'new-password');
+                            input.setAttribute('readonly', 'readonly');
+                            setTimeout(() => {
+                                input.removeAttribute('readonly');
+                            }, 10);
+                        }
+                    }
+                }, true);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', async function() {
             setupLoginHandling();
 
@@ -1150,6 +2077,10 @@
                     showAppContainer();
                     hideLoginOverlay();
                     await initializeApp();
+                    // Disable autocomplete after form is loaded - multiple calls for reliability
+                    setTimeout(disableAutocomplete, 100);
+                    setTimeout(disableAutocomplete, 300);
+                    setTimeout(disableAutocomplete, 500);
                 } catch (error) {
                     console.error('Initialization error:', error);
                     handleUnauthorized();
@@ -1188,6 +2119,9 @@
                 loadLoans();
             } else if (sectionId === 'new-loan') {
                 setDefaultDate();
+                setTimeout(disableAutocomplete, 100);
+                setTimeout(disableAutocomplete, 300);
+                setTimeout(disableAutocomplete, 500);
             }
         }
         
@@ -1200,7 +2134,7 @@
                     companies = data.data;
                     
                     // Populate company dropdowns
-                    const companySelects = ['company', 'filterCompany', 'msCompany'];
+                    const companySelects = ['company', 'filterCompany', 'msCompany', 'mailingLabelCompany'];
                     companySelects.forEach(selectId => {
                         const select = document.getElementById(selectId);
                         select.innerHTML = '<option value="">Select Company</option>';
@@ -1211,6 +2145,53 @@
                             select.appendChild(option);
                         });
                     });
+                    
+                    // Add event listener for company dropdown in new loan form to auto-fill serial number prefix
+                    const companySelect = document.getElementById('company');
+                    const itemTypeSelect = document.getElementById('itemType');
+                    const serialNumberInput = document.getElementById('serialNumber');
+                    
+                    // Function to update prefix based on both company and item type
+                    function updatePrefixIfNeeded() {
+                        const companyId = companySelect ? companySelect.value : '';
+                        const itemType = itemTypeSelect ? itemTypeSelect.value : '';
+                        
+                        if (companyId && itemType) {
+                            updateSerialNumberPrefix(companyId, itemType);
+                        } else {
+                            // Clear serial number if company or item type is not selected and it matches any prefix
+                            const prefixes = getSerialPrefixes();
+                            let hasAnyPrefix = false;
+                            
+                            Object.keys(prefixes).forEach(cId => {
+                                const companyPrefix = prefixes[cId];
+                                if (typeof companyPrefix === 'string') {
+                                    if (serialNumberInput.value === companyPrefix) {
+                                        hasAnyPrefix = true;
+                                    }
+                                } else {
+                                    if (companyPrefix.gold && serialNumberInput.value === companyPrefix.gold) {
+                                        hasAnyPrefix = true;
+                                    }
+                                    if (companyPrefix.silver && serialNumberInput.value === companyPrefix.silver) {
+                                        hasAnyPrefix = true;
+                                    }
+                                }
+                            });
+                            
+                            if (hasAnyPrefix) {
+                                serialNumberInput.value = '';
+                            }
+                        }
+                    }
+                    
+                    if (companySelect && serialNumberInput) {
+                        companySelect.onchange = updatePrefixIfNeeded;
+                    }
+                    
+                    if (itemTypeSelect && serialNumberInput) {
+                        itemTypeSelect.onchange = updatePrefixIfNeeded;
+                    }
                 }
             } catch (error) {
                 console.error('Error loading companies:', error);
@@ -1259,39 +2240,20 @@
                     </div>
                 `;
                 
-                // Load recent loans
-                const loansResponse = await authFetch('/api/loans?limit=10');
+                // Load all loans for pagination
+                const loansResponse = await authFetch('/api/loans?limit=1000');
                 const loansData = await loansResponse.json();
                 
                 if (loansData.success) {
-                    const loans = loansData.data.loans;
-                    if (loans.length > 0) {
-                        recentLoans.innerHTML = `
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Serial No</th>
-                                        <th>Customer</th>
-                                        <th>Company</th>
-                                        <th>Amount</th>
-                                        <th>Status</th>
-                                        <th>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${loans.map(loan => `
-                                        <tr>
-                                            <td>${loan.serial_number}</td>
-                                            <td>${loan.customer_name}</td>
-                                            <td>${loan.company_name}</td>
-                                            <td>₹${parseFloat(loan.loan_amount).toFixed(2)}</td>
-                                            <td><span class="status ${loan.status}">${loan.status}</span></td>
-                                            <td>${new Date(loan.loan_date).toLocaleDateString()}</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        `;
+                    const allLoansData = loansData.data.loans;
+                    allLoans.dashboard = allLoansData;
+                    totalPages.dashboard = Math.ceil(allLoansData.length / 10);
+                    if (currentPage.dashboard > totalPages.dashboard) {
+                        currentPage.dashboard = 1;
+                    }
+                    
+                    if (allLoansData.length > 0) {
+                        displayDashboardLoans();
                     } else {
                         recentLoans.innerHTML = '<p>No loans found</p>';
                     }
@@ -1300,6 +2262,52 @@
             } catch (error) {
                 console.error('Error loading dashboard:', error);
                 showAlert('Error loading dashboard data', 'error');
+            }
+        }
+        
+        // Page navigation functions
+        function goToDashboardPage(page) {
+            if (page >= 1 && page <= totalPages.dashboard) {
+                currentPage.dashboard = page;
+                displayDashboardLoans();
+            }
+        }
+        
+        function displayDashboardLoans() {
+            const recentLoans = document.getElementById('recentLoans');
+            const allLoansData = allLoans.dashboard;
+            const startIndex = (currentPage.dashboard - 1) * 10;
+            const endIndex = startIndex + 10;
+            const loans = allLoansData.slice(startIndex, endIndex);
+            
+            if (allLoansData.length > 0) {
+                recentLoans.innerHTML = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Serial No</th>
+                                <th>Customer</th>
+                                <th>Company</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${loans.map(loan => `
+                                <tr>
+                                    <td>${loan.serial_number || loan.serialNumber || 'N/A'}</td>
+                                    <td>${loan.customer_name}</td>
+                                    <td>${loan.company_name}</td>
+                                    <td>₹${parseFloat(loan.loan_amount).toFixed(2)}</td>
+                                    <td><span class="status ${loan.status}">${loan.status}</span></td>
+                                    <td>${formatDate(loan.loan_date)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    ${generatePagination('dashboard', currentPage.dashboard, totalPages.dashboard, 'goToDashboardPage')}
+                `;
             }
         }
         
@@ -1331,7 +2339,7 @@
                 itemDescription: document.getElementById('itemDescription').value,
                 itemType: document.getElementById('itemType').value,
                 loanDate: document.getElementById('loanDate').value,
-                interestRate: document.getElementById('interestRate').value
+                aadharNumber: document.getElementById('aadharNumber').value
             };
             
             console.log('Form data:', formData);
@@ -1376,7 +2384,7 @@
                 const status = document.getElementById('filterStatus').value;
                 const searchTerm = document.getElementById('loanSearch') ? document.getElementById('loanSearch').value.trim() : '';
                 
-                let url = '/api/loans?limit=100';
+                let url = '/api/loans?limit=1000';
                 if (companyId) url += `&companyId=${companyId}`;
                 if (status) url += `&status=${status}`;
                 if (searchTerm) url += `&search=${encodeURIComponent(searchTerm)}`;
@@ -1401,41 +2409,13 @@
                         });
                     }
                     
+                    // Store all loans and reset to page 1 when filters change
+                    allLoans.loans = filteredLoans;
+                    currentPage.loans = 1;
+                    totalPages.loans = Math.ceil(filteredLoans.length / 10);
+                    
                     if (filteredLoans.length > 0) {
-                        loansTable.innerHTML = `
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Serial No</th>
-                                        <th>Customer</th>
-                                        <th>Company</th>
-                                        <th>Amount</th>
-                                        <th>Weight</th>
-                                        <th>Type</th>
-                                        <th>Status</th>
-                                        <th>Date</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${filteredLoans.map(loan => `
-                                        <tr>
-                                            <td>${loan.serial_number}</td>
-                                            <td>${loan.customer_name}</td>
-                                            <td>${loan.company_name}</td>
-                                            <td>₹${parseFloat(loan.loan_amount).toFixed(2)}</td>
-                                            <td>${parseFloat(loan.item_weight).toFixed(3)}g</td>
-                                            <td>${loan.item_type.toUpperCase()}</td>
-                                            <td><span class="status ${loan.status}">${loan.status}</span></td>
-                                            <td>${new Date(loan.loan_date).toLocaleDateString()}</td>
-                                            <td>
-                                                <button onclick="viewLoanDetails(${loan.id})" class="btn" style="padding: 5px 10px; font-size: 12px;">View Details</button>
-                                            </td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        `;
+                        displayLoans();
                     } else {
                         loansTable.innerHTML = searchTerm 
                             ? `<p>No loans found for "<strong>${searchTerm}</strong>"</p>`
@@ -1447,6 +2427,89 @@
             } catch (error) {
                 console.error('Error loading loans:', error);
                 showAlert('Error loading loans', 'error');
+            }
+        }
+        
+        function goToLoansPage(page) {
+            if (page >= 1 && page <= totalPages.loans) {
+                currentPage.loans = page;
+                displayLoans();
+            }
+        }
+        
+        function displayLoans() {
+            const loansTable = document.getElementById('loansTable');
+            const allLoansData = allLoans.loans;
+            const startIndex = (currentPage.loans - 1) * 10;
+            const endIndex = startIndex + 10;
+            const loans = allLoansData.slice(startIndex, endIndex);
+            
+            // Get column configuration
+            const columnConfig = getColumnConfig();
+            
+            if (allLoansData.length > 0) {
+                // Build header row - only show visible columns
+                let headerRow = '<thead><tr>';
+                const visibleColumns = columnConfig.filter(col => col.visible);
+                
+                visibleColumns.forEach(col => {
+                    headerRow += `<th>${col.header}</th>`;
+                });
+                
+                // Always add Actions column
+                headerRow += '<th>Actions</th>';
+                headerRow += '</tr></thead>';
+                
+                // Build body rows
+                let bodyRows = '<tbody>';
+                loans.forEach(loan => {
+                    bodyRows += '<tr>';
+                    
+                    // Add data cells based on column configuration
+                    visibleColumns.forEach(col => {
+                        const fieldInfo = availableLoanFields[col.field];
+                        let value = 'N/A';
+                        
+                        if (fieldInfo) {
+                            value = fieldInfo.getValue(loan);
+                            // If getValue returns N/A, try direct access as fallback
+                            if (value === 'N/A') {
+                                // Try multiple field name variations
+                                const fieldVariations = [
+                                    col.field,
+                                    col.field.replace(/_/g, ''),
+                                    col.field.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase(),
+                                    col.field.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
+                                ];
+                                
+                                for (const fieldName of fieldVariations) {
+                                    if (loan[fieldName] !== undefined && loan[fieldName] !== null && loan[fieldName] !== '') {
+                                        value = String(loan[fieldName]);
+                                        break;
+                                    }
+                                }
+                            }
+                        } else {
+                            // Fallback: try to get value directly from loan object
+                            value = loan[col.field] || loan[col.field.replace(/_/g, '')] || 'N/A';
+                        }
+                        
+                        bodyRows += `<td>${value}</td>`;
+                    });
+                    
+                    // Always add Actions cell
+                    bodyRows += `<td><button onclick="viewLoanDetails(${loan.id})" class="btn" style="padding: 5px 10px; font-size: 12px;">View Details</button></td>`;
+                    bodyRows += '</tr>';
+                });
+                bodyRows += '</tbody>';
+                
+                loansTable.innerHTML = `
+                    <table class="table">
+                        ${headerRow}
+                        ${bodyRows}
+                    </table>
+                    ${generatePagination('loans', currentPage.loans, totalPages.loans, 'goToLoansPage')}
+                `;
             }
         }
 
@@ -1476,6 +2539,8 @@
                     if (data.success) {
                         showAlert('Loan marked as delivered', 'success');
                         loadLoans();
+                        // Refresh loan details in modal if it's open
+                        await refreshLoanDetailsIfOpen();
                     } else {
                         showAlert(data.error || 'Error delivering loan', 'error');
                     }
@@ -1615,6 +2680,62 @@
             }
         }
         
+        async function generateMailingLabelByCompany() {
+            const companyId = document.getElementById('mailingLabelCompany').value;
+            const status = document.getElementById('mailingLabelStatus').value;
+            const startDate = document.getElementById('mailingLabelStartDate').value;
+            const endDate = document.getElementById('mailingLabelEndDate').value;
+            
+            if (!companyId) {
+                showAlert('Please select a company', 'error');
+                return;
+            }
+            
+            const resultDiv = document.getElementById('mailingLabelResult');
+            resultDiv.innerHTML = '<div class="loading">Loading loans...</div>';
+            
+            try {
+                let url = `/api/loans?companyId=${companyId}&limit=1000`;
+                const params = [];
+                
+                if (status) {
+                    params.push(`status=${status}`);
+                }
+                if (startDate) {
+                    params.push(`startDate=${startDate}`);
+                }
+                if (endDate) {
+                    params.push(`endDate=${endDate}`);
+                }
+                
+                if (params.length > 0) {
+                    url += '&' + params.join('&');
+                }
+                
+                const response = await authFetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const loans = data.data.loans;
+                    
+                    if (loans.length > 0) {
+                        displayMailingLabels(loans);
+                        showAlert(`Generated ${loans.length} mailing label(s) for selected company`, 'success');
+                    } else {
+                        showAlert('No loans found for the selected company and filters', 'error');
+                        resultDiv.innerHTML = '';
+                    }
+                } else {
+                    showAlert(data.error || 'Error loading loans', 'error');
+                    resultDiv.innerHTML = '';
+                }
+            } catch (error) {
+                console.error('Error generating mailing labels by company:', error);
+                showAlert('Error generating mailing labels by company', 'error');
+                resultDiv.innerHTML = '';
+            }
+        }
+        
         // Store loans data globally for print function
         let currentMailingLabelLoans = [];
         
@@ -1624,7 +2745,7 @@
             
             const labelsHTML = loans.map(loan => {
                 // Format date
-                const loanDate = new Date(loan.loan_date).toLocaleDateString();
+                const loanDate = formatDate(loan.loan_date);
                 
                 // Get father/husband name
                 const fatherHusbandName = loan.father_name || loan.husband_name || '';
@@ -1679,7 +2800,7 @@
             
             // Format loans for printing
             const formattedLoans = currentMailingLabelLoans.map(loan => {
-                const loanDate = new Date(loan.loan_date).toLocaleDateString();
+                const loanDate = formatDate(loan.loan_date);
                 const fatherHusbandName = loan.father_name || loan.husband_name || '';
                 const phoneNumber = loan.cell_number || 'N/A';
                 
@@ -1870,55 +2991,15 @@
                     const { loans, summary } = data.data;
                     const resultDiv = document.getElementById('masterSheetResult');
                     
-                    resultDiv.innerHTML = `
-                        <h3>Summary</h3>
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <h3>${summary.totalLoans}</h3>
-                                <p>Total Loans</p>
-                            </div>
-                            <div class="stat-card">
-                                <h3>₹${summary.totalAmount.toFixed(2)}</h3>
-                                <p>Total Amount</p>
-                            </div>
-                            <div class="stat-card">
-                                <h3>${summary.totalWeight.toFixed(3)}g</h3>
-                                <p>Total Weight</p>
-                            </div>
-                            <div class="stat-card">
-                                <h3>${summary.activeLoans}</h3>
-                                <p>Active Loans</p>
-                            </div>
-                        </div>
-                        
-                        <h3>Loans</h3>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Serial No</th>
-                                    <th>Date</th>
-                                    <th>Customer</th>
-                                    <th>Amount</th>
-                                    <th>Weight</th>
-                                    <th>Type</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${loans.map(loan => `
-                                    <tr>
-                                        <td>${loan.serial_number}</td>
-                                        <td>${new Date(loan.loan_date).toLocaleDateString()}</td>
-                                        <td>${loan.customer_name}</td>
-                                        <td>₹${parseFloat(loan.loan_amount).toFixed(2)}</td>
-                                        <td>${parseFloat(loan.item_weight).toFixed(3)}g</td>
-                                        <td>${loan.item_type.toUpperCase()}</td>
-                                        <td><span class="status ${loan.status}">${loan.status}</span></td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    `;
+                    // Store all loans and reset to page 1
+                    allLoans.masterSheet = loans;
+                    currentPage.masterSheet = 1;
+                    totalPages.masterSheet = Math.ceil(loans.length / 10);
+                    
+                    // Store summary for display
+                    window.masterSheetSummary = summary;
+                    
+                    displayMasterSheetLoans();
                 } else {
                     showAlert(data.error || 'Error loading master sheet', 'error');
                 }
@@ -1926,6 +3007,73 @@
                 console.error('Error loading master sheet:', error);
                 showAlert('Error loading master sheet', 'error');
             }
+        }
+        
+        function goToMasterSheetPage(page) {
+            if (page >= 1 && page <= totalPages.masterSheet) {
+                currentPage.masterSheet = page;
+                displayMasterSheetLoans();
+            }
+        }
+        
+        function displayMasterSheetLoans() {
+            const resultDiv = document.getElementById('masterSheetResult');
+            const allLoansData = allLoans.masterSheet;
+            const summary = window.masterSheetSummary;
+            const startIndex = (currentPage.masterSheet - 1) * 10;
+            const endIndex = startIndex + 10;
+            const loans = allLoansData.slice(startIndex, endIndex);
+            
+            resultDiv.innerHTML = `
+                <h3>Summary</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>${summary.totalLoans}</h3>
+                        <p>Total Loans</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>₹${summary.totalAmount.toFixed(2)}</h3>
+                        <p>Total Amount</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>${summary.totalWeight.toFixed(3)}g</h3>
+                        <p>Total Weight</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>${summary.activeLoans}</h3>
+                        <p>Active Loans</p>
+                    </div>
+                </div>
+                
+                <h3>Loans</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Serial No</th>
+                            <th>Date</th>
+                            <th>Customer</th>
+                            <th>Amount</th>
+                            <th>Weight</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${loans.map(loan => `
+                            <tr>
+                                <td>${loan.serial_number || loan.serialNumber || 'N/A'}</td>
+                                <td>${formatDate(loan.loan_date)}</td>
+                                <td>${loan.customer_name}</td>
+                                <td>₹${parseFloat(loan.loan_amount).toFixed(2)}</td>
+                                <td>${parseFloat(loan.item_weight).toFixed(3)}g</td>
+                                <td>${loan.item_type.toUpperCase()}</td>
+                                <td><span class="status ${loan.status}">${loan.status}</span></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                ${generatePagination('masterSheet', currentPage.masterSheet, totalPages.masterSheet, 'goToMasterSheetPage')}
+            `;
         }
         
         async function exportMasterSheet() {
@@ -2019,6 +3167,9 @@
             const footer = document.getElementById('loanDetailsFooter');
             const buttons = document.getElementById('loanDetailsButtons');
             
+            // Store current loan ID
+            currentLoanDetailsId = loanId;
+            
             // Show modal
             modal.classList.add('active');
             content.innerHTML = '<div class="loading">Loading loan details...</div>';
@@ -2042,6 +3193,14 @@
             }
         }
         
+        // Function to refresh loan details in modal if open
+        async function refreshLoanDetailsIfOpen() {
+            const modal = document.getElementById('loanDetailsModal');
+            if (modal && modal.classList.contains('active') && currentLoanDetailsId) {
+                await viewLoanDetails(currentLoanDetailsId);
+            }
+        }
+        
         function generateLoanDetailsHTML(loan) {
             return `
                 <div class="loan-details-grid">
@@ -2061,18 +3220,16 @@
                         </div>
                         <div class="detail-item">
                             <strong>Loan Date:</strong>
-                            <span>${new Date(loan.loan_date).toLocaleDateString()}</span>
+                            <span>${formatDate(loan.loan_date)}</span>
                         </div>
                         <div class="detail-item">
                             <strong>Status:</strong>
                             <span class="status ${loan.status}">${loan.status.toUpperCase()}</span>
                         </div>
-                        ${loan.delivered_date ? `
                         <div class="detail-item">
                             <strong>Delivered Date:</strong>
-                            <span>${new Date(loan.delivered_date).toLocaleDateString()}</span>
+                            <span>${(loan.delivered_date || loan.deliveredDate) ? formatDate(loan.delivered_date || loan.deliveredDate) : 'N/A'}</span>
                         </div>
-                        ` : ''}
                     </div>
                     
                     <div class="detail-section">
@@ -2092,10 +3249,6 @@
                         <div class="detail-item">
                             <strong>Item Description:</strong>
                             <span>${loan.item_description}</span>
-                        </div>
-                        <div class="detail-item">
-                            <strong>Interest Rate:</strong>
-                            <span>${parseFloat(loan.interest_rate).toFixed(2)}% per month</span>
                         </div>
                     </div>
                     
@@ -2133,6 +3286,10 @@
                             <span>${loan.cell_number}</span>
                         </div>
                         ` : ''}
+                        <div class="detail-item">
+                            <strong>Aadhar Number:</strong>
+                            <span>${loan.aadhar_number || loan.aadharNumber || 'N/A'}</span>
+                        </div>
                     </div>
                 </div>
             `;
@@ -2142,7 +3299,7 @@
             return `
                 <button onclick="generateMailingLabel(${loan.id})" class="btn btn-secondary">Generate Mailing Label</button>
                 ${loan.status === 'active' ? `
-                <button onclick="deliverLoan(${loan.id}); closeLoanDetails();" class="btn btn-success">Mark as Delivered</button>
+                <button onclick="deliverLoan(${loan.id})" class="btn btn-success">Mark as Delivered</button>
                 <button onclick="defaultLoan(${loan.id}); closeLoanDetails();" class="btn btn-danger">Mark as Defaulted</button>
                 ` : ''}
                 <button onclick="deleteLoan(${loan.id})" class="btn btn-danger">Delete Permanently</button>
@@ -2180,6 +3337,7 @@
             const footer = document.getElementById('loanDetailsFooter');
             modal.classList.remove('active');
             footer.style.display = 'none';
+            currentLoanDetailsId = null; // Clear stored loan ID
         }
         
         // Close modal when clicking outside
