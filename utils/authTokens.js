@@ -34,18 +34,7 @@ class AuthTokenStore {
   revokeToken(token) {
     this.tokens.delete(token);
   }
-
-  cleanupExpiredTokens() {
-    const now = Date.now();
-    for (const [token, record] of this.tokens.entries()) {
-      if (record.expiresAt < now) {
-        this.tokens.delete(token);
-      }
-    }
-  }
 }
 
 module.exports = new AuthTokenStore();
-
-
 

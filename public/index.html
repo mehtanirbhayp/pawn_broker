@@ -162,6 +162,10 @@
             background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
         }
         
+        .btn-warning {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+        
         .table {
             width: 100%;
             border-collapse: collapse;
@@ -201,12 +205,12 @@
             color: #155724;
         }
         
-        .status.delivered {
+        .status.released {
             background: #cce5ff;
             color: #004085;
         }
         
-        .status.defaulted {
+        .status.unredeemed {
             background: #f8d7da;
             color: #721c24;
         }
@@ -1139,8 +1143,8 @@
                         <select id="filterStatus">
                             <option value="">All Status</option>
                             <option value="active">Active</option>
-                            <option value="delivered">Delivered</option>
-                            <option value="defaulted">Defaulted</option>
+                            <option value="released">Released</option>
+                            <option value="unredeemed">Unredeemed</option>
                         </select>
                     </div>
                 </div>
@@ -1185,8 +1189,8 @@
                             <select id="mailingLabelStatus">
                                 <option value="">All Status</option>
                                 <option value="active">Active</option>
-                                <option value="delivered">Delivered</option>
-                                <option value="defaulted">Defaulted</option>
+                                <option value="released">Released</option>
+                                <option value="unredeemed">Unredeemed</option>
                             </select>
                             <div class="form-hint">Optionally filter by loan status</div>
                         </div>
@@ -1243,8 +1247,8 @@
                         <select id="msStatus">
                             <option value="">All Status</option>
                             <option value="active">Active</option>
-                            <option value="delivered">Delivered</option>
-                            <option value="defaulted">Defaulted</option>
+                            <option value="released">Released</option>
+                            <option value="unredeemed">Unredeemed</option>
                         </select>
                     </div>
                 </div>
@@ -1319,6 +1323,20 @@
             const year = date.getFullYear();
             
             return `${day}-${month}-${year}`;
+        }
+
+        // Helper function to format status display name
+        function formatStatus(status) {
+            if (!status) return 'N/A';
+            const statusLower = status.toLowerCase();
+            const statusMap = {
+                'active': 'Active',
+                'released': 'Released',
+                'unredeemed': 'Unredeemed',
+                'delivered': 'Released',  // Legacy support
+                'defaulted': 'Unredeemed'  // Legacy support
+            };
+            return statusMap[statusLower] || status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
         }
 
         // Pagination Component Function
@@ -1459,7 +1477,14 @@
             loan_amount: { label: 'Loan Amount', getValue: (loan) => `₹${parseFloat(loan.loan_amount).toFixed(2)}` },
             item_weight: { label: 'Item Weight', getValue: (loan) => `${parseFloat(loan.item_weight).toFixed(3)}g` },
             item_type: { label: 'Item Type', getValue: (loan) => loan.item_type.toUpperCase() },
-            status: { label: 'Status', getValue: (loan) => `<span class="status ${loan.status}">${loan.status}</span>` },
+            status: { label: 'Status', getValue: (loan) => {
+                const statusValue = loan.status || 'active';
+                const displayStatus = formatStatus(statusValue);
+                // Normalize status for CSS class (use new names)
+                const cssStatus = statusValue.toLowerCase() === 'delivered' ? 'released' : 
+                                 statusValue.toLowerCase() === 'defaulted' ? 'unredeemed' : statusValue.toLowerCase();
+                return `<span class="status ${cssStatus}">${displayStatus}</span>`;
+            }},
             loan_date: { label: 'Loan Date', getValue: (loan) => formatDate(loan.loan_date) },
             item_description: { label: 'Item Description', getValue: (loan) => loan.item_description || 'N/A' },
             address: { label: 'Address', getValue: (loan) => loan.address || 'N/A' },
@@ -1470,7 +1495,7 @@
             post: { label: 'Post', getValue: (loan) => loan.post || 'N/A' },
             pin_code: { label: 'Pin Code', getValue: (loan) => loan.pin_code || 'N/A' },
             aadhar_number: { label: 'Aadhar Number', getValue: (loan) => loan.aadhar_number || 'N/A' },
-            delivered_date: { label: 'Delivered Date', getValue: (loan) => loan.delivered_date ? formatDate(loan.delivered_date) : 'N/A' },
+            released_date: { label: 'Released Date', getValue: (loan) => loan.released_date ? formatDate(loan.released_date) : 'N/A' },
             id: { label: 'Loan ID', getValue: (loan) => loan.id }
         };
         
@@ -1861,6 +1886,7 @@
             const fetchOptions = {
                 ...options,
                 headers: {
+                    'Content-Type': 'application/json',
                     ...(options.headers || {})
                 }
             };
@@ -1869,13 +1895,19 @@
                 fetchOptions.headers['Authorization'] = `Bearer ${token}`;
             }
 
-            const response = await fetch(url, fetchOptions);
+            try {
+                const response = await fetch(url, fetchOptions);
 
-            if (response.status === 401) {
-                handleUnauthorized();
+                if (response.status === 401) {
+                    handleUnauthorized();
+                    throw new Error('Unauthorized');
+                }
+
+                return response;
+            } catch (error) {
+                console.error('Fetch error:', error);
+                throw error;
             }
-
-            return response;
         }
 
         async function initializeApp() {
@@ -2112,6 +2144,20 @@
             // Add active class to clicked nav link
             event.target.classList.add('active');
             
+            // Ensure companies are loaded and dropdowns are populated when showing sections that need them
+            if (['new-loan', 'loans', 'master-sheet', 'mailing-label'].includes(sectionId)) {
+                if (companies && companies.length > 0) {
+                    // Companies already loaded, just populate dropdowns
+                    populateCompanyDropdowns();
+                } else {
+                    // Companies not loaded yet, load them
+                    loadCompanies().then(() => {
+                        // After loading, populate dropdowns
+                        populateCompanyDropdowns();
+                    });
+                }
+            }
+            
             // Load section-specific data
             if (sectionId === 'dashboard') {
                 loadDashboard();
@@ -2125,26 +2171,80 @@
             }
         }
         
+        // Helper function to populate company dropdowns
+        function populateCompanyDropdowns() {
+            if (!companies || companies.length === 0) {
+                console.warn('No companies available to populate dropdowns');
+                return false;
+            }
+            
+            const companySelects = [
+                { id: 'company', placeholder: 'Select Company' },
+                { id: 'filterCompany', placeholder: 'All Companies' },
+                { id: 'msCompany', placeholder: 'Select Company' },
+                { id: 'mailingLabelCompany', placeholder: 'Select Company' }
+            ];
+            
+            let allPopulated = true;
+            companySelects.forEach(({ id, placeholder }) => {
+                const select = document.getElementById(id);
+                if (select) {
+                    // Clear existing options
+                    select.innerHTML = '';
+                    
+                    // Add placeholder option
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = placeholder;
+                    select.appendChild(defaultOption);
+                    
+                    // Add company options
+                    companies.forEach(company => {
+                        const option = document.createElement('option');
+                        option.value = company.id;
+                        option.textContent = company.name;
+                        select.appendChild(option);
+                    });
+                    console.log(`Populated dropdown: ${id} with ${companies.length} companies`);
+                } else {
+                    console.warn(`Dropdown element not found: ${id}`);
+                    allPopulated = false;
+                }
+            });
+            
+            return allPopulated;
+        }
+
         async function loadCompanies() {
             try {
                 const response = await authFetch('/api/companies');
+                
+                if (!response.ok) {
+                    let errorText = '';
+                    try {
+                        errorText = await response.text();
+                    } catch (e) {
+                        errorText = 'Unknown error';
+                    }
+                    console.error('Companies API error:', response.status, errorText);
+                    throw new Error(`Failed to load companies: ${response.status}`);
+                }
+                
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('Non-JSON response from companies API:', text.substring(0, 200));
+                    throw new Error('Invalid response format from server');
+                }
+                
                 const data = await response.json();
                 
-                if (data.success) {
+                if (data.success && data.data && Array.isArray(data.data)) {
                     companies = data.data;
+                    console.log('Loaded companies:', companies.length, companies);
                     
                     // Populate company dropdowns
-                    const companySelects = ['company', 'filterCompany', 'msCompany', 'mailingLabelCompany'];
-                    companySelects.forEach(selectId => {
-                        const select = document.getElementById(selectId);
-                        select.innerHTML = '<option value="">Select Company</option>';
-                        companies.forEach(company => {
-                            const option = document.createElement('option');
-                            option.value = company.id;
-                            option.textContent = company.name;
-                            select.appendChild(option);
-                        });
-                    });
+                    populateCompanyDropdowns();
                     
                     // Add event listener for company dropdown in new loan form to auto-fill serial number prefix
                     const companySelect = document.getElementById('company');
@@ -2192,10 +2292,16 @@
                     if (itemTypeSelect && serialNumberInput) {
                         itemTypeSelect.onchange = updatePrefixIfNeeded;
                     }
+                } else {
+                    console.error('Invalid companies response:', data);
+                    showAlert('Error loading companies: Invalid response', 'error');
+                    companies = [];
                 }
             } catch (error) {
                 console.error('Error loading companies:', error);
-                showAlert('Error loading companies', 'error');
+                showAlert('Error loading companies: ' + (error.message || 'Unknown error'), 'error');
+                // If companies fail to load, still try to continue
+                companies = [];
             }
         }
         
@@ -2204,19 +2310,36 @@
                 const statsGrid = document.getElementById('statsGrid');
                 const recentLoans = document.getElementById('recentLoans');
                 
+                if (!statsGrid || !recentLoans) {
+                    console.error('Dashboard elements not found');
+                    return;
+                }
+                
                 // Load company statistics
                 let totalStats = { totalLoans: 0, totalAmount: 0, totalWeight: 0, activeLoans: 0 };
                 
-                for (const company of companies) {
-                    const response = await authFetch(`/api/companies/${company.id}/stats`);
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        const stats = data.data;
-                        totalStats.totalLoans += stats.totalLoans;
-                        totalStats.totalAmount += stats.totalAmount;
-                        totalStats.totalWeight += stats.totalWeight;
-                        totalStats.activeLoans += stats.activeLoans;
+                if (companies && companies.length > 0) {
+                    for (const company of companies) {
+                        try {
+                            const response = await authFetch(`/api/companies/${company.id}/stats`);
+                            
+                            if (!response.ok) {
+                                console.error(`Failed to load stats for company ${company.id}:`, response.status);
+                                continue;
+                            }
+                            
+                            const data = await response.json();
+                            
+                            if (data.success) {
+                                const stats = data.data;
+                                totalStats.totalLoans += stats.totalLoans;
+                                totalStats.totalAmount += stats.totalAmount;
+                                totalStats.totalWeight += stats.totalWeight;
+                                totalStats.activeLoans += stats.activeLoans;
+                            }
+                        } catch (error) {
+                            console.error(`Error loading stats for company ${company.id}:`, error);
+                        }
                     }
                 }
                 
@@ -2241,27 +2364,57 @@
                 `;
                 
                 // Load all loans for pagination
-                const loansResponse = await authFetch('/api/loans?limit=1000');
-                const loansData = await loansResponse.json();
-                
-                if (loansData.success) {
-                    const allLoansData = loansData.data.loans;
-                    allLoans.dashboard = allLoansData;
-                    totalPages.dashboard = Math.ceil(allLoansData.length / 10);
-                    if (currentPage.dashboard > totalPages.dashboard) {
-                        currentPage.dashboard = 1;
+                try {
+                    const loansResponse = await authFetch('/api/loans?limit=1000');
+                    
+                    if (!loansResponse.ok) {
+                        let errorText = '';
+                        try {
+                            errorText = await loansResponse.text();
+                        } catch (e) {
+                            errorText = 'Unknown error';
+                        }
+                        console.error('Failed to load loans:', loansResponse.status, errorText);
+                        recentLoans.innerHTML = '<p>Error loading loans</p>';
+                        return;
                     }
                     
-                    if (allLoansData.length > 0) {
-                        displayDashboardLoans();
-                    } else {
-                        recentLoans.innerHTML = '<p>No loans found</p>';
+                    const contentType = loansResponse.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        const text = await loansResponse.text();
+                        console.error('Non-JSON response from loans API:', text.substring(0, 200));
+                        recentLoans.innerHTML = '<p>Error: Invalid response format</p>';
+                        return;
                     }
+                    
+                    const loansData = await loansResponse.json();
+                    
+                    if (loansData.success && loansData.data && loansData.data.loans) {
+                        const allLoansData = loansData.data.loans;
+                        console.log('Loaded loans:', allLoansData.length);
+                        allLoans.dashboard = allLoansData;
+                        totalPages.dashboard = Math.ceil(allLoansData.length / 10);
+                        if (currentPage.dashboard > totalPages.dashboard) {
+                            currentPage.dashboard = 1;
+                        }
+                        
+                        if (allLoansData.length > 0) {
+                            displayDashboardLoans();
+                        } else {
+                            recentLoans.innerHTML = '<p>No loans found</p>';
+                        }
+                    } else {
+                        console.error('Invalid loans response:', loansData);
+                        recentLoans.innerHTML = '<p>Error loading loans data</p>';
+                    }
+                } catch (error) {
+                    console.error('Error loading loans:', error);
+                    recentLoans.innerHTML = '<p>Error loading loans</p>';
                 }
                 
             } catch (error) {
                 console.error('Error loading dashboard:', error);
-                showAlert('Error loading dashboard data', 'error');
+                showAlert('Error loading dashboard data: ' + (error.message || 'Unknown error'), 'error');
             }
         }
         
@@ -2300,7 +2453,7 @@
                                     <td>${loan.customer_name}</td>
                                     <td>${loan.company_name}</td>
                                     <td>₹${parseFloat(loan.loan_amount).toFixed(2)}</td>
-                                    <td><span class="status ${loan.status}">${loan.status}</span></td>
+                                    <td><span class="status ${loan.status === 'delivered' ? 'released' : loan.status === 'defaulted' ? 'unredeemed' : loan.status}">${formatStatus(loan.status)}</span></td>
                                     <td>${formatDate(loan.loan_date)}</td>
                                 </tr>
                             `).join('')}
@@ -2524,35 +2677,35 @@
         }
         
         async function deliverLoan(loanId) {
-            if (confirm('Mark this loan as delivered?')) {
+            if (confirm('Mark this loan as released?')) {
                 try {
                     const response = await authFetch(`/api/loans/${loanId}/deliver`, {
                         method: 'PATCH',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ deliveredDate: new Date().toISOString().split('T')[0] })
+                        body: JSON.stringify({ releasedDate: new Date().toISOString().split('T')[0] })
                     });
                     
                     const data = await response.json();
                     
                     if (data.success) {
-                        showAlert('Loan marked as delivered', 'success');
+                        showAlert('Loan marked as released', 'success');
                         loadLoans();
                         // Refresh loan details in modal if it's open
                         await refreshLoanDetailsIfOpen();
                     } else {
-                        showAlert(data.error || 'Error delivering loan', 'error');
+                        showAlert(data.error || 'Error releasing loan', 'error');
                     }
                 } catch (error) {
-                    console.error('Error delivering loan:', error);
-                    showAlert('Error delivering loan', 'error');
+                    console.error('Error releasing loan:', error);
+                    showAlert('Error releasing loan', 'error');
                 }
             }
         }
         
         async function defaultLoan(loanId) {
-            if (confirm('Mark this loan as defaulted?')) {
+            if (confirm('Mark this loan as unredeemed?')) {
                 try {
                     const response = await authFetch(`/api/loans/${loanId}/default`, {
                         method: 'PATCH'
@@ -2561,14 +2714,41 @@
                     const data = await response.json();
                     
                     if (data.success) {
-                        showAlert('Loan marked as defaulted', 'success');
+                        showAlert('Loan marked as unredeemed', 'success');
                         loadLoans();
+                        // Refresh loan details in modal if it's open
+                        await refreshLoanDetailsIfOpen();
                     } else {
-                        showAlert(data.error || 'Error defaulting loan', 'error');
+                        showAlert(data.error || 'Error marking loan as unredeemed', 'error');
                     }
                 } catch (error) {
-                    console.error('Error defaulting loan:', error);
-                    showAlert('Error defaulting loan', 'error');
+                    console.error('Error marking loan as unredeemed:', error);
+                    showAlert('Error marking loan as unredeemed', 'error');
+                }
+            }
+        }
+        
+        async function undoLoanAction(loanId) {
+            if (confirm('Undo this action and revert loan status back to active?')) {
+                try {
+                    const response = await authFetch(`/api/loans/${loanId}/undo`, {
+                        method: 'PATCH'
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showAlert('Loan status reverted to active successfully', 'success');
+                        loadLoans();
+                        loadDashboard();
+                        // Refresh loan details in modal if it's open
+                        await refreshLoanDetailsIfOpen();
+                    } else {
+                        showAlert(data.error || 'Error undoing loan action', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error undoing loan action:', error);
+                    showAlert('Error undoing loan action', 'error');
                 }
             }
         }
@@ -3224,11 +3404,11 @@
                         </div>
                         <div class="detail-item">
                             <strong>Status:</strong>
-                            <span class="status ${loan.status}">${loan.status.toUpperCase()}</span>
+                            <span class="status ${loan.status === 'delivered' ? 'released' : loan.status === 'defaulted' ? 'unredeemed' : loan.status}">${formatStatus(loan.status)}</span>
                         </div>
                         <div class="detail-item">
-                            <strong>Delivered Date:</strong>
-                            <span>${(loan.delivered_date || loan.deliveredDate) ? formatDate(loan.delivered_date || loan.deliveredDate) : 'N/A'}</span>
+                            <strong>Released Date:</strong>
+                            <span>${(loan.released_date || loan.releasedDate || loan.delivered_date || loan.deliveredDate) ? formatDate(loan.released_date || loan.releasedDate || loan.delivered_date || loan.deliveredDate) : 'N/A'}</span>
                         </div>
                     </div>
                     
@@ -3296,11 +3476,19 @@
         }
         
         function generateLoanButtonsHTML(loan) {
+            const status = (loan.status || 'active').toLowerCase();
+            const isActive = status === 'active';
+            const isReleased = status === 'released' || status === 'delivered';
+            const isUnredeemed = status === 'unredeemed' || status === 'defaulted';
+            
             return `
                 <button onclick="generateMailingLabel(${loan.id})" class="btn btn-secondary">Generate Mailing Label</button>
-                ${loan.status === 'active' ? `
-                <button onclick="deliverLoan(${loan.id})" class="btn btn-success">Mark as Delivered</button>
-                <button onclick="defaultLoan(${loan.id}); closeLoanDetails();" class="btn btn-danger">Mark as Defaulted</button>
+                ${isActive ? `
+                <button onclick="deliverLoan(${loan.id})" class="btn btn-success">Mark as Released</button>
+                <button onclick="defaultLoan(${loan.id}); closeLoanDetails();" class="btn btn-danger">Mark as Unredeemed</button>
+                ` : ''}
+                ${!isActive ? `
+                <button onclick="undoLoanAction(${loan.id})" class="btn btn-warning">Undo Action</button>
                 ` : ''}
                 <button onclick="deleteLoan(${loan.id})" class="btn btn-danger">Delete Permanently</button>
             `;

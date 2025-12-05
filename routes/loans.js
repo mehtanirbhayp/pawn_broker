@@ -164,7 +164,11 @@ router.get('/', async (req, res) => {
     const offset = (page - 1) * limit;
     
     const loans = await db.query(`
-      SELECT l.*, c.name as company_name, c.type as company_type,
+      SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
+             l.item_weight, l.item_description, l.item_type, l.loan_date, 
+             l.interest_rate, l.status, l.created_at,
+             l.released_date,
+             c.name as company_name, c.type as company_type,
              cu.name as customer_name, cu.father_name, cu.husband_name, 
              cu.address, cu.occupation, cu.cell_number
       FROM loans l
@@ -213,7 +217,11 @@ router.get('/:id', async (req, res) => {
     const db = new Database();
     
     const loan = await db.get(`
-      SELECT l.*, c.name as company_name, c.type as company_type,
+      SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
+             l.item_weight, l.item_description, l.item_type, l.loan_date, 
+             l.interest_rate, l.status, l.created_at,
+             l.released_date,
+             c.name as company_name, c.type as company_type,
              cu.name as customer_name, cu.father_name, cu.husband_name, 
              cu.address, cu.occupation, cu.cell_number
       FROM loans l
@@ -244,11 +252,11 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Update loan status (deliver item)
+// Update loan status (release item)
 router.patch('/:id/deliver', async (req, res) => {
   try {
     const { id } = req.params;
-    const { deliveredDate } = req.body;
+    const { releasedDate } = req.body;
     
     const db = new Database();
     
@@ -262,29 +270,46 @@ router.patch('/:id/deliver', async (req, res) => {
       });
     }
     
-    const deliveredDateFormatted = deliveredDate ? moment(deliveredDate).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
+    const releasedDateFormatted = releasedDate ? moment(releasedDate).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
     
+    // Update loan status to released and set released_date
     await db.run(
-      'UPDATE loans SET status = "delivered", delivered_date = ? WHERE id = ?',
-      [deliveredDateFormatted, id]
+      'UPDATE loans SET status = "released", released_date = ? WHERE id = ?',
+      [releasedDateFormatted, id]
     );
+    
+    // Fetch the updated loan to return it
+    const updatedLoan = await db.get(`
+      SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
+             l.item_weight, l.item_description, l.item_type, l.loan_date, 
+             l.interest_rate, l.status, l.created_at,
+             l.released_date,
+             c.name as company_name, c.type as company_type,
+             cu.name as customer_name, cu.father_name, cu.husband_name, 
+             cu.address, cu.occupation, cu.cell_number
+      FROM loans l
+      JOIN companies c ON l.company_id = c.id
+      JOIN customers cu ON l.customer_id = cu.id
+      WHERE l.id = ?
+    `, [id]);
     
     await db.close();
     
     res.json({
       success: true,
-      message: 'Loan marked as delivered successfully'
+      message: 'Loan marked as released successfully',
+      data: updatedLoan
     });
   } catch (error) {
-    console.error('Error delivering loan:', error);
+    console.error('Error releasing loan:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to deliver loan'
+      error: 'Failed to release loan'
     });
   }
 });
 
-// Update loan status (mark as defaulted)
+// Update loan status (mark as unredeemed)
 router.patch('/:id/default', async (req, res) => {
   try {
     const { id } = req.params;
@@ -302,21 +327,120 @@ router.patch('/:id/default', async (req, res) => {
     }
     
     await db.run(
-      'UPDATE loans SET status = "defaulted" WHERE id = ?',
+      'UPDATE loans SET status = "unredeemed" WHERE id = ?',
       [id]
     );
+    
+    // Fetch the updated loan to return it
+    const updatedLoan = await db.get(`
+      SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
+             l.item_weight, l.item_description, l.item_type, l.loan_date, 
+             l.interest_rate, l.status, l.created_at,
+             l.released_date,
+             c.name as company_name, c.type as company_type,
+             cu.name as customer_name, cu.father_name, cu.husband_name, 
+             cu.address, cu.occupation, cu.cell_number
+      FROM loans l
+      JOIN companies c ON l.company_id = c.id
+      JOIN customers cu ON l.customer_id = cu.id
+      WHERE l.id = ?
+    `, [id]);
     
     await db.close();
     
     res.json({
       success: true,
-      message: 'Loan marked as defaulted successfully'
+      message: 'Loan marked as unredeemed successfully',
+      data: updatedLoan
     });
   } catch (error) {
-    console.error('Error defaulting loan:', error);
+    console.error('Error marking loan as unredeemed:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to mark loan as defaulted'
+      error: 'Failed to mark loan as unredeemed'
+    });
+  }
+});
+
+// Undo loan status change (revert to active)
+router.patch('/:id/undo', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const db = new Database();
+    
+    // Check if loan exists and is not active (can only undo released or unredeemed loans)
+    const loan = await db.get('SELECT * FROM loans WHERE id = ?', [id]);
+    if (!loan) {
+      await db.close();
+      return res.status(404).json({
+        success: false,
+        error: 'Loan not found'
+      });
+    }
+    
+    const currentStatus = (loan.status || '').toLowerCase();
+    
+    if (currentStatus === 'active') {
+      await db.close();
+      return res.status(400).json({
+        success: false,
+        error: 'Loan is already active. Nothing to undo.'
+      });
+    }
+    
+    // Revert status to active and clear released_date if it was a released loan
+    // For unredeemed loans, we just need to change status, no date field to clear
+    const isReleased = currentStatus === 'released' || currentStatus === 'delivered';
+    const isUnredeemed = currentStatus === 'unredeemed' || currentStatus === 'defaulted';
+    
+    if (isReleased) {
+      // Clear released_date for released loans
+      await db.run(
+        'UPDATE loans SET status = "active", released_date = NULL WHERE id = ?',
+        [id]
+      );
+    } else if (isUnredeemed) {
+      // For unredeemed loans, just update status (no date field to clear)
+      await db.run(
+        'UPDATE loans SET status = "active" WHERE id = ?',
+        [id]
+      );
+    } else {
+      // For any other status, just update to active
+      await db.run(
+        'UPDATE loans SET status = "active" WHERE id = ?',
+        [id]
+      );
+    }
+    
+    // Fetch the updated loan to return it
+    const updatedLoan = await db.get(`
+      SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
+             l.item_weight, l.item_description, l.item_type, l.loan_date, 
+             l.interest_rate, l.status, l.created_at,
+             l.released_date,
+             c.name as company_name, c.type as company_type,
+             cu.name as customer_name, cu.father_name, cu.husband_name, 
+             cu.address, cu.occupation, cu.cell_number
+      FROM loans l
+      JOIN companies c ON l.company_id = c.id
+      JOIN customers cu ON l.customer_id = cu.id
+      WHERE l.id = ?
+    `, [id]);
+    
+    await db.close();
+    
+    res.json({
+      success: true,
+      message: 'Loan status reverted to active successfully',
+      data: updatedLoan
+    });
+  } catch (error) {
+    console.error('Error undoing loan status:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to undo loan status'
     });
   }
 });

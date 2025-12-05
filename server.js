@@ -10,10 +10,6 @@ const companyRoutes = require('./routes/companies');
 const loanRoutes = require('./routes/loans');
 const receiptRoutes = require('./routes/receipts');
 const masterSheetRoutes = require('./routes/masterSheet');
-const backupRoutes = require('./routes/backup');
-
-// Import scheduler
-const BackupScheduler = require('./utils/scheduler');
 const runMigrations = require('./utils/migrations');
 const authenticate = require('./middleware/authenticate');
 
@@ -34,7 +30,6 @@ app.use('/api/companies', authenticate, companyRoutes);
 app.use('/api/loans', authenticate, loanRoutes);
 app.use('/api/receipts', authenticate, receiptRoutes);
 app.use('/api/master-sheet', authenticate, masterSheetRoutes);
-app.use('/api/backup', authenticate, backupRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -67,10 +62,6 @@ async function startServer() {
       console.log(`  Local: http://localhost:${PORT}`);
       console.log(`  Network: http://192.168.29.246:${PORT}`);
       console.log(`\nShare this network URL with your client for remote access`);
-
-      // Start automatic backup scheduler
-      const scheduler = new BackupScheduler();
-      scheduler.start();
     });
   } catch (error) {
     console.error('Failed to start server:', error);

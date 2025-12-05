@@ -63,8 +63,8 @@ db.serialize(() => {
       item_type TEXT NOT NULL CHECK (item_type IN ('gold', 'silver')),
       loan_date DATE NOT NULL,
       interest_rate DECIMAL(5,2) DEFAULT 2.0,
-      status TEXT DEFAULT 'active' CHECK (status IN ('active', 'delivered', 'defaulted')),
-      delivered_date DATE,
+      status TEXT DEFAULT 'active' CHECK (status IN ('active', 'released', 'unredeemed')),
+      released_date DATE,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (company_id) REFERENCES companies (id),
       FOREIGN KEY (customer_id) REFERENCES customers (id)

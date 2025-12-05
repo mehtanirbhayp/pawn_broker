@@ -19,8 +19,8 @@ function migrateSerialNumbers(db, finish) {
       item_type TEXT NOT NULL CHECK (item_type IN ('gold', 'silver')),
       loan_date DATE NOT NULL,
       interest_rate DECIMAL(5,2) DEFAULT 2.0,
-      status TEXT DEFAULT 'active' CHECK (status IN ('active', 'delivered', 'defaulted')),
-      delivered_date DATE,
+      status TEXT DEFAULT 'active' CHECK (status IN ('active', 'released', 'unredeemed')),
+      released_date DATE,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (company_id) REFERENCES companies (id),
       FOREIGN KEY (customer_id) REFERENCES customers (id)
@@ -28,12 +28,17 @@ function migrateSerialNumbers(db, finish) {
     INSERT INTO loans_new (
       id, serial_number, company_id, customer_id, loan_amount, item_weight,
       item_description, item_type, loan_date, interest_rate, status,
-      delivered_date, created_at
+      released_date, created_at
     )
     SELECT
       id, serial_number, company_id, customer_id, loan_amount, item_weight,
-      item_description, item_type, loan_date, interest_rate, status,
-      delivered_date, created_at
+      item_description, item_type, loan_date, interest_rate, 
+      CASE 
+        WHEN status = 'delivered' THEN 'released'
+        WHEN status = 'defaulted' THEN 'unredeemed'
+        ELSE status
+      END as status,
+      delivered_date as released_date, created_at
     FROM loans;
     DROP TABLE loans;
     ALTER TABLE loans_new RENAME TO loans;
@@ -55,6 +60,104 @@ function ensureCompositeIndex(db, finish) {
   db.run(
     'CREATE UNIQUE INDEX IF NOT EXISTS idx_loans_company_serial ON loans (company_id, serial_number)',
     (err) => finish(err)
+  );
+}
+
+function migrateStatusValues(db, finish) {
+  // Check the current table schema
+  db.get(
+    "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'loans'",
+    (err, row) => {
+      if (err) {
+        return finish(err);
+      }
+      
+      if (!row || !row.sql) {
+        // Table doesn't exist, nothing to migrate
+        return finish();
+      }
+      
+      const tableSql = row.sql;
+      const hasOldConstraint = tableSql.includes("status IN ('active', 'delivered', 'defaulted')");
+      const hasNewConstraint = tableSql.includes("status IN ('active', 'released', 'unredeemed')");
+      const hasDeliveredDate = tableSql.includes('delivered_date');
+      const hasReleasedDate = tableSql.includes('released_date');
+      
+      // If table already has new constraint and released_date, nothing to do
+      if (hasNewConstraint && hasReleasedDate) {
+        return finish();
+      }
+      
+      // If table has old constraint, we need to recreate it
+      if (hasOldConstraint || hasDeliveredDate) {
+        // Determine which date column to use in the SELECT
+        const dateColumn = hasDeliveredDate ? 'delivered_date' : (hasReleasedDate ? 'released_date' : 'NULL');
+        
+        // Recreate table with new schema
+        const migrationSql = 
+          'BEGIN TRANSACTION; ' +
+          'DROP TABLE IF EXISTS loans_migration_temp; ' +
+          'CREATE TABLE loans_migration_temp (' +
+          '  id INTEGER PRIMARY KEY AUTOINCREMENT,' +
+          '  serial_number TEXT NOT NULL,' +
+          '  company_id INTEGER NOT NULL,' +
+          '  customer_id INTEGER NOT NULL,' +
+          '  loan_amount DECIMAL(10,2) NOT NULL,' +
+          '  item_weight DECIMAL(8,3) NOT NULL,' +
+          '  item_description TEXT NOT NULL,' +
+          '  item_type TEXT NOT NULL CHECK (item_type IN (\'gold\', \'silver\')),' +
+          '  loan_date DATE NOT NULL,' +
+          '  interest_rate DECIMAL(5,2) DEFAULT 2.0,' +
+          '  status TEXT DEFAULT \'active\' CHECK (status IN (\'active\', \'released\', \'unredeemed\')),' +
+          '  released_date DATE,' +
+          '  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,' +
+          '  FOREIGN KEY (company_id) REFERENCES companies (id),' +
+          '  FOREIGN KEY (customer_id) REFERENCES customers (id)' +
+          '); ' +
+          'INSERT INTO loans_migration_temp (' +
+          '  id, serial_number, company_id, customer_id, loan_amount, item_weight,' +
+          '  item_description, item_type, loan_date, interest_rate, status,' +
+          '  released_date, created_at' +
+          ') ' +
+          'SELECT ' +
+          '  id, serial_number, company_id, customer_id, loan_amount, item_weight,' +
+          '  item_description, item_type, loan_date, interest_rate,' +
+          '  CASE ' +
+          '    WHEN status = \'delivered\' THEN \'released\' ' +
+          '    WHEN status = \'defaulted\' THEN \'unredeemed\' ' +
+          '    ELSE status ' +
+          '  END as status,' +
+          '  ' + dateColumn + ' as released_date,' +
+          '  created_at ' +
+          'FROM loans; ' +
+          'DROP TABLE loans; ' +
+          'ALTER TABLE loans_migration_temp RENAME TO loans; ' +
+          'CREATE UNIQUE INDEX IF NOT EXISTS idx_loans_company_serial ' +
+          '  ON loans (company_id, serial_number); ' +
+          'COMMIT;';
+        
+        db.exec(migrationSql, (execErr) => {
+          if (execErr) {
+            db.exec('ROLLBACK;', () => finish(execErr));
+          } else {
+            finish();
+          }
+        });
+      } else {
+        // Table exists but no constraint issue, just try to rename column if needed
+        if (hasDeliveredDate && !hasReleasedDate) {
+          db.run(
+            `ALTER TABLE loans RENAME COLUMN delivered_date TO released_date`,
+            (renameErr) => {
+              // Ignore error if already renamed or doesn't exist
+              finish();
+            }
+          );
+        } else {
+          finish();
+        }
+      }
+    }
   );
 }
 
@@ -98,6 +201,56 @@ function ensureUsersTable(db, callback) {
   );
 }
 
+function ensureCompaniesTable(db, callback) {
+  db.run(
+    `
+      CREATE TABLE IF NOT EXISTS companies (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE,
+        type TEXT NOT NULL CHECK (type IN ('gold', 'silver', 'both')),
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `,
+    (tableErr) => {
+      if (tableErr) {
+        return callback(tableErr);
+      }
+
+      // Ensure default companies exist
+      const companies = [
+        { name: 'Darshan Bankers', type: 'gold' },
+        { name: 'Mutha Sobhagmull and Sons', type: 'both' },
+        { name: 'Dariachand and Sons', type: 'gold' }
+      ];
+
+      let completed = 0;
+      let hasError = false;
+
+      companies.forEach(company => {
+        db.run(
+          'INSERT OR IGNORE INTO companies (name, type) VALUES (?, ?)',
+          [company.name, company.type],
+          (err) => {
+            if (err && !hasError) {
+              hasError = true;
+              return callback(err);
+            }
+            completed++;
+            if (completed === companies.length && !hasError) {
+              callback();
+            }
+          }
+        );
+      });
+
+      // If no companies to insert, callback immediately
+      if (companies.length === 0) {
+        callback();
+      }
+    }
+  );
+}
+
 function runMigrations() {
   return new Promise((resolve, reject) => {
     const db = new sqlite3.Database(dbPath, (err) => {
@@ -124,28 +277,40 @@ function runMigrations() {
           return finish(userErr);
         }
 
-        db.get(
-          "SELECT name, sql FROM sqlite_master WHERE type = 'table' AND name = 'loans'",
-          (err, row) => {
-            if (err) {
-              return finish(err);
-            }
-
-            if (!row) {
-              return finish();
-            }
-
-            const tableSql = row.sql || '';
-            const hasUniqueSerial =
-              /serial_number\s+TEXT\s+NOT\s+NULL\s+UNIQUE/i.test(tableSql);
-
-            if (hasUniqueSerial) {
-              migrateSerialNumbers(db, finish);
-            } else {
-              ensureCompositeIndex(db, finish);
-            }
+        ensureCompaniesTable(db, (companyErr) => {
+          if (companyErr) {
+            return finish(companyErr);
           }
-        );
+
+          migrateStatusValues(db, (statusErr) => {
+            if (statusErr) {
+              return finish(statusErr);
+            }
+
+            db.get(
+              "SELECT name, sql FROM sqlite_master WHERE type = 'table' AND name = 'loans'",
+              (err, row) => {
+                if (err) {
+                  return finish(err);
+                }
+
+                if (!row) {
+                  return finish();
+                }
+
+                const tableSql = row.sql || '';
+                const hasUniqueSerial =
+                  /serial_number\s+TEXT\s+NOT\s+NULL\s+UNIQUE/i.test(tableSql);
+
+                if (hasUniqueSerial) {
+                  migrateSerialNumbers(db, finish);
+                } else {
+                  ensureCompositeIndex(db, finish);
+                }
+              }
+            );
+          });
+        });
       });
     });
   });

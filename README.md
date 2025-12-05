@@ -12,12 +12,10 @@ A comprehensive digital pawn broker management system for Mutha Sobhagmull and S
 ### Core Functionality
 - ✅ **Loan Management**: Create, view, and manage loans with complete customer details
 - ✅ **Receipt Generation**: Generate PDF receipts with all required information
-- ✅ **Delivery Tracking**: Mark items as delivered when customers redeem them
+- ✅ **Release Tracking**: Mark items as released when customers redeem them
 - ✅ **Master Sheet**: Company-wise master sheets with day-wise calculations
 - ✅ **Excel Export**: Export master sheet data to Excel format
 - ✅ **Database Management**: SQLite database for reliable data storage
-- ✅ **Automatic Backups**: Automatic backup system every 6 hours + daily backups
-- ✅ **Data Recovery**: Easy restore functionality with multiple backup management options
 
 ### Receipt Information
 Each receipt contains:
@@ -82,8 +80,8 @@ Each receipt contains:
 - `POST /api/loans` - Create new loan
 - `GET /api/loans` - Get all loans (with filters)
 - `GET /api/loans/:id` - Get loan by ID
-- `PATCH /api/loans/:id/deliver` - Mark loan as delivered
-- `PATCH /api/loans/:id/default` - Mark loan as defaulted
+- `PATCH /api/loans/:id/deliver` - Mark loan as released
+- `PATCH /api/loans/:id/default` - Mark loan as unredeemed
 
 ### Receipts
 - `GET /api/receipts/:loanId` - Get receipt details (JSON)
@@ -94,12 +92,6 @@ Each receipt contains:
 - `GET /api/master-sheet/:companyId` - Get master sheet data
 - `GET /api/master-sheet/:companyId/export` - Export to Excel
 - `GET /api/master-sheet/:companyId/summary` - Get summary statistics
-
-### Backup & Recovery
-- `POST /api/backup/create` - Create manual backup
-- `GET /api/backup/list` - List all available backups
-- `POST /api/backup/restore` - Restore from backup
-- `GET /api/backup/download/:filename` - Download backup file
 
 ## Database Schema
 
@@ -130,8 +122,8 @@ Each receipt contains:
 - `item_type` - 'gold' or 'silver'
 - `loan_date` - Date of loan
 - `interest_rate` - Interest rate per month
-- `status` - 'active', 'delivered', or 'defaulted'
-- `delivered_date` - Date when item was delivered
+- `status` - 'active', 'released', or 'unredeemed'
+- `released_date` - Date when item was released
 - `created_at` - Creation timestamp
 
 ### Receipts Table
@@ -153,7 +145,7 @@ Each receipt contains:
 1. Go to "View Loans" tab
 2. Use filters to narrow down results
 3. Click "Load Loans" to view data
-4. Use action buttons to deliver, default, or generate receipts
+4. Use action buttons to release, mark as unredeemed, or generate receipts
 
 ### Generating Receipts
 1. Go to "Receipts" tab
@@ -174,18 +166,14 @@ Pawn_broker/
 ├── package.json              # Dependencies and scripts
 ├── README.md                 # This file
 ├── scripts/
-│   ├── initDatabase.js       # Database initialization
-│   └── backupDatabase.js     # Backup and restore functionality
+│   └── initDatabase.js       # Database initialization
 ├── routes/
 │   ├── companies.js          # Company management routes
 │   ├── loans.js              # Loan management routes
 │   ├── receipts.js           # Receipt generation routes
-│   ├── masterSheet.js        # Master sheet routes
-│   └── backup.js             # Backup management routes
+│   └── masterSheet.js        # Master sheet routes
 ├── utils/
-│   ├── database.js           # Database utility class
-│   └── scheduler.js          # Automated backup scheduler
-├── backups/                   # Backup storage (auto-created)
+│   └── database.js           # Database utility class
 ├── public/
 │   └── index.html            # Frontend interface
 └── database/
@@ -204,33 +192,11 @@ Pawn_broker/
 2. Delete the existing database file
 3. Run `npm run init-db` to recreate the database
 
-## Backup & Data Recovery
-
-### Automatic Backups
-The system automatically creates backups:
-- **Every 6 hours** during operation
-- **Daily at 3:00 AM**
-- Old backups older than 30 days are automatically deleted
-
-### Manual Backup
-```bash
-npm run backup
-```
-
-### Recovery
-See **[BACKUP_RECOVERY.md](BACKUP_RECOVERY.md)** for complete recovery guide.
-
-**QUICK REFERENCE**: See **[QUICK_BACKUP_GUIDE.txt](QUICK_BACKUP_GUIDE.txt)**
-
-⚠️ **IMPORTANT**: Always copy backups to external storage (USB, Cloud) daily!
-
 ## Security Notes
 
 - The system is designed for internal use
 - Consider adding authentication for production use
-- Database file is automatically backed up every 6 hours
 - Consider implementing data encryption for sensitive information
-- **Always maintain external backups** (USB drive, cloud storage)
 
 ## Support
 

@@ -34,7 +34,11 @@ router.get('/:companyId', async (req, res) => {
     
     // Get all loans for the company
     const loans = await db.query(`
-      SELECT l.*, c.name as company_name,
+      SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
+             l.item_weight, l.item_description, l.item_type, l.loan_date, 
+             l.interest_rate, l.status, l.created_at,
+             l.released_date,
+             c.name as company_name,
              cu.name as customer_name, cu.father_name, cu.husband_name, 
              cu.address, cu.occupation, cu.cell_number
       FROM loans l
@@ -49,8 +53,8 @@ router.get('/:companyId', async (req, res) => {
     let totalAmount = 0;
     let totalWeight = 0;
     let activeLoans = 0;
-    let deliveredLoans = 0;
-    let defaultedLoans = 0;
+    let releasedLoans = 0;
+    let unredeemedLoans = 0;
     
     loans.forEach(loan => {
       const date = loan.loan_date;
@@ -62,8 +66,8 @@ router.get('/:companyId', async (req, res) => {
           amount: 0,
           weight: 0,
           active: 0,
-          delivered: 0,
-          defaulted: 0
+          released: 0,
+          unredeemed: 0
         };
       }
       
@@ -74,12 +78,12 @@ router.get('/:companyId', async (req, res) => {
       if (loan.status === 'active') {
         dayWiseStats[date].active++;
         activeLoans++;
-      } else if (loan.status === 'delivered') {
-        dayWiseStats[date].delivered++;
-        deliveredLoans++;
-      } else if (loan.status === 'defaulted') {
-        dayWiseStats[date].defaulted++;
-        defaultedLoans++;
+      } else if (loan.status === 'released') {
+        dayWiseStats[date].released++;
+        releasedLoans++;
+      } else if (loan.status === 'unredeemed') {
+        dayWiseStats[date].unredeemed++;
+        unredeemedLoans++;
       }
       
       totalAmount += parseFloat(loan.loan_amount);
@@ -107,8 +111,8 @@ router.get('/:companyId', async (req, res) => {
           totalAmount,
           totalWeight,
           activeLoans,
-          deliveredLoans,
-          defaultedLoans
+          releasedLoans,
+          unredeemedLoans
         }
       }
     });
@@ -150,7 +154,11 @@ router.get('/:companyId/export', async (req, res) => {
     
     // Get loans data
     const loans = await db.query(`
-      SELECT l.*, c.name as company_name,
+      SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
+             l.item_weight, l.item_description, l.item_type, l.loan_date, 
+             l.interest_rate, l.status, l.created_at,
+             l.released_date,
+             c.name as company_name,
              cu.name as customer_name, cu.father_name, cu.husband_name, 
              cu.address, cu.occupation, cu.cell_number
       FROM loans l
@@ -184,7 +192,7 @@ router.get('/:companyId/export', async (req, res) => {
       { header: 'Description', key: 'item_description', width: 30 },
       { header: 'Interest Rate', key: 'interest_rate', width: 12 },
       { header: 'Status', key: 'status', width: 12 },
-      { header: 'Delivered Date', key: 'delivered_date', width: 15 }
+      { header: 'Released Date', key: 'released_date', width: 15 }
     ];
     
     // Style headers
@@ -211,7 +219,7 @@ router.get('/:companyId/export', async (req, res) => {
         item_description: loan.item_description,
         interest_rate: parseFloat(loan.interest_rate).toFixed(2) + '%',
         status: loan.status.toUpperCase(),
-        delivered_date: loan.delivered_date ? moment(loan.delivered_date).format('DD/MM/YYYY') : ''
+        released_date: loan.released_date ? moment(loan.released_date).format('DD/MM/YYYY') : ''
       });
     });
     
@@ -223,8 +231,8 @@ router.get('/:companyId/export', async (req, res) => {
     const totalAmount = loans.reduce((sum, loan) => sum + parseFloat(loan.loan_amount), 0);
     const totalWeight = loans.reduce((sum, loan) => sum + parseFloat(loan.item_weight), 0);
     const activeLoans = loans.filter(loan => loan.status === 'active').length;
-    const deliveredLoans = loans.filter(loan => loan.status === 'delivered').length;
-    const defaultedLoans = loans.filter(loan => loan.status === 'defaulted').length;
+    const releasedLoans = loans.filter(loan => loan.status === 'released').length;
+    const unredeemedLoans = loans.filter(loan => loan.status === 'unredeemed').length;
     
     worksheet.getCell(`A${summaryRow + 1}`).value = 'Total Loans:';
     worksheet.getCell(`B${summaryRow + 1}`).value = loans.length;
@@ -234,10 +242,10 @@ router.get('/:companyId/export', async (req, res) => {
     worksheet.getCell(`B${summaryRow + 3}`).value = `${totalWeight.toFixed(3)} gms`;
     worksheet.getCell(`A${summaryRow + 4}`).value = 'Active Loans:';
     worksheet.getCell(`B${summaryRow + 4}`).value = activeLoans;
-    worksheet.getCell(`A${summaryRow + 5}`).value = 'Delivered Loans:';
-    worksheet.getCell(`B${summaryRow + 5}`).value = deliveredLoans;
-    worksheet.getCell(`A${summaryRow + 6}`).value = 'Defaulted Loans:';
-    worksheet.getCell(`B${summaryRow + 6}`).value = defaultedLoans;
+    worksheet.getCell(`A${summaryRow + 5}`).value = 'Released Loans:';
+    worksheet.getCell(`B${summaryRow + 5}`).value = releasedLoans;
+    worksheet.getCell(`A${summaryRow + 6}`).value = 'Unredeemed Loans:';
+    worksheet.getCell(`B${summaryRow + 6}`).value = unredeemedLoans;
     
     // Style summary section
     for (let i = summaryRow + 1; i <= summaryRow + 6; i++) {
@@ -279,8 +287,8 @@ router.get('/:companyId/summary', async (req, res) => {
         SUM(loan_amount) as total_amount,
         SUM(item_weight) as total_weight,
         SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_count,
-        SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) as delivered_count,
-        SUM(CASE WHEN status = 'defaulted' THEN 1 ELSE 0 END) as defaulted_count
+        SUM(CASE WHEN status = 'released' THEN 1 ELSE 0 END) as released_count,
+        SUM(CASE WHEN status = 'unredeemed' THEN 1 ELSE 0 END) as unredeemed_count
       FROM loans 
       WHERE company_id = ? AND loan_date >= ?
       GROUP BY loan_date
@@ -294,8 +302,8 @@ router.get('/:companyId/summary', async (req, res) => {
         SUM(loan_amount) as total_amount,
         SUM(item_weight) as total_weight,
         SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_loans,
-        SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) as delivered_loans,
-        SUM(CASE WHEN status = 'defaulted' THEN 1 ELSE 0 END) as defaulted_loans
+        SUM(CASE WHEN status = 'released' THEN 1 ELSE 0 END) as released_loans,
+        SUM(CASE WHEN status = 'unredeemed' THEN 1 ELSE 0 END) as unredeemed_loans
       FROM loans 
       WHERE company_id = ?
     `, [companyId]);

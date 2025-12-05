@@ -20,7 +20,11 @@ router.get('/:loanId/pdf', async (req, res) => {
     
     // Get loan details with customer and company info
     const loan = await db.get(`
-      SELECT l.*, c.name as company_name, c.type as company_type,
+      SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
+             l.item_weight, l.item_description, l.item_type, l.loan_date, 
+             l.interest_rate, l.status, l.created_at,
+             l.released_date,
+             c.name as company_name, c.type as company_type,
              cu.name as customer_name, cu.father_name, cu.husband_name, 
              cu.address, cu.occupation, cu.cell_number
       FROM loans l
@@ -147,7 +151,11 @@ router.get('/:loanId', async (req, res) => {
     
     // Get loan details with customer and company info
     const loan = await db.get(`
-      SELECT l.*, c.name as company_name, c.type as company_type,
+      SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
+             l.item_weight, l.item_description, l.item_type, l.loan_date, 
+             l.interest_rate, l.status, l.created_at,
+             l.released_date,
+             c.name as company_name, c.type as company_type,
              cu.name as customer_name, cu.father_name, cu.husband_name, 
              cu.address, cu.occupation, cu.cell_number
       FROM loans l
