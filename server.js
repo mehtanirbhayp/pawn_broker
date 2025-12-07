@@ -23,6 +23,12 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Optional: IP Whitelisting for additional security (uncomment to enable)
+// Requires ALLOWED_IPS environment variable (comma-separated IP addresses)
+// Example: ALLOWED_IPS=192.168.1.100,203.0.113.50
+// const ipWhitelist = require('./middleware/ipWhitelist');
+// app.use(ipWhitelist);
+
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
