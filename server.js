@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 const path = require('path');
 
 // Import routes
@@ -12,6 +11,7 @@ const receiptRoutes = require('./routes/receipts');
 const masterSheetRoutes = require('./routes/masterSheet');
 const reportRoutes = require('./routes/reports');
 const noticeRoutes = require('./routes/notices');
+const dataMigrationRoutes = require('./routes/dataMigration');
 const runMigrations = require('./utils/migrations');
 const authenticate = require('./middleware/authenticate');
 
@@ -20,8 +20,8 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Optional: IP Whitelisting for additional security (uncomment to enable)
 // Requires ALLOWED_IPS environment variable (comma-separated IP addresses)
@@ -40,6 +40,7 @@ app.use('/api/receipts', authenticate, receiptRoutes);
 app.use('/api/master-sheet', authenticate, masterSheetRoutes);
 app.use('/api/reports', authenticate, reportRoutes);
 app.use('/api/notices', authenticate, noticeRoutes);
+app.use('/api/data-migration', authenticate, dataMigrationRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -53,8 +54,20 @@ app.get('/', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
+  console.error('Error:', err);
+  console.error('Stack:', err.stack);
+  console.error('Request URL:', req.url);
+  console.error('Request Method:', req.method);
+  
+  // Don't send error details in production, but log them
+  const errorMessage = process.env.NODE_ENV === 'production' 
+    ? 'Something went wrong!' 
+    : err.message || 'Something went wrong!';
+  
+  res.status(err.status || 500).json({ 
+    error: errorMessage,
+    ...(process.env.NODE_ENV !== 'production' && { details: err.message, stack: err.stack })
+  });
 });
 
 // 404 handler

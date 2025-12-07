@@ -8,6 +8,9 @@ database/*.db-journal
 # Backups (keep local, don't commit to git)
 backups/
 
+# Uploads (temporary files for data import)
+uploads/
+
 # Logs
 *.log
 npm-debug.log*
