@@ -315,6 +315,8 @@
             border-bottom: 2px solid #eee;
             background: #f8f9fa;
             border-radius: 15px 15px 0 0;
+            position: relative;
+            z-index: 1;
         }
         
         .modal-header h2 {
@@ -332,6 +334,113 @@
         
         .close-modal:hover {
             color: #000;
+        }
+        
+        /* Action Menu Styles */
+        .action-menu-container {
+            position: relative;
+            display: inline-block;
+            z-index: 10001;
+        }
+        
+        .action-menu-btn {
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10002;
+            min-width: 36px;
+            min-height: 36px;
+        }
+        
+        .action-menu-btn:hover {
+            background: #e0e0e0;
+            color: #333;
+            border-color: #999;
+        }
+        
+        .action-menu-btn:active {
+            background: #d0d0d0;
+            transform: scale(0.95);
+        }
+        
+        .action-menu-btn span {
+            user-select: none;
+            pointer-events: none;
+            font-size: 24px;
+            line-height: 1;
+            display: inline-block;
+            font-weight: bold;
+        }
+        
+        .action-menu-btn:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+        
+        .action-menu-btn:focus-visible {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+        
+        .action-menu-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 180px;
+            z-index: 10000;
+            display: none;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        
+        .action-menu-dropdown.active {
+            display: block;
+        }
+        
+        .action-menu-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #333;
+            border: none;
+            width: 100%;
+            text-align: left;
+            background: none;
+            font-size: 14px;
+        }
+        
+        .action-menu-item:hover {
+            background: #f5f5f5;
+        }
+        
+        .action-menu-item:first-child {
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        
+        .action-menu-item:last-child {
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+        
+        .action-menu-item .icon {
+            font-size: 16px;
         }
         
         .loan-details-grid {
@@ -946,6 +1055,16 @@
                     <span class="label">Table Columns</span>
                     <span class="arrow">→</span>
                 </div>
+                <div class="settings-menu-item" onclick="showSettingsContent('daily-report')">
+                    <span class="icon">📅</span>
+                    <span class="label">Daily Report</span>
+                    <span class="arrow">→</span>
+                </div>
+                <div class="settings-menu-item" onclick="showSettingsContent('notice-management')">
+                    <span class="icon">📋</span>
+                    <span class="label">Notice Management</span>
+                    <span class="arrow">→</span>
+                </div>
                 <!-- Add more menu items here in the future -->
             </div>
             <div id="settingsContent" class="settings-content">
@@ -1277,7 +1396,20 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Loan Details</h2>
-                <span class="close-modal" onclick="closeLoanDetails()">&times;</span>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="action-menu-container">
+                        <button class="action-menu-btn" id="loanActionMenuBtn" title="Actions" type="button" data-action="toggle-menu">
+                            <span>⋮</span>
+                        </button>
+                        <div class="action-menu-dropdown" id="loanActionMenu">
+                            <button class="action-menu-item" id="loanActionMenuEdit" type="button" data-action="edit-loan">
+                                <span class="icon">✏️</span>
+                                <span>Edit Loan</span>
+                            </button>
+                        </div>
+                    </div>
+                    <span class="close-modal" onclick="closeLoanDetails()">&times;</span>
+                </div>
             </div>
             <div class="modal-body" id="loanDetailsContent">
                 <div class="loading">Loading loan details...</div>
@@ -1286,6 +1418,155 @@
                 <div class="modal-buttons" id="loanDetailsButtons">
                     <!-- Buttons will be inserted here -->
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Loan Modal -->
+    <div id="editLoanModal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2>Edit Loan</h2>
+                <span class="close-modal" onclick="closeEditLoanModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="editLoanForm" autocomplete="off" novalidate>
+                    <!-- Company & Item Information Section -->
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <div class="form-section-icon">🏢</div>
+                            <h3>Company & Item Information</h3>
+                        </div>
+                        <div class="form-section-content">
+                            <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
+                                <div class="form-group">
+                                    <label for="editCompany">
+                                        Company
+                                        <span class="required-marker">*</span>
+                                    </label>
+                                    <select id="editCompany" required>
+                                        <option value="">Select Company</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editItemType">
+                                        Item Type
+                                        <span class="required-marker">*</span>
+                                    </label>
+                                    <select id="editItemType" required>
+                                        <option value="">Select Type</option>
+                                        <option value="gold">Gold</option>
+                                        <option value="silver">Silver</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editSerialNumber">
+                                        Serial Number
+                                        <span class="required-marker">*</span>
+                                    </label>
+                                    <input type="text" id="editSerialNumber" required placeholder="Enter serial number" autocomplete="new-password">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer Information Section -->
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <div class="form-section-icon">👤</div>
+                            <h3>Customer Information</h3>
+                        </div>
+                        <div class="form-section-content">
+                            <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
+                                <div class="form-group">
+                                    <label for="editCustomerName">
+                                        Customer Name
+                                        <span class="required-marker">*</span>
+                                    </label>
+                                    <input type="text" id="editCustomerName" required placeholder="Enter customer full name" autocomplete="new-password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editFatherName">Father/Husband Name</label>
+                                    <input type="text" id="editFatherName" placeholder="Enter father or husband name" autocomplete="new-password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editCellNumber">Cell Number</label>
+                                    <input type="tel" id="editCellNumber" placeholder="Enter contact number" autocomplete="new-password">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="editAddress">
+                                        Address
+                                        <span class="required-marker">*</span>
+                                    </label>
+                                    <textarea id="editAddress" rows="2" required placeholder="Enter complete address" autocomplete="new-password"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editAadharNumber">Aadhar Number</label>
+                                    <input type="text" id="editAadharNumber" placeholder="Enter Aadhar number" autocomplete="new-password" maxlength="12" pattern="[0-9]{12}">
+                                </div>
+                            </div>
+                            <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
+                                <div class="form-group">
+                                    <label for="editOccupation">Occupation</label>
+                                    <input type="text" id="editOccupation" placeholder="Enter occupation" autocomplete="new-password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editPost">Post</label>
+                                    <input type="text" id="editPost" placeholder="Enter post" autocomplete="new-password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editPinCode">Pin Code</label>
+                                    <input type="text" id="editPinCode" placeholder="Enter pin code" autocomplete="new-password">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loan Details Section -->
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <div class="form-section-icon">💰</div>
+                            <h3>Loan Details</h3>
+                        </div>
+                        <div class="form-section-content">
+                            <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
+                                <div class="form-group">
+                                    <label for="editLoanAmount">
+                                        Loan Amount (₹)
+                                        <span class="required-marker">*</span>
+                                    </label>
+                                    <input type="number" id="editLoanAmount" step="0.01" required placeholder="0.00" autocomplete="off">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editItemWeight">
+                                        Item Weight (grams)
+                                        <span class="required-marker">*</span>
+                                    </label>
+                                    <input type="number" id="editItemWeight" step="0.001" required placeholder="0.000" autocomplete="off">
+                                </div>
+                                <div class="form-group">
+                                    <label for="editLoanDate">Loan Date</label>
+                                    <input type="date" id="editLoanDate" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="editItemDescription">
+                                    Item Description
+                                    <span class="required-marker">*</span>
+                                </label>
+                                <textarea id="editItemDescription" rows="2" required placeholder="Describe the item being pledged" autocomplete="new-password"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button type="button" onclick="closeEditLoanModal()" class="btn btn-reset">Cancel</button>
+                        <button type="submit" class="btn btn-submit">Update Loan</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -1457,6 +1738,10 @@
                 loadPrefixSettings();
             } else if (contentType === 'columns') {
                 loadColumnSettings();
+            } else if (contentType === 'daily-report') {
+                loadDailyReportSettings();
+            } else if (contentType === 'notice-management') {
+                loadNoticeManagementSettings();
             }
             // Add more content types here in the future
         }
@@ -1691,6 +1976,344 @@
             }
         }
 
+        function loadDailyReportSettings() {
+            const settingsContent = document.getElementById('settingsContent');
+            
+            // Set default date to today
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+            
+            let html = '<h4 style="margin: 0 0 20px 0; color: #2c3e50; font-size: 1.1em;">Daily Report Generator</h4>';
+            html += '<p style="margin: 0 0 20px 0; color: #7f8c8d; font-size: 0.9em;">Generate a comprehensive daily report with company-wise breakdown of gold and silver loans.</p>';
+            
+            html += '<div style="max-width: 500px;">';
+            html += '<div class="form-group" style="margin-bottom: 20px;">';
+            html += '<label for="dailyReportDate" style="display: block; margin-bottom: 8px; font-weight: 500; color: #2c3e50;">Select Date</label>';
+            html += `<input type="date" id="dailyReportDate" value="${todayStr}" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">`;
+            html += '</div>';
+            
+            html += '<div class="settings-actions" style="margin-top: 30px;">';
+            html += '<button onclick="generateDailyReport()" class="btn btn-submit" style="width: 100%;">Generate Daily Report</button>';
+            html += '</div>';
+            html += '</div>';
+            
+            html += '<div id="dailyReportStatus" style="margin-top: 20px;"></div>';
+            
+            settingsContent.innerHTML = html;
+        }
+        
+        async function generateDailyReport() {
+            const dateInput = document.getElementById('dailyReportDate');
+            const statusDiv = document.getElementById('dailyReportStatus');
+            
+            if (!dateInput || !dateInput.value) {
+                showAlert('Please select a date', 'error');
+                return;
+            }
+            
+            const selectedDate = dateInput.value;
+            statusDiv.innerHTML = '<div class="loading">Generating daily report...</div>';
+            
+            try {
+                const url = `/api/reports/daily?date=${selectedDate}`;
+                console.log('Requesting daily report from:', url);
+                
+                const response = await authFetch(url);
+                console.log('Response status:', response.status, response.statusText);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    let errorData;
+                    try {
+                        errorData = JSON.parse(errorText);
+                    } catch (e) {
+                        errorData = { error: errorText || 'Unknown error' };
+                    }
+                    statusDiv.innerHTML = `<div class="alert alert-error">Error: ${errorData.error || 'Failed to generate report'}</div>`;
+                    return;
+                }
+                
+                const blob = await response.blob();
+                const downloadUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                
+                // Generate filename with date
+                const dateFormatted = selectedDate.split('-').reverse().join('-'); // DD-MM-YYYY
+                link.download = `Daily_Report_${dateFormatted}.xlsx`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(() => URL.revokeObjectURL(downloadUrl), 60_000);
+                
+                statusDiv.innerHTML = '<div class="alert alert-success">Daily report generated and downloaded successfully!</div>';
+                showAlert('Daily report downloaded successfully!', 'success');
+            } catch (error) {
+                console.error('Error generating daily report:', error);
+                statusDiv.innerHTML = `<div class="alert alert-error">Error: ${error.message || 'Failed to generate report'}</div>`;
+                showAlert('Error generating daily report: ' + error.message, 'error');
+            }
+        }
+        
+        function loadNoticeManagementSettings() {
+            const settingsContent = document.getElementById('settingsContent');
+            
+            // Ensure companies are loaded
+            if (companies.length === 0) {
+                settingsContent.innerHTML = '<div class="loading">Loading companies...</div>';
+                loadCompanies().then(() => {
+                    loadNoticeManagementSettings();
+                });
+                return;
+            }
+            
+            let html = '<h4 style="margin: 0 0 20px 0; color: #2c3e50; font-size: 1.1em;">Notice Management</h4>';
+            html += '<p style="margin: 0 0 20px 0; color: #7f8c8d; font-size: 0.9em;">Export loans to Excel, mark notices, and upload to update notice dates.</p>';
+            
+            html += '<div style="max-width: 700px;">';
+            
+            // Export section with filters
+            html += '<div style="margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">';
+            html += '<h5 style="margin: 0 0 15px 0; color: #2c3e50;">Export Loans for Notice Management</h5>';
+            html += '<p style="margin: 0 0 20px 0; color: #7f8c8d; font-size: 0.9em;">Filter loans and download an Excel file. You can mark notices in the Excel file and upload it back.</p>';
+            
+            // Filters
+            html += '<div class="form-group" style="margin-bottom: 15px;">';
+            html += '<label for="noticeExportCompany" style="display: block; margin-bottom: 8px; font-weight: 500; color: #2c3e50;">Company (Optional)</label>';
+            html += '<select id="noticeExportCompany" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">';
+            html += '<option value="">All Companies</option>';
+            companies.forEach(company => {
+                html += `<option value="${company.id}">${company.name}</option>`;
+            });
+            html += '</select>';
+            html += '</div>';
+            
+            html += '<div class="form-group" style="margin-bottom: 15px;">';
+            html += '<label for="noticeExportStatus" style="display: block; margin-bottom: 8px; font-weight: 500; color: #2c3e50;">Status (Optional)</label>';
+            html += '<select id="noticeExportStatus" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">';
+            html += '<option value="">All Status</option>';
+            html += '<option value="active" selected>Active</option>';
+            html += '<option value="released">Released</option>';
+            html += '<option value="unredeemed">Unredeemed</option>';
+            html += '</select>';
+            html += '</div>';
+            
+            html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">';
+            html += '<div class="form-group">';
+            html += '<label for="noticeExportStartDate" style="display: block; margin-bottom: 8px; font-weight: 500; color: #2c3e50;">Start Date (Optional)</label>';
+            html += '<input type="date" id="noticeExportStartDate" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">';
+            html += '</div>';
+            html += '<div class="form-group">';
+            html += '<label for="noticeExportEndDate" style="display: block; margin-bottom: 8px; font-weight: 500; color: #2c3e50;">End Date (Optional)</label>';
+            html += '<input type="date" id="noticeExportEndDate" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">';
+            html += '</div>';
+            html += '</div>';
+            
+            html += '<button onclick="exportLoansForNotices()" class="btn btn-submit" style="width: 100%;">Export Loans to Excel</button>';
+            html += '</div>';
+            
+            // Import section
+            html += '<div style="margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #28a745;">';
+            html += '<h5 style="margin: 0 0 15px 0; color: #2c3e50;">Upload Updated Excel File</h5>';
+            html += '<p style="margin: 0 0 15px 0; color: #7f8c8d; font-size: 0.9em;">Upload the Excel file after marking notices. Notice dates will be updated automatically.</p>';
+            html += '<input type="file" id="noticeFileInput" accept=".xlsx,.xls" style="display: none;" onchange="handleNoticeFileUpload(event)">';
+            html += '<button onclick="document.getElementById(\'noticeFileInput\').click()" class="btn btn-primary" style="width: 100%;">Choose Excel File to Upload</button>';
+            html += '<div id="noticeUploadStatus" style="margin-top: 15px;"></div>';
+            html += '</div>';
+            
+            html += '</div>';
+            
+            settingsContent.innerHTML = html;
+        }
+        
+        async function exportLoansForNotices() {
+            try {
+                // Get filter values
+                const companyId = document.getElementById('noticeExportCompany')?.value || '';
+                const status = document.getElementById('noticeExportStatus')?.value || '';
+                const startDate = document.getElementById('noticeExportStartDate')?.value || '';
+                const endDate = document.getElementById('noticeExportEndDate')?.value || '';
+                
+                // Build query string (only include non-empty values)
+                const params = [];
+                if (companyId && companyId.trim() !== '') {
+                    params.push(`companyId=${encodeURIComponent(companyId)}`);
+                }
+                if (status && status.trim() !== '') {
+                    params.push(`status=${encodeURIComponent(status)}`);
+                }
+                if (startDate && startDate.trim() !== '') {
+                    params.push(`startDate=${encodeURIComponent(startDate)}`);
+                }
+                if (endDate && endDate.trim() !== '') {
+                    params.push(`endDate=${encodeURIComponent(endDate)}`);
+                }
+                
+                const url = '/api/notices/export' + (params.length > 0 ? '?' + params.join('&') : '');
+                console.log('Exporting notices with filters:', { 
+                    companyId, 
+                    status, 
+                    startDate, 
+                    endDate, 
+                    url 
+                }); // Debug log
+                
+                const response = await authFetch(url);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    showAlert(errorText || 'Error exporting loans', 'error');
+                    return;
+                }
+                
+                const blob = await response.blob();
+                const downloadUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                
+                // Generate filename with date
+                const dateStr = new Date().toISOString().split('T')[0];
+                link.download = `Loans_Notice_Management_${dateStr}.xlsx`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(() => URL.revokeObjectURL(downloadUrl), 60_000);
+                
+                showAlert('Excel file downloaded successfully! Mark notices and upload it back.', 'success');
+            } catch (error) {
+                console.error('Error exporting loans:', error);
+                showAlert('Error exporting loans: ' + error.message, 'error');
+            }
+        }
+        
+        async function handleNoticeFileUpload(event) {
+            const file = event.target.files[0];
+            const statusDiv = document.getElementById('noticeUploadStatus');
+            
+            if (!file) {
+                return;
+            }
+            
+            if (!file.name.match(/\.(xlsx|xls)$/i)) {
+                statusDiv.innerHTML = '<div class="alert alert-error">Please select an Excel file (.xlsx or .xls)</div>';
+                return;
+            }
+            
+            statusDiv.innerHTML = '<div class="loading">Uploading and processing file...</div>';
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                const token = localStorage.getItem('authToken');
+                const response = await fetch('/api/notices/import', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    let errorData;
+                    try {
+                        errorData = JSON.parse(errorText);
+                    } catch (e) {
+                        errorData = { error: errorText || 'Unknown error' };
+                    }
+                    statusDiv.innerHTML = `<div class="alert alert-error">Error: ${errorData.error || 'Failed to process file'}</div>`;
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusDiv.innerHTML = `<div class="alert alert-success">Successfully updated ${data.updated || 0} loan(s) with notice dates!</div>`;
+                    showAlert(`Successfully updated ${data.updated || 0} loan(s)`, 'success');
+                    
+                    // Refresh loans if on loans page
+                    if (document.getElementById('loans') && document.getElementById('loans').classList.contains('active')) {
+                        loadLoans();
+                    }
+                } else {
+                    statusDiv.innerHTML = `<div class="alert alert-error">Error: ${data.error || 'Failed to process file'}</div>`;
+                }
+                
+                // Reset file input
+                event.target.value = '';
+            } catch (error) {
+                console.error('Error uploading file:', error);
+                statusDiv.innerHTML = `<div class="alert alert-error">Error: ${error.message || 'Failed to upload file'}</div>`;
+            }
+        }
+        
+        function showNoticeComment(loanId, noticeNumber, comment) {
+            // Create or get comment popup
+            let popup = document.getElementById('noticeCommentPopup');
+            if (!popup) {
+                popup = document.createElement('div');
+                popup.id = 'noticeCommentPopup';
+                popup.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: white;
+                    padding: 25px;
+                    border-radius: 12px;
+                    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                    z-index: 10002;
+                    max-width: 500px;
+                    width: 90%;
+                    display: none;
+                `;
+                document.body.appendChild(popup);
+            }
+            
+            const commentText = comment && comment.trim() ? comment.trim() : 'No comment available';
+            
+            popup.innerHTML = `
+                <div style="margin-bottom: 15px;">
+                    <h3 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 1.2em;">Notice ${noticeNumber} Comment</h3>
+                    <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e0e0e0; min-height: 60px; max-height: 300px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; color: #2c3e50;">
+                        ${commentText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+                    </div>
+                </div>
+                <button onclick="closeNoticeCommentPopup()" class="btn btn-submit" style="width: 100%;">Close</button>
+            `;
+            
+            popup.style.display = 'block';
+            
+            // Close on outside click
+            let overlay = document.getElementById('noticeCommentOverlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'noticeCommentOverlay';
+                overlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.5);
+                    z-index: 10001;
+                `;
+                overlay.onclick = closeNoticeCommentPopup;
+                document.body.appendChild(overlay);
+            } else {
+                overlay.style.display = 'block';
+            }
+        }
+        
+        function closeNoticeCommentPopup() {
+            const popup = document.getElementById('noticeCommentPopup');
+            const overlay = document.getElementById('noticeCommentOverlay');
+            if (popup) popup.style.display = 'none';
+            if (overlay) overlay.style.display = 'none';
+        }
+        
         function loadPrefixSettings() {
             const settingsContent = document.getElementById('settingsContent');
             const prefixes = getSerialPrefixes();
@@ -2103,6 +2726,9 @@
 
         document.addEventListener('DOMContentLoaded', async function() {
             setupLoginHandling();
+            
+            // Setup action menu event delegation immediately
+            setupActionMenuListeners();
 
             if (getAuthToken()) {
                 try {
@@ -3355,6 +3981,12 @@
             content.innerHTML = '<div class="loading">Loading loan details...</div>';
             footer.style.display = 'none';
             
+            // Ensure event listeners are attached to action menu buttons
+            // Use setTimeout to ensure DOM is ready
+            setTimeout(() => {
+                setupActionMenuListeners();
+            }, 100);
+            
             try {
                 const response = await authFetch(`/api/loans/${loanId}`);
                 const data = await response.json();
@@ -3371,6 +4003,32 @@
                 console.error('Error loading loan details:', error);
                 content.innerHTML = '<div class="alert alert-error">Error loading loan details</div>';
             }
+        }
+        
+        // Setup action menu event listeners using event delegation
+        function setupActionMenuListeners() {
+            const modal = document.getElementById('loanDetailsModal');
+            if (!modal) return;
+            
+            console.log('Setting up action menu listeners');
+            
+            // Use event delegation on the modal
+            modal.addEventListener('click', function(event) {
+                const target = event.target.closest('[data-action]');
+                if (!target) return;
+                
+                const action = target.getAttribute('data-action');
+                console.log('Action clicked:', action);
+                
+                event.stopPropagation();
+                event.preventDefault();
+                
+                if (action === 'toggle-menu') {
+                    window.toggleLoanActionMenu(event);
+                } else if (action === 'edit-loan') {
+                    window.handleLoanActionMenuEdit(event);
+                }
+            }, true);
         }
         
         // Function to refresh loan details in modal if open
@@ -3471,6 +4129,36 @@
                             <span>${loan.aadhar_number || loan.aadharNumber || 'N/A'}</span>
                         </div>
                     </div>
+                    
+                    ${(loan.notice1_date || loan.notice1Date || loan.notice2_date || loan.notice2Date || loan.notice3_date || loan.notice3Date || loan.notice4_date || loan.notice4Date) ? `
+                    <div class="detail-section">
+                        <h3>Notice Information</h3>
+                        ${(loan.notice1_date || loan.notice1Date) ? `
+                        <div class="detail-item">
+                            <strong>Notice 1:</strong>
+                            <span class="notice-date" onclick="showNoticeComment(${loan.id}, 1, '${(loan.notice1_comment || loan.notice1Comment || '').replace(/'/g, "\\'")}')" style="cursor: pointer; color: #667eea; text-decoration: underline;">${formatDate(loan.notice1_date || loan.notice1Date)}</span>
+                        </div>
+                        ` : ''}
+                        ${(loan.notice2_date || loan.notice2Date) ? `
+                        <div class="detail-item">
+                            <strong>Notice 2:</strong>
+                            <span class="notice-date" onclick="showNoticeComment(${loan.id}, 2, '${(loan.notice2_comment || loan.notice2Comment || '').replace(/'/g, "\\'")}')" style="cursor: pointer; color: #667eea; text-decoration: underline;">${formatDate(loan.notice2_date || loan.notice2Date)}</span>
+                        </div>
+                        ` : ''}
+                        ${(loan.notice3_date || loan.notice3Date) ? `
+                        <div class="detail-item">
+                            <strong>Notice 3:</strong>
+                            <span class="notice-date" onclick="showNoticeComment(${loan.id}, 3, '${(loan.notice3_comment || loan.notice3Comment || '').replace(/'/g, "\\'")}')" style="cursor: pointer; color: #667eea; text-decoration: underline;">${formatDate(loan.notice3_date || loan.notice3Date)}</span>
+                        </div>
+                        ` : ''}
+                        ${(loan.notice4_date || loan.notice4Date) ? `
+                        <div class="detail-item">
+                            <strong>Notice 4:</strong>
+                            <span class="notice-date" onclick="showNoticeComment(${loan.id}, 4, '${(loan.notice4_comment || loan.notice4Comment || '').replace(/'/g, "\\'")}')" style="cursor: pointer; color: #667eea; text-decoration: underline;">${formatDate(loan.notice4_date || loan.notice4Date)}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                    ` : ''}
                 </div>
             `;
         }
@@ -3482,6 +4170,7 @@
             const isUnredeemed = status === 'unredeemed' || status === 'defaulted';
             
             return `
+                <button onclick="editLoan(${loan.id})" class="btn btn-primary">Edit Loan</button>
                 <button onclick="generateMailingLabel(${loan.id})" class="btn btn-secondary">Generate Mailing Label</button>
                 ${isActive ? `
                 <button onclick="deliverLoan(${loan.id})" class="btn btn-success">Mark as Released</button>
@@ -3520,12 +4209,270 @@
             }
         }
         
+        // Action menu functions - make them globally accessible
+        window.toggleLoanActionMenu = function(event) {
+            console.log('toggleLoanActionMenu called', event);
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+            const menu = document.getElementById('loanActionMenu');
+            const menuBtn = document.getElementById('loanActionMenuBtn');
+            console.log('Menu element:', menu, 'Button element:', menuBtn);
+            if (menu) {
+                const isActive = menu.classList.contains('active');
+                console.log('Menu is active:', isActive);
+                // Close all other menus first
+                document.querySelectorAll('.action-menu-dropdown').forEach(m => m.classList.remove('active'));
+                // Toggle this menu
+                if (!isActive) {
+                    menu.classList.add('active');
+                    console.log('Menu opened');
+                } else {
+                    menu.classList.remove('active');
+                    console.log('Menu closed');
+                }
+            } else {
+                console.error('Menu element not found!');
+            }
+        };
+        
+        window.handleLoanActionMenuEdit = function(event) {
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+            if (currentLoanDetailsId) {
+                editLoan(currentLoanDetailsId);
+                // Close the action menu
+                const menu = document.getElementById('loanActionMenu');
+                if (menu) {
+                    menu.classList.remove('active');
+                }
+            } else {
+                showAlert('No loan selected', 'error');
+            }
+        };
+        
+        // Also define as regular functions for backward compatibility
+        function toggleLoanActionMenu(event) {
+            return window.toggleLoanActionMenu(event);
+        }
+        
+        function handleLoanActionMenuEdit(event) {
+            return window.handleLoanActionMenuEdit(event);
+        }
+        
+        // Close action menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('loanActionMenu');
+            const menuBtn = document.getElementById('loanActionMenuBtn');
+            if (menu && menuBtn) {
+                // Check if click is outside both menu and button
+                if (!menu.contains(event.target) && !menuBtn.contains(event.target)) {
+                    menu.classList.remove('active');
+                }
+            }
+        });
+        
+        
+        // ============================================
+        // EDIT LOAN SYSTEM - REBUILT FROM SCRATCH
+        // ============================================
+        
+        let editingLoanId = null; // Simple variable to store loan ID being edited
+        
+        // Open edit loan modal and populate form - make it globally accessible
+        window.editLoan = async function(loanId) {
+            if (!loanId) {
+                showAlert('Loan ID is required', 'error');
+                return;
+            }
+            
+            // Clean and store loan ID
+            editingLoanId = parseInt(String(loanId).replace(/[^0-9]/g, ''), 10);
+            if (isNaN(editingLoanId) || editingLoanId <= 0) {
+                showAlert('Invalid loan ID', 'error');
+                return;
+            }
+            
+            try {
+                // Fetch loan data
+                const response = await authFetch(`/api/loans/${editingLoanId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch loan data');
+                }
+                
+                const data = await response.json();
+                if (!data.success || !data.data) {
+                    showAlert(data.error || 'Loan not found', 'error');
+                    return;
+                }
+                
+                const loan = data.data;
+                
+                // Ensure companies are loaded
+                if (companies.length === 0) {
+                    await loadCompanies();
+                }
+                
+                // Populate company dropdown
+                const companySelect = document.getElementById('editCompany');
+                if (companySelect) {
+                    companySelect.innerHTML = '<option value="">Select Company</option>';
+                    companies.forEach(company => {
+                        const option = document.createElement('option');
+                        option.value = company.id;
+                        option.textContent = company.name;
+                        if (company.id == (loan.company_id || loan.companyId)) {
+                            option.selected = true;
+                        }
+                        companySelect.appendChild(option);
+                    });
+                }
+                
+                // Populate all form fields
+                document.getElementById('editCompany').value = loan.company_id || loan.companyId || '';
+                document.getElementById('editItemType').value = loan.item_type || loan.itemType || '';
+                document.getElementById('editSerialNumber').value = loan.serial_number || loan.serialNumber || '';
+                document.getElementById('editCustomerName').value = loan.customer_name || loan.customerName || '';
+                document.getElementById('editFatherName').value = loan.father_name || loan.fatherName || loan.husband_name || loan.husbandName || '';
+                document.getElementById('editAddress').value = loan.address || '';
+                document.getElementById('editPost').value = loan.post || '';
+                document.getElementById('editPinCode').value = loan.pin_code || loan.pinCode || '';
+                document.getElementById('editOccupation').value = loan.occupation || '';
+                document.getElementById('editCellNumber').value = loan.cell_number || loan.cellNumber || '';
+                document.getElementById('editAadharNumber').value = loan.aadhar_number || loan.aadharNumber || '';
+                document.getElementById('editLoanAmount').value = loan.loan_amount || loan.loanAmount || '';
+                document.getElementById('editItemWeight').value = loan.item_weight || loan.itemWeight || '';
+                document.getElementById('editItemDescription').value = loan.item_description || loan.itemDescription || '';
+                
+                // Format date
+                if (loan.loan_date || loan.loanDate) {
+                    const date = new Date(loan.loan_date || loan.loanDate);
+                    if (!isNaN(date.getTime())) {
+                        document.getElementById('editLoanDate').value = date.toISOString().split('T')[0];
+                    }
+                }
+                
+                // Show modal
+                document.getElementById('editLoanModal').classList.add('active');
+                
+                // Close loan details modal if open
+                closeLoanDetails();
+                
+            } catch (error) {
+                console.error('Error loading loan:', error);
+                showAlert('Error loading loan: ' + error.message, 'error');
+            }
+        }
+        
+        // Close edit modal - make globally accessible
+        window.closeEditLoanModal = function() {
+            const modal = document.getElementById('editLoanModal');
+            const form = document.getElementById('editLoanForm');
+            if (modal) modal.classList.remove('active');
+            if (form) form.reset();
+            editingLoanId = null;
+        }
+        
+        // Handle form submission - set up once on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('editLoanForm');
+            if (form) {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    if (!editingLoanId) {
+                        showAlert('No loan selected for editing', 'error');
+                        return;
+                    }
+                    
+                    // Get form values
+                    const formData = {
+                        serialNumber: document.getElementById('editSerialNumber').value.trim(),
+                        companyId: document.getElementById('editCompany').value,
+                        customerName: document.getElementById('editCustomerName').value.trim(),
+                        fatherName: document.getElementById('editFatherName').value.trim(),
+                        husbandName: '',
+                        address: document.getElementById('editAddress').value.trim(),
+                        post: document.getElementById('editPost').value.trim(),
+                        pinCode: document.getElementById('editPinCode').value.trim(),
+                        occupation: document.getElementById('editOccupation').value.trim(),
+                        cellNumber: document.getElementById('editCellNumber').value.trim(),
+                        loanAmount: document.getElementById('editLoanAmount').value,
+                        itemWeight: document.getElementById('editItemWeight').value,
+                        itemDescription: document.getElementById('editItemDescription').value.trim(),
+                        itemType: document.getElementById('editItemType').value,
+                        loanDate: document.getElementById('editLoanDate').value,
+                        aadharNumber: document.getElementById('editAadharNumber').value.trim()
+                    };
+                    
+                    // Validate
+                    if (!formData.serialNumber || !formData.companyId || !formData.customerName || 
+                        !formData.address || !formData.loanAmount || !formData.itemWeight || 
+                        !formData.itemDescription || !formData.itemType) {
+                        showAlert('Please fill in all required fields', 'error');
+                        return;
+                    }
+                    
+                    try {
+                        const url = `/api/loans/${editingLoanId}`;
+                        console.log('Sending PUT request to:', url);
+                        console.log('Request body:', formData);
+                        
+                        const response = await authFetch(url, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(formData)
+                        });
+                        
+                        console.log('Response status:', response.status, response.statusText);
+                        
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            console.error('Error response:', errorText);
+                            let errorData;
+                            try {
+                                errorData = JSON.parse(errorText);
+                            } catch (e) {
+                                errorData = { error: errorText || 'Unknown error' };
+                            }
+                            showAlert(errorData.error || `Server error: ${response.status}`, 'error');
+                            return;
+                        }
+                        
+                        const data = await response.json();
+                        console.log('Response data:', data);
+                        
+                        if (data.success) {
+                            showAlert('Loan updated successfully!', 'success');
+                            closeEditLoanModal();
+                            loadLoans();
+                            loadDashboard();
+                        } else {
+                            showAlert(data.error || 'Error updating loan', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error updating loan:', error);
+                        showAlert('Error updating loan: ' + error.message, 'error');
+                    }
+                });
+            }
+        });
+        
         function closeLoanDetails() {
             const modal = document.getElementById('loanDetailsModal');
             const footer = document.getElementById('loanDetailsFooter');
             modal.classList.remove('active');
             footer.style.display = 'none';
             currentLoanDetailsId = null; // Clear stored loan ID
+            
+            // Close action menu if open
+            const menu = document.getElementById('loanActionMenu');
+            if (menu) {
+                menu.classList.remove('active');
+            }
         }
         
         // Close modal when clicking outside
@@ -3533,6 +4480,11 @@
             const modal = document.getElementById('loanDetailsModal');
             if (event.target === modal) {
                 closeLoanDetails();
+            }
+            
+            const editModal = document.getElementById('editLoanModal');
+            if (event.target === editModal) {
+                closeEditLoanModal();
             }
         }
     </script>

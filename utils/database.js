@@ -1,7 +1,14 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const fs = require('fs');
 
 const dbPath = path.join(__dirname, '..', 'database', 'pawn_broker.db');
+
+// Ensure database directory exists
+const dbDir = path.dirname(dbPath);
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
 
 class Database {
   constructor() {

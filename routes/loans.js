@@ -220,7 +220,9 @@ router.get('/:id', async (req, res) => {
       SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
              l.item_weight, l.item_description, l.item_type, l.loan_date, 
              l.interest_rate, l.status, l.created_at,
-             l.released_date,
+             l.released_date, 
+             l.notice1_date, l.notice2_date, l.notice3_date, l.notice4_date,
+             l.notice1_comment, l.notice2_comment, l.notice3_comment, l.notice4_comment,
              c.name as company_name, c.type as company_type,
              cu.name as customer_name, cu.father_name, cu.husband_name, 
              cu.address, cu.occupation, cu.cell_number
@@ -248,6 +250,168 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to fetch loan'
+    });
+  }
+});
+
+// Update loan details
+router.put('/:id', async (req, res) => {
+  console.log('PUT /api/loans/:id route hit', req.params.id);
+  try {
+    const { id } = req.params;
+    const {
+      serialNumber,
+      companyId,
+      customerName,
+      fatherName,
+      husbandName,
+      address,
+      post,
+      pinCode,
+      occupation,
+      cellNumber,
+      loanAmount,
+      itemWeight,
+      itemDescription,
+      itemType,
+      loanDate,
+      aadharNumber
+    } = req.body;
+
+    // Validate required fields
+    if (!serialNumber || !companyId || !customerName || !address || !loanAmount || !itemWeight || !itemDescription || !itemType) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields'
+      });
+    }
+
+    if (!['gold', 'silver'].includes(itemType)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Item type must be gold or silver'
+      });
+    }
+
+    const db = new Database();
+    
+    // Check if loan exists
+    const existingLoan = await db.get('SELECT * FROM loans WHERE id = ?', [id]);
+    if (!existingLoan) {
+      await db.close();
+      return res.status(404).json({
+        success: false,
+        error: 'Loan not found'
+      });
+    }
+    
+    // Check if company exists and supports this item type
+    const company = await db.get('SELECT * FROM companies WHERE id = ?', [companyId]);
+    if (!company) {
+      await db.close();
+      return res.status(404).json({
+        success: false,
+        error: 'Company not found'
+      });
+    }
+
+    if (company.type !== 'both' && company.type !== itemType) {
+      await db.close();
+      return res.status(400).json({
+        success: false,
+        error: `Company ${company.name} does not support ${itemType} loans`
+      });
+    }
+
+    // Check if serial number is already used by another loan
+    const normalizedSerial = String(serialNumber).trim();
+    if (!normalizedSerial) {
+      await db.close();
+      return res.status(400).json({
+        success: false,
+        error: 'Serial number cannot be empty'
+      });
+    }
+
+    const existingSerial = await db.get(
+      'SELECT id FROM loans WHERE company_id = ? AND serial_number = ? AND id != ?',
+      [companyId, normalizedSerial, id]
+    );
+
+    if (existingSerial) {
+      await db.close();
+      return res.status(400).json({
+        success: false,
+        error: 'A loan with this serial number already exists for the selected company'
+      });
+    }
+
+    // Update or create customer
+    let customerId = existingLoan.customer_id;
+    const existingCustomer = await db.get(
+      'SELECT id FROM customers WHERE name = ? AND cell_number = ?',
+      [customerName, cellNumber]
+    );
+
+    if (existingCustomer) {
+      customerId = existingCustomer.id;
+      // Update customer information (only fields that exist in the table)
+      await db.run(
+        'UPDATE customers SET father_name = ?, husband_name = ?, address = ?, occupation = ? WHERE id = ?',
+        [fatherName, husbandName, address, occupation, customerId]
+      );
+    } else {
+      // Create new customer (only fields that exist in the table)
+      const customerResult = await db.run(
+        'INSERT INTO customers (name, father_name, husband_name, address, occupation, cell_number) VALUES (?, ?, ?, ?, ?, ?)',
+        [customerName, fatherName, husbandName, address, occupation, cellNumber]
+      );
+      customerId = customerResult.id;
+    }
+
+    // Update loan
+    const loanDateFormatted = loanDate ? moment(loanDate).format('YYYY-MM-DD') : existingLoan.loan_date;
+    await db.run(
+      `UPDATE loans SET 
+       serial_number = ?, 
+       company_id = ?, 
+       customer_id = ?, 
+       loan_amount = ?, 
+       item_weight = ?, 
+       item_description = ?, 
+       item_type = ?, 
+       loan_date = ?
+       WHERE id = ?`,
+      [normalizedSerial, companyId, customerId, loanAmount, itemWeight, itemDescription, itemType, loanDateFormatted, id]
+    );
+
+    // Fetch the updated loan to return it
+    const updatedLoan = await db.get(`
+      SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
+             l.item_weight, l.item_description, l.item_type, l.loan_date, 
+             l.interest_rate, l.status, l.created_at,
+             l.released_date,
+             c.name as company_name, c.type as company_type,
+             cu.name as customer_name, cu.father_name, cu.husband_name, 
+             cu.address, cu.occupation, cu.cell_number
+      FROM loans l
+      JOIN companies c ON l.company_id = c.id
+      JOIN customers cu ON l.customer_id = cu.id
+      WHERE l.id = ?
+    `, [id]);
+    
+    await db.close();
+
+    res.json({
+      success: true,
+      message: 'Loan updated successfully',
+      data: updatedLoan
+    });
+  } catch (error) {
+    console.error('Error updating loan:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to update loan'
     });
   }
 });

@@ -10,6 +10,8 @@ const companyRoutes = require('./routes/companies');
 const loanRoutes = require('./routes/loans');
 const receiptRoutes = require('./routes/receipts');
 const masterSheetRoutes = require('./routes/masterSheet');
+const reportRoutes = require('./routes/reports');
+const noticeRoutes = require('./routes/notices');
 const runMigrations = require('./utils/migrations');
 const authenticate = require('./middleware/authenticate');
 
@@ -30,6 +32,8 @@ app.use('/api/companies', authenticate, companyRoutes);
 app.use('/api/loans', authenticate, loanRoutes);
 app.use('/api/receipts', authenticate, receiptRoutes);
 app.use('/api/master-sheet', authenticate, masterSheetRoutes);
+app.use('/api/reports', authenticate, reportRoutes);
+app.use('/api/notices', authenticate, noticeRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

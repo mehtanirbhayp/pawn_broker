@@ -1,8 +1,15 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const fs = require('fs');
 const bcrypt = require('bcryptjs');
 
 const dbPath = path.join(__dirname, '..', 'database', 'pawn_broker.db');
+
+// Ensure database directory exists
+const dbDir = path.dirname(dbPath);
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
 
 function migrateSerialNumbers(db, finish) {
   const migrationSql = `
@@ -201,6 +208,73 @@ function ensureUsersTable(db, callback) {
   );
 }
 
+function addNoticeColumns(db, callback) {
+  // Get all column names
+  db.all("PRAGMA table_info(loans)", (err, columns) => {
+    if (err) {
+      return callback(err);
+    }
+
+    const columnNames = columns.map(col => col.name);
+    const hasNotice1 = columnNames.includes('notice1_date');
+    const hasNotice2 = columnNames.includes('notice2_date');
+    const hasNotice3 = columnNames.includes('notice3_date');
+    const hasNotice4 = columnNames.includes('notice4_date');
+    const hasNotice1Comment = columnNames.includes('notice1_comment');
+    const hasNotice2Comment = columnNames.includes('notice2_comment');
+    const hasNotice3Comment = columnNames.includes('notice3_comment');
+    const hasNotice4Comment = columnNames.includes('notice4_comment');
+
+    if (hasNotice1 && hasNotice2 && hasNotice3 && hasNotice4 && 
+        hasNotice1Comment && hasNotice2Comment && hasNotice3Comment && hasNotice4Comment) {
+      // All columns exist, nothing to do
+      return callback();
+    }
+
+    // Add missing columns one by one (SQLite limitation)
+    const columnsToAdd = [];
+    if (!hasNotice1) columnsToAdd.push('notice1_date DATE');
+    if (!hasNotice2) columnsToAdd.push('notice2_date DATE');
+    if (!hasNotice3) columnsToAdd.push('notice3_date DATE');
+    if (!hasNotice4) columnsToAdd.push('notice4_date DATE');
+    if (!hasNotice1Comment) columnsToAdd.push('notice1_comment TEXT');
+    if (!hasNotice2Comment) columnsToAdd.push('notice2_comment TEXT');
+    if (!hasNotice3Comment) columnsToAdd.push('notice3_comment TEXT');
+    if (!hasNotice4Comment) columnsToAdd.push('notice4_comment TEXT');
+
+    if (columnsToAdd.length === 0) {
+      return callback();
+    }
+
+    let completed = 0;
+    let hasError = false;
+
+    const addNextColumn = () => {
+      if (completed >= columnsToAdd.length) {
+        callback();
+        return;
+      }
+
+      const columnDef = columnsToAdd[completed];
+      db.run(`ALTER TABLE loans ADD COLUMN ${columnDef}`, (err) => {
+        if (err) {
+          // Ignore error if column already exists
+          if (err.message && err.message.includes('duplicate column name')) {
+            // Column already exists, continue
+          } else {
+            hasError = true;
+            return callback(err);
+          }
+        }
+        completed++;
+        addNextColumn();
+      });
+    };
+
+    addNextColumn();
+  });
+}
+
 function ensureCompaniesTable(db, callback) {
   db.run(
     `
@@ -287,28 +361,34 @@ function runMigrations() {
               return finish(statusErr);
             }
 
-            db.get(
-              "SELECT name, sql FROM sqlite_master WHERE type = 'table' AND name = 'loans'",
-              (err, row) => {
-                if (err) {
-                  return finish(err);
-                }
-
-                if (!row) {
-                  return finish();
-                }
-
-                const tableSql = row.sql || '';
-                const hasUniqueSerial =
-                  /serial_number\s+TEXT\s+NOT\s+NULL\s+UNIQUE/i.test(tableSql);
-
-                if (hasUniqueSerial) {
-                  migrateSerialNumbers(db, finish);
-                } else {
-                  ensureCompositeIndex(db, finish);
-                }
+            addNoticeColumns(db, (noticeErr) => {
+              if (noticeErr) {
+                return finish(noticeErr);
               }
-            );
+
+              db.get(
+                "SELECT name, sql FROM sqlite_master WHERE type = 'table' AND name = 'loans'",
+                (err, row) => {
+                  if (err) {
+                    return finish(err);
+                  }
+
+                  if (!row) {
+                    return finish();
+                  }
+
+                  const tableSql = row.sql || '';
+                  const hasUniqueSerial =
+                    /serial_number\s+TEXT\s+NOT\s+NULL\s+UNIQUE/i.test(tableSql);
+
+                  if (hasUniqueSerial) {
+                    migrateSerialNumbers(db, finish);
+                  } else {
+                    ensureCompositeIndex(db, finish);
+                  }
+                }
+              );
+            });
           });
         });
       });
