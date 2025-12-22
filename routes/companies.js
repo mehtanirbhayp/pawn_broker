@@ -80,6 +80,18 @@ router.get('/:id/stats', async (req, res) => {
       [id]
     );
     
+    // Get gold weight
+    const goldWeight = await db.get(
+      'SELECT SUM(item_weight) as total FROM loans WHERE company_id = ? AND status = "active" AND item_type = "gold"',
+      [id]
+    );
+    
+    // Get silver weight
+    const silverWeight = await db.get(
+      'SELECT SUM(item_weight) as total FROM loans WHERE company_id = ? AND status = "active" AND item_type = "silver"',
+      [id]
+    );
+    
     await db.close();
     
     res.json({
@@ -88,7 +100,9 @@ router.get('/:id/stats', async (req, res) => {
         totalLoans: totalLoans.count,
         activeLoans: activeLoans.count,
         totalAmount: totalAmount.total || 0,
-        totalWeight: totalWeight.total || 0
+        totalWeight: totalWeight.total || 0,
+        goldWeight: goldWeight.total || 0,
+        silverWeight: silverWeight.total || 0
       }
     });
   } catch (error) {
