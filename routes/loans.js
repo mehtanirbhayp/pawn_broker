@@ -20,7 +20,8 @@ router.post('/', async (req, res) => {
       itemDescription,
       itemType,
       loanDate,
-      interestRate = 2.0
+      interestRate = 2.0,
+      remarks
     } = req.body;
 
     // Validate required fields
@@ -106,9 +107,9 @@ router.post('/', async (req, res) => {
     const loanDateFormatted = loanDate ? moment(loanDate).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
     const loanResult = await db.run(
       `INSERT INTO loans (serial_number, company_id, customer_id, loan_amount, item_weight, 
-       item_description, item_type, loan_date, interest_rate) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [normalizedSerial, companyId, customerId, loanAmount, itemWeight, itemDescription, itemType, loanDateFormatted, interestRate]
+       item_description, item_type, loan_date, interest_rate, remarks) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [normalizedSerial, companyId, customerId, loanAmount, itemWeight, itemDescription, itemType, loanDateFormatted, interestRate, remarks || null]
     );
 
     await db.close();
@@ -167,7 +168,7 @@ router.get('/', async (req, res) => {
       SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
              l.item_weight, l.item_description, l.item_type, l.loan_date, 
              l.interest_rate, l.status, l.created_at,
-             l.released_date,
+             l.released_date, l.remarks,
              c.name as company_name, c.type as company_type,
              cu.name as customer_name, cu.father_name, cu.husband_name, 
              cu.address, cu.occupation, cu.cell_number
@@ -220,7 +221,7 @@ router.get('/:id', async (req, res) => {
       SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
              l.item_weight, l.item_description, l.item_type, l.loan_date, 
              l.interest_rate, l.status, l.created_at,
-             l.released_date, 
+             l.released_date, l.remarks,
              l.notice1_date, l.notice2_date, l.notice3_date, l.notice4_date,
              l.notice1_comment, l.notice2_comment, l.notice3_comment, l.notice4_comment,
              c.name as company_name, c.type as company_type,
@@ -275,7 +276,8 @@ router.put('/:id', async (req, res) => {
       itemDescription,
       itemType,
       loanDate,
-      aadharNumber
+      aadharNumber,
+      remarks
     } = req.body;
 
     // Validate required fields
@@ -380,9 +382,10 @@ router.put('/:id', async (req, res) => {
        item_weight = ?, 
        item_description = ?, 
        item_type = ?, 
-       loan_date = ?
+       loan_date = ?,
+       remarks = ?
        WHERE id = ?`,
-      [normalizedSerial, companyId, customerId, loanAmount, itemWeight, itemDescription, itemType, loanDateFormatted, id]
+      [normalizedSerial, companyId, customerId, loanAmount, itemWeight, itemDescription, itemType, loanDateFormatted, remarks || null, id]
     );
 
     // Fetch the updated loan to return it
@@ -390,7 +393,7 @@ router.put('/:id', async (req, res) => {
       SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
              l.item_weight, l.item_description, l.item_type, l.loan_date, 
              l.interest_rate, l.status, l.created_at,
-             l.released_date,
+             l.released_date, l.remarks,
              c.name as company_name, c.type as company_type,
              cu.name as customer_name, cu.father_name, cu.husband_name, 
              cu.address, cu.occupation, cu.cell_number
@@ -401,7 +404,7 @@ router.put('/:id', async (req, res) => {
     `, [id]);
     
     await db.close();
-
+    
     res.json({
       success: true,
       message: 'Loan updated successfully',
@@ -447,7 +450,7 @@ router.patch('/:id/deliver', async (req, res) => {
       SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
              l.item_weight, l.item_description, l.item_type, l.loan_date, 
              l.interest_rate, l.status, l.created_at,
-             l.released_date,
+             l.released_date, l.remarks,
              c.name as company_name, c.type as company_type,
              cu.name as customer_name, cu.father_name, cu.husband_name, 
              cu.address, cu.occupation, cu.cell_number
@@ -469,6 +472,70 @@ router.patch('/:id/deliver', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to release loan'
+    });
+  }
+});
+
+// Update release date for a released loan
+router.patch('/:id/release-date', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { releasedDate } = req.body;
+    
+    if (!releasedDate) {
+      return res.status(400).json({
+        success: false,
+        error: 'Release date is required'
+      });
+    }
+    
+    const db = new Database();
+    
+    // Check if loan exists and is released
+    const loan = await db.get('SELECT * FROM loans WHERE id = ? AND status = "released"', [id]);
+    if (!loan) {
+      await db.close();
+      return res.status(404).json({
+        success: false,
+        error: 'Released loan not found'
+      });
+    }
+    
+    const releasedDateFormatted = moment(releasedDate).format('YYYY-MM-DD');
+    
+    // Update release date
+    await db.run(
+      'UPDATE loans SET released_date = ? WHERE id = ?',
+      [releasedDateFormatted, id]
+    );
+    
+    // Fetch the updated loan to return it
+    const updatedLoan = await db.get(`
+      SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
+             l.item_weight, l.item_description, l.item_type, l.loan_date, 
+             l.interest_rate, l.status, l.created_at,
+             l.released_date, l.remarks,
+             c.name as company_name, c.type as company_type,
+             cu.name as customer_name, cu.father_name, cu.husband_name, 
+             cu.address, cu.occupation, cu.cell_number
+      FROM loans l
+      JOIN companies c ON l.company_id = c.id
+      JOIN customers cu ON l.customer_id = cu.id
+      WHERE l.id = ?
+    `, [id]);
+    
+    await db.close();
+    
+    res.json({
+      success: true,
+      message: 'Release date updated successfully',
+      data: updatedLoan
+    });
+  } catch (error) {
+    console.error('Error updating release date:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to update release date'
     });
   }
 });
@@ -500,7 +567,7 @@ router.patch('/:id/default', async (req, res) => {
       SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
              l.item_weight, l.item_description, l.item_type, l.loan_date, 
              l.interest_rate, l.status, l.created_at,
-             l.released_date,
+             l.released_date, l.remarks,
              c.name as company_name, c.type as company_type,
              cu.name as customer_name, cu.father_name, cu.husband_name, 
              cu.address, cu.occupation, cu.cell_number
@@ -583,7 +650,7 @@ router.patch('/:id/undo', async (req, res) => {
       SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
              l.item_weight, l.item_description, l.item_type, l.loan_date, 
              l.interest_rate, l.status, l.created_at,
-             l.released_date,
+             l.released_date, l.remarks,
              c.name as company_name, c.type as company_type,
              cu.name as customer_name, cu.father_name, cu.husband_name, 
              cu.address, cu.occupation, cu.cell_number

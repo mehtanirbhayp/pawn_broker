@@ -1241,6 +1241,13 @@
                                 </label>
                                 <textarea id="itemDescription" rows="2" required placeholder="Describe the item being pledged (e.g., gold chain, silver coins, etc.)" autocomplete="new-password"></textarea>
                             </div>
+                            <div class="form-group">
+                                <label for="remarks">
+                                    Remarks
+                                </label>
+                                <textarea id="remarks" rows="2" placeholder="Any additional notes or remarks about this loan (optional)" autocomplete="off"></textarea>
+                                <div class="form-hint">Optional notes or remarks about this loan</div>
+                            </div>
                         </div>
                     </div>
 
@@ -1617,6 +1624,13 @@
                                     <span class="required-marker">*</span>
                                 </label>
                                 <textarea id="editItemDescription" rows="2" required placeholder="Describe the item being pledged" autocomplete="new-password"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="editRemarks">
+                                    Remarks
+                                </label>
+                                <textarea id="editRemarks" rows="2" placeholder="Any additional notes or remarks about this loan (optional)" autocomplete="off"></textarea>
+                                <div class="form-hint">Optional notes or remarks about this loan</div>
                             </div>
                         </div>
                     </div>
@@ -3190,7 +3204,8 @@
                 itemDescription: document.getElementById('itemDescription').value,
                 itemType: document.getElementById('itemType').value,
                 loanDate: document.getElementById('loanDate').value,
-                aadharNumber: document.getElementById('aadharNumber').value
+                aadharNumber: document.getElementById('aadharNumber').value,
+                remarks: document.getElementById('remarks').value
             };
             
             console.log('Form data:', formData);
@@ -3375,30 +3390,126 @@
         }
         
         async function deliverLoan(loanId) {
-            if (confirm('Mark this loan as released?')) {
-                try {
-                    const response = await authFetch(`/api/loans/${loanId}/deliver`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ releasedDate: new Date().toISOString().split('T')[0] })
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        showAlert('Loan marked as released', 'success');
-                        loadLoans();
-                        // Refresh loan details in modal if it's open
-                        await refreshLoanDetailsIfOpen();
-                    } else {
-                        showAlert(data.error || 'Error releasing loan', 'error');
-                    }
-                } catch (error) {
-                    console.error('Error releasing loan:', error);
-                    showAlert('Error releasing loan', 'error');
+            // Show date picker dialog
+            const today = new Date().toISOString().split('T')[0];
+            const releaseDate = prompt('Enter release date (YYYY-MM-DD):', today);
+            
+            if (releaseDate === null) {
+                return; // User cancelled
+            }
+            
+            // Validate date format
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!dateRegex.test(releaseDate)) {
+                showAlert('Invalid date format. Please use YYYY-MM-DD', 'error');
+                return;
+            }
+            
+            // Validate date is valid
+            const dateObj = new Date(releaseDate);
+            if (isNaN(dateObj.getTime())) {
+                showAlert('Invalid date. Please enter a valid date', 'error');
+                return;
+            }
+            
+            try {
+                const response = await authFetch(`/api/loans/${loanId}/deliver`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ releasedDate: releaseDate })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('Loan marked as released', 'success');
+                    loadLoans();
+                    // Refresh loan details in modal if it's open
+                    await refreshLoanDetailsIfOpen();
+                } else {
+                    showAlert(data.error || 'Error releasing loan', 'error');
                 }
+            } catch (error) {
+                console.error('Error releasing loan:', error);
+                showAlert('Error releasing loan', 'error');
+            }
+        }
+        
+        async function editReleaseDate(loanId) {
+            // Get current release date from the display
+            const displayElement = document.getElementById(`released-date-display-${loanId}`);
+            if (!displayElement) {
+                showAlert('Could not find release date to edit', 'error');
+                return;
+            }
+            
+            // Get current date value - try to parse from display or fetch from API
+            let currentDate = '';
+            try {
+                const response = await authFetch(`/api/loans/${loanId}`);
+                const data = await response.json();
+                if (data.success && data.data) {
+                    const loan = data.data;
+                    const dateValue = loan.released_date || loan.releasedDate || loan.delivered_date || loan.deliveredDate;
+                    if (dateValue) {
+                        // Convert to YYYY-MM-DD format
+                        const date = new Date(dateValue);
+                        currentDate = date.toISOString().split('T')[0];
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching loan:', error);
+            }
+            
+            // If we couldn't get the date, use today as default
+            if (!currentDate) {
+                currentDate = new Date().toISOString().split('T')[0];
+            }
+            
+            const newReleaseDate = prompt('Enter new release date (YYYY-MM-DD):', currentDate);
+            
+            if (newReleaseDate === null) {
+                return; // User cancelled
+            }
+            
+            // Validate date format
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!dateRegex.test(newReleaseDate)) {
+                showAlert('Invalid date format. Please use YYYY-MM-DD', 'error');
+                return;
+            }
+            
+            // Validate date is valid
+            const dateObj = new Date(newReleaseDate);
+            if (isNaN(dateObj.getTime())) {
+                showAlert('Invalid date. Please enter a valid date', 'error');
+                return;
+            }
+            
+            try {
+                const response = await authFetch(`/api/loans/${loanId}/release-date`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ releasedDate: newReleaseDate })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('Release date updated successfully', 'success');
+                    loadLoans();
+                    // Refresh loan details in modal if it's open
+                    await refreshLoanDetailsIfOpen();
+                } else {
+                    showAlert(data.error || 'Error updating release date', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating release date:', error);
+                showAlert('Error updating release date', 'error');
             }
         }
         
@@ -4230,6 +4341,8 @@
                 
                 if (data.success) {
                     const loan = data.data;
+                    console.log('Loan data received:', loan); // Debug log
+                    console.log('Remarks value:', loan.remarks); // Debug log
                     content.innerHTML = generateLoanDetailsHTML(loan);
                     buttons.innerHTML = generateLoanButtonsHTML(loan);
                     footer.style.display = 'block';
@@ -4303,7 +4416,12 @@
                         </div>
                         <div class="detail-item">
                             <strong>Released Date:</strong>
-                            <span>${(loan.released_date || loan.releasedDate || loan.delivered_date || loan.deliveredDate) ? formatDate(loan.released_date || loan.releasedDate || loan.delivered_date || loan.deliveredDate) : 'N/A'}</span>
+                            ${(loan.status === 'released' || loan.status === 'delivered') && (loan.released_date || loan.releasedDate || loan.delivered_date || loan.deliveredDate) ? `
+                                <span id="released-date-display-${loan.id}">${formatDate(loan.released_date || loan.releasedDate || loan.delivered_date || loan.deliveredDate)}</span>
+                                <button onclick="editReleaseDate(${loan.id})" class="btn btn-sm btn-secondary" style="margin-left: 10px; padding: 2px 8px; font-size: 12px;">Edit</button>
+                            ` : `
+                                <span>${(loan.released_date || loan.releasedDate || loan.delivered_date || loan.deliveredDate) ? formatDate(loan.released_date || loan.releasedDate || loan.delivered_date || loan.deliveredDate) : 'N/A'}</span>
+                            `}
                         </div>
                     </div>
                     
@@ -4324,6 +4442,10 @@
                         <div class="detail-item">
                             <strong>Item Description:</strong>
                             <span>${loan.item_description}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Remarks:</strong>
+                            <span>${loan.remarks && loan.remarks.trim() ? loan.remarks : 'N/A'}</span>
                         </div>
                     </div>
                     
@@ -4583,6 +4705,7 @@
                 document.getElementById('editLoanAmount').value = loan.loan_amount || loan.loanAmount || '';
                 document.getElementById('editItemWeight').value = loan.item_weight || loan.itemWeight || '';
                 document.getElementById('editItemDescription').value = loan.item_description || loan.itemDescription || '';
+                document.getElementById('editRemarks').value = loan.remarks || '';
                 
                 // Format date
                 if (loan.loan_date || loan.loanDate) {
@@ -4642,7 +4765,8 @@
                         itemDescription: document.getElementById('editItemDescription').value.trim(),
                         itemType: document.getElementById('editItemType').value,
                         loanDate: document.getElementById('editLoanDate').value,
-                        aadharNumber: document.getElementById('editAadharNumber').value.trim()
+                        aadharNumber: document.getElementById('editAadharNumber').value.trim(),
+                        remarks: document.getElementById('editRemarks').value.trim()
                     };
                     
                     // Validate

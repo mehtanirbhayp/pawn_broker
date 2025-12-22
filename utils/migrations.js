@@ -275,6 +275,37 @@ function addNoticeColumns(db, callback) {
   });
 }
 
+function addRemarksColumn(db, callback) {
+  // Get all column names
+  db.all("PRAGMA table_info(loans)", (err, columns) => {
+    if (err) {
+      return callback(err);
+    }
+
+    const columnNames = columns.map(col => col.name);
+    const hasRemarks = columnNames.includes('remarks');
+
+    if (hasRemarks) {
+      // Column already exists, nothing to do
+      return callback();
+    }
+
+    // Add remarks column
+    db.run('ALTER TABLE loans ADD COLUMN remarks TEXT', (err) => {
+      if (err) {
+        // Ignore error if column already exists
+        if (err.message && err.message.includes('duplicate column name')) {
+          // Column already exists, continue
+          return callback();
+        } else {
+          return callback(err);
+        }
+      }
+      callback();
+    });
+  });
+}
+
 function ensureCompaniesTable(db, callback) {
   db.run(
     `
@@ -366,28 +397,34 @@ function runMigrations() {
                 return finish(noticeErr);
               }
 
-              db.get(
-                "SELECT name, sql FROM sqlite_master WHERE type = 'table' AND name = 'loans'",
-                (err, row) => {
-                  if (err) {
-                    return finish(err);
-                  }
-
-                  if (!row) {
-                    return finish();
-                  }
-
-                  const tableSql = row.sql || '';
-                  const hasUniqueSerial =
-                    /serial_number\s+TEXT\s+NOT\s+NULL\s+UNIQUE/i.test(tableSql);
-
-                  if (hasUniqueSerial) {
-                    migrateSerialNumbers(db, finish);
-                  } else {
-                    ensureCompositeIndex(db, finish);
-                  }
+              addRemarksColumn(db, (remarksErr) => {
+                if (remarksErr) {
+                  return finish(remarksErr);
                 }
-              );
+
+                db.get(
+                  "SELECT name, sql FROM sqlite_master WHERE type = 'table' AND name = 'loans'",
+                  (err, row) => {
+                    if (err) {
+                      return finish(err);
+                    }
+
+                    if (!row) {
+                      return finish();
+                    }
+
+                    const tableSql = row.sql || '';
+                    const hasUniqueSerial =
+                      /serial_number\s+TEXT\s+NOT\s+NULL\s+UNIQUE/i.test(tableSql);
+
+                    if (hasUniqueSerial) {
+                      migrateSerialNumbers(db, finish);
+                    } else {
+                      ensureCompositeIndex(db, finish);
+                    }
+                  }
+                );
+              });
             });
           });
         });
