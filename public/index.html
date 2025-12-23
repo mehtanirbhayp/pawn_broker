@@ -1070,6 +1070,11 @@
                     <span class="label">Backup & Restore</span>
                     <span class="arrow">→</span>
                 </div>
+                <div class="settings-menu-item" onclick="openValidityCheck()">
+                    <span class="icon">⏰</span>
+                    <span class="label">Validity Date Check</span>
+                    <span class="arrow">→</span>
+                </div>
                 <!-- Add more menu items here in the future -->
             </div>
             <div id="settingsContent" class="settings-content">
@@ -1211,7 +1216,7 @@
                             <h3>Loan Details</h3>
                         </div>
                         <div class="form-section-content">
-                            <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
+                            <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
                                 <div class="form-group">
                                     <label for="loanAmount">
                                         Loan Amount (₹)
@@ -1233,6 +1238,11 @@
                                     <input type="date" id="loanDate" autocomplete="off">
                                     <div class="form-hint">Date when the loan is issued</div>
                                 </div>
+                                <div class="form-group">
+                                    <label for="timeLimitDate">Time Limit Date</label>
+                                    <input type="date" id="timeLimitDate" autocomplete="off">
+                                    <div class="form-hint">Optional deadline for the loan</div>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="itemDescription">
@@ -1240,13 +1250,6 @@
                                     <span class="required-marker">*</span>
                                 </label>
                                 <textarea id="itemDescription" rows="2" required placeholder="Describe the item being pledged (e.g., gold chain, silver coins, etc.)" autocomplete="new-password"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="remarks">
-                                    Remarks
-                                </label>
-                                <textarea id="remarks" rows="2" placeholder="Any additional notes or remarks about this loan (optional)" autocomplete="off"></textarea>
-                                <div class="form-hint">Optional notes or remarks about this loan</div>
                             </div>
                         </div>
                     </div>
@@ -1399,6 +1402,36 @@
                 <button onclick="exportMasterSheet()" class="btn btn-success">Export to Excel</button>
                 
                 <div id="masterSheetResult"></div>
+            </div>
+            
+            <!-- Validity Date Check Section -->
+            <div id="validity-check" class="section">
+                <h2>⏰ Validity Date Check</h2>
+                <p style="color: #6c757d; margin-bottom: 20px;">
+                    View loans with validity dates that are expired or near expiry (within 7 days)
+                </p>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="vcCompany">Filter by Company</label>
+                        <select id="vcCompany">
+                            <option value="">All Companies</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="vcDays">Days Threshold</label>
+                        <select id="vcDays">
+                            <option value="7">Within 7 days</option>
+                            <option value="3">Within 3 days</option>
+                            <option value="0">Expired only</option>
+                            <option value="30">Within 30 days</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button onclick="loadValidityCheck()" class="btn">Check Validity Dates</button>
+                
+                <div id="validityCheckResult" style="margin-top: 20px;"></div>
             </div>
             
             <!-- Data Migration Section -->
@@ -1598,7 +1631,7 @@
                             <h3>Loan Details</h3>
                         </div>
                         <div class="form-section-content">
-                            <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
+                            <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
                                 <div class="form-group">
                                     <label for="editLoanAmount">
                                         Loan Amount (₹)
@@ -1617,6 +1650,11 @@
                                     <label for="editLoanDate">Loan Date</label>
                                     <input type="date" id="editLoanDate" autocomplete="off">
                                 </div>
+                                <div class="form-group">
+                                    <label for="editTimeLimitDate">Time Limit Date</label>
+                                    <input type="date" id="editTimeLimitDate" autocomplete="off">
+                                    <div class="form-hint">Optional deadline for the loan</div>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="editItemDescription">
@@ -1624,13 +1662,6 @@
                                     <span class="required-marker">*</span>
                                 </label>
                                 <textarea id="editItemDescription" rows="2" required placeholder="Describe the item being pledged" autocomplete="new-password"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="editRemarks">
-                                    Remarks
-                                </label>
-                                <textarea id="editRemarks" rows="2" placeholder="Any additional notes or remarks about this loan (optional)" autocomplete="off"></textarea>
-                                <div class="form-hint">Optional notes or remarks about this loan</div>
                             </div>
                         </div>
                     </div>
@@ -1692,6 +1723,53 @@
                 'defaulted': 'Unredeemed'  // Legacy support
             };
             return statusMap[statusLower] || status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+        }
+
+        // Helper function to check expiry status
+        function checkExpiryStatus(timeLimitDate) {
+            if (!timeLimitDate) return { status: 'none', days: null, message: '' };
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const expiryDate = new Date(timeLimitDate);
+            expiryDate.setHours(0, 0, 0, 0);
+            
+            if (isNaN(expiryDate.getTime())) return { status: 'none', days: null, message: '' };
+            
+            const diffTime = expiryDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 0) {
+                return { 
+                    status: 'expired', 
+                    days: Math.abs(diffDays), 
+                    message: `Expired ${Math.abs(diffDays)} day${Math.abs(diffDays) !== 1 ? 's' : ''} ago`
+                };
+            } else if (diffDays === 0) {
+                return { 
+                    status: 'expired', 
+                    days: 0, 
+                    message: 'Expires today'
+                };
+            } else if (diffDays <= 3) {
+                return { 
+                    status: 'near-expiry', 
+                    days: diffDays, 
+                    message: `Expires in ${diffDays} day${diffDays !== 1 ? 's' : ''}`
+                };
+            } else if (diffDays <= 7) {
+                return { 
+                    status: 'warning', 
+                    days: diffDays, 
+                    message: `Expires in ${diffDays} days`
+                };
+            } else {
+                return { 
+                    status: 'safe', 
+                    days: diffDays, 
+                    message: `Expires in ${diffDays} days`
+                };
+            }
         }
 
         // Pagination Component Function
@@ -1831,6 +1909,19 @@
             // Show the data-migration section
             showSection('data-migration');
         }
+
+        function openValidityCheck() {
+            // Close the settings menu
+            const menu = document.getElementById('settingsMenu');
+            const hamburger = document.getElementById('hamburgerMenu');
+            if (menu) menu.classList.remove('active');
+            if (hamburger) hamburger.classList.remove('active');
+            showSettingsMenu(); // Reset menu state
+            
+            // Show the validity-check section
+            showSection('validity-check');
+            loadValidityCheck();
+        }
         
         // Column Settings Management - Advanced Customization
         // All available loan data fields
@@ -1867,6 +1958,11 @@
             pin_code: { label: 'Pin Code', getValue: (loan) => loan.pin_code || 'N/A' },
             aadhar_number: { label: 'Aadhar Number', getValue: (loan) => loan.aadhar_number || 'N/A' },
             released_date: { label: 'Released Date', getValue: (loan) => loan.released_date ? formatDate(loan.released_date) : 'N/A' },
+            time_limit_date: { label: 'Validity Date', getValue: (loan) => {
+                const timeLimitDate = loan.time_limit_date || loan.timeLimitDate;
+                if (!timeLimitDate) return 'N/A';
+                return formatDate(timeLimitDate);
+            }},
             id: { label: 'Loan ID', getValue: (loan) => loan.id }
         };
         
@@ -2857,7 +2953,7 @@
             event.target.classList.add('active');
             
             // Ensure companies are loaded and dropdowns are populated when showing sections that need them
-            if (['new-loan', 'loans', 'master-sheet', 'mailing-label'].includes(sectionId)) {
+            if (['new-loan', 'loans', 'master-sheet', 'mailing-label', 'validity-check'].includes(sectionId)) {
                 if (companies && companies.length > 0) {
                     // Companies already loaded, just populate dropdowns
                     populateCompanyDropdowns();
@@ -2880,6 +2976,8 @@
                 setTimeout(disableAutocomplete, 100);
                 setTimeout(disableAutocomplete, 300);
                 setTimeout(disableAutocomplete, 500);
+            } else if (sectionId === 'validity-check') {
+                loadValidityCheck();
             }
         }
         
@@ -2894,7 +2992,8 @@
                 { id: 'company', placeholder: 'Select Company' },
                 { id: 'filterCompany', placeholder: 'All Companies' },
                 { id: 'msCompany', placeholder: 'Select Company' },
-                { id: 'mailingLabelCompany', placeholder: 'Select Company' }
+                { id: 'mailingLabelCompany', placeholder: 'Select Company' },
+                { id: 'vcCompany', placeholder: 'All Companies' }
             ];
             
             let allPopulated = true;
@@ -3210,8 +3309,8 @@
                 itemDescription: document.getElementById('itemDescription').value,
                 itemType: document.getElementById('itemType').value,
                 loanDate: document.getElementById('loanDate').value,
-                aadharNumber: document.getElementById('aadharNumber').value,
-                remarks: document.getElementById('remarks').value
+                timeLimitDate: document.getElementById('timeLimitDate').value,
+                aadharNumber: document.getElementById('aadharNumber').value
             };
             
             console.log('Form data:', formData);
@@ -4283,6 +4382,144 @@
                 showAlert('Error exporting master sheet', 'error');
             }
         }
+
+        async function loadValidityCheck() {
+            try {
+                const resultDiv = document.getElementById('validityCheckResult');
+                const companyId = document.getElementById('vcCompany').value;
+                const daysThreshold = parseInt(document.getElementById('vcDays').value);
+                
+                resultDiv.innerHTML = '<div class="loading">Loading loans...</div>';
+                
+                // Load all loans
+                let url = '/api/loans?limit=10000';
+                if (companyId) url += `&companyId=${companyId}`;
+                
+                const response = await authFetch(url);
+                const data = await response.json();
+                
+                if (!data.success || !data.data || !data.data.loans) {
+                    resultDiv.innerHTML = '<p style="color: #f44336;">Error loading loans</p>';
+                    return;
+                }
+                
+                const allLoans = data.data.loans;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                // Filter loans with validity dates
+                const loansWithValidity = allLoans.filter(loan => {
+                    const timeLimitDate = loan.time_limit_date || loan.timeLimitDate;
+                    if (!timeLimitDate) return false;
+                    if (loan.status !== 'active') return false; // Only show active loans
+                    
+                    const expiryDate = new Date(timeLimitDate);
+                    expiryDate.setHours(0, 0, 0, 0);
+                    if (isNaN(expiryDate.getTime())) return false;
+                    
+                    const diffTime = expiryDate - today;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if (daysThreshold === 0) {
+                        return diffDays < 0; // Expired only
+                    } else {
+                        return diffDays <= daysThreshold && diffDays >= -30; // Within threshold (and not too old)
+                    }
+                });
+                
+                // Sort by expiry status (expired first, then by days remaining)
+                loansWithValidity.sort((a, b) => {
+                    const aDate = new Date(a.time_limit_date || a.timeLimitDate);
+                    const bDate = new Date(b.time_limit_date || b.timeLimitDate);
+                    aDate.setHours(0, 0, 0, 0);
+                    bDate.setHours(0, 0, 0, 0);
+                    
+                    const aDiff = Math.ceil((aDate - today) / (1000 * 60 * 60 * 24));
+                    const bDiff = Math.ceil((bDate - today) / (1000 * 60 * 60 * 24));
+                    
+                    // Expired loans first
+                    if (aDiff < 0 && bDiff >= 0) return -1;
+                    if (aDiff >= 0 && bDiff < 0) return 1;
+                    
+                    // Then sort by days remaining (ascending)
+                    return aDiff - bDiff;
+                });
+                
+                if (loansWithValidity.length === 0) {
+                    resultDiv.innerHTML = `
+                        <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; border: 2px solid #4caf50;">
+                            <h3 style="color: #2e7d32; margin-bottom: 10px;">✅ No Loans Found</h3>
+                            <p style="color: #388e3c;">No active loans found with validity dates within the selected threshold.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Build table
+                let tableHTML = `
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 2px solid #ffc107;">
+                        <h3 style="color: #856404; margin: 0;">⚠️ Found ${loansWithValidity.length} loan${loansWithValidity.length !== 1 ? 's' : ''} with validity dates within threshold</h3>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Serial No</th>
+                                <th>Customer</th>
+                                <th>Company</th>
+                                <th>Amount</th>
+                                <th>Validity Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                loansWithValidity.forEach(loan => {
+                    const timeLimitDate = loan.time_limit_date || loan.timeLimitDate;
+                    const expiryDate = new Date(timeLimitDate);
+                    expiryDate.setHours(0, 0, 0, 0);
+                    const diffTime = expiryDate - today;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    const expiryInfo = checkExpiryStatus(timeLimitDate);
+                    const rowClass = expiryInfo.status === 'expired' ? 'style="background-color: #ffebee;"' : 
+                                   expiryInfo.status === 'near-expiry' ? 'style="background-color: #fff3e0;"' : 
+                                   expiryInfo.status === 'warning' ? 'style="background-color: #fffde7;"' : '';
+                    
+                    const statusBadge = expiryInfo.status === 'expired' ? 
+                        `<span style="background: #f44336; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">${expiryInfo.message}</span>` :
+                        expiryInfo.status === 'near-expiry' ?
+                        `<span style="background: #ff9800; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">${expiryInfo.message}</span>` :
+                        `<span style="background: #ffc107; color: #856404; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">${expiryInfo.message}</span>`;
+                    
+                    tableHTML += `
+                        <tr ${rowClass}>
+                            <td>${loan.serial_number || loan.serialNumber || 'N/A'}</td>
+                            <td>${loan.customer_name}</td>
+                            <td>${loan.company_name}</td>
+                            <td>₹${parseFloat(loan.loan_amount).toFixed(2)}</td>
+                            <td>${formatDate(timeLimitDate)} ${statusBadge}</td>
+                            <td><span class="status ${loan.status}">${formatStatus(loan.status)}</span></td>
+                            <td><button onclick="viewLoanDetails(${loan.id})" class="btn" style="padding: 5px 10px; font-size: 12px;">View Details</button></td>
+                        </tr>
+                    `;
+                });
+                
+                tableHTML += `
+                        </tbody>
+                    </table>
+                `;
+                
+                resultDiv.innerHTML = tableHTML;
+                
+            } catch (error) {
+                console.error('Error loading validity check:', error);
+                document.getElementById('validityCheckResult').innerHTML = 
+                    '<p style="color: #f44336;">Error loading validity check data</p>';
+                showAlert('Error loading validity check', 'error');
+            }
+        }
         
         function showAlert(message, type) {
             const alertDiv = document.createElement('div');
@@ -4348,7 +4585,6 @@
                 if (data.success) {
                     const loan = data.data;
                     console.log('Loan data received:', loan); // Debug log
-                    console.log('Remarks value:', loan.remarks); // Debug log
                     content.innerHTML = generateLoanDetailsHTML(loan);
                     buttons.innerHTML = generateLoanButtonsHTML(loan);
                     footer.style.display = 'block';
@@ -4416,6 +4652,12 @@
                             <strong>Loan Date:</strong>
                             <span>${formatDate(loan.loan_date)}</span>
                         </div>
+                        ${loan.time_limit_date || loan.timeLimitDate ? `
+                        <div class="detail-item">
+                            <strong>Time Limit Date:</strong>
+                            <span>${formatDate(loan.time_limit_date || loan.timeLimitDate)}</span>
+                        </div>
+                        ` : ''}
                         <div class="detail-item">
                             <strong>Status:</strong>
                             <span class="status ${loan.status === 'delivered' ? 'released' : loan.status === 'defaulted' ? 'unredeemed' : loan.status}">${formatStatus(loan.status)}</span>
@@ -4448,10 +4690,6 @@
                         <div class="detail-item">
                             <strong>Item Description:</strong>
                             <span>${loan.item_description}</span>
-                        </div>
-                        <div class="detail-item">
-                            <strong>Remarks:</strong>
-                            <span>${loan.remarks && loan.remarks.trim() ? loan.remarks : 'N/A'}</span>
                         </div>
                     </div>
                     
@@ -4711,7 +4949,6 @@
                 document.getElementById('editLoanAmount').value = loan.loan_amount || loan.loanAmount || '';
                 document.getElementById('editItemWeight').value = loan.item_weight || loan.itemWeight || '';
                 document.getElementById('editItemDescription').value = loan.item_description || loan.itemDescription || '';
-                document.getElementById('editRemarks').value = loan.remarks || '';
                 
                 // Format date
                 if (loan.loan_date || loan.loanDate) {
@@ -4719,6 +4956,16 @@
                     if (!isNaN(date.getTime())) {
                         document.getElementById('editLoanDate').value = date.toISOString().split('T')[0];
                     }
+                }
+                
+                // Format time limit date
+                if (loan.time_limit_date || loan.timeLimitDate) {
+                    const timeLimitDate = new Date(loan.time_limit_date || loan.timeLimitDate);
+                    if (!isNaN(timeLimitDate.getTime())) {
+                        document.getElementById('editTimeLimitDate').value = timeLimitDate.toISOString().split('T')[0];
+                    }
+                } else {
+                    document.getElementById('editTimeLimitDate').value = '';
                 }
                 
                 // Show modal
@@ -4771,8 +5018,8 @@
                         itemDescription: document.getElementById('editItemDescription').value.trim(),
                         itemType: document.getElementById('editItemType').value,
                         loanDate: document.getElementById('editLoanDate').value,
-                        aadharNumber: document.getElementById('editAadharNumber').value.trim(),
-                        remarks: document.getElementById('editRemarks').value.trim()
+                        timeLimitDate: document.getElementById('editTimeLimitDate').value,
+                        aadharNumber: document.getElementById('editAadharNumber').value.trim()
                     };
                     
                     // Validate

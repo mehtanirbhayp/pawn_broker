@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
       itemType,
       loanDate,
       interestRate = 2.0,
-      remarks
+      timeLimitDate
     } = req.body;
 
     // Validate required fields
@@ -105,11 +105,12 @@ router.post('/', async (req, res) => {
 
     // Create loan
     const loanDateFormatted = loanDate ? moment(loanDate).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
+    const timeLimitDateFormatted = timeLimitDate ? moment(timeLimitDate).format('YYYY-MM-DD') : null;
     const loanResult = await db.run(
       `INSERT INTO loans (serial_number, company_id, customer_id, loan_amount, item_weight, 
-       item_description, item_type, loan_date, interest_rate, remarks) 
+       item_description, item_type, loan_date, interest_rate, time_limit_date) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [normalizedSerial, companyId, customerId, loanAmount, itemWeight, itemDescription, itemType, loanDateFormatted, interestRate, remarks || null]
+      [normalizedSerial, companyId, customerId, loanAmount, itemWeight, itemDescription, itemType, loanDateFormatted, interestRate, timeLimitDateFormatted]
     );
 
     await db.close();
@@ -168,7 +169,7 @@ router.get('/', async (req, res) => {
       SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
              l.item_weight, l.item_description, l.item_type, l.loan_date, 
              l.interest_rate, l.status, l.created_at,
-             l.released_date, l.remarks,
+             l.released_date, l.time_limit_date,
              c.name as company_name, c.type as company_type,
              cu.name as customer_name, cu.father_name, cu.husband_name, 
              cu.address, cu.occupation, cu.cell_number
@@ -221,7 +222,7 @@ router.get('/:id', async (req, res) => {
       SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
              l.item_weight, l.item_description, l.item_type, l.loan_date, 
              l.interest_rate, l.status, l.created_at,
-             l.released_date, l.remarks,
+             l.released_date, l.time_limit_date,
              l.notice1_date, l.notice2_date, l.notice3_date, l.notice4_date,
              l.notice1_comment, l.notice2_comment, l.notice3_comment, l.notice4_comment,
              c.name as company_name, c.type as company_type,
@@ -277,7 +278,7 @@ router.put('/:id', async (req, res) => {
       itemType,
       loanDate,
       aadharNumber,
-      remarks
+      timeLimitDate
     } = req.body;
 
     // Validate required fields
@@ -373,6 +374,7 @@ router.put('/:id', async (req, res) => {
 
     // Update loan
     const loanDateFormatted = loanDate ? moment(loanDate).format('YYYY-MM-DD') : existingLoan.loan_date;
+    const timeLimitDateFormatted = timeLimitDate ? moment(timeLimitDate).format('YYYY-MM-DD') : (timeLimitDate === '' ? null : existingLoan.time_limit_date);
     await db.run(
       `UPDATE loans SET 
        serial_number = ?, 
@@ -383,9 +385,9 @@ router.put('/:id', async (req, res) => {
        item_description = ?, 
        item_type = ?, 
        loan_date = ?,
-       remarks = ?
+       time_limit_date = ?
        WHERE id = ?`,
-      [normalizedSerial, companyId, customerId, loanAmount, itemWeight, itemDescription, itemType, loanDateFormatted, remarks || null, id]
+      [normalizedSerial, companyId, customerId, loanAmount, itemWeight, itemDescription, itemType, loanDateFormatted, timeLimitDateFormatted, id]
     );
 
     // Fetch the updated loan to return it
@@ -393,7 +395,7 @@ router.put('/:id', async (req, res) => {
       SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
              l.item_weight, l.item_description, l.item_type, l.loan_date, 
              l.interest_rate, l.status, l.created_at,
-             l.released_date, l.remarks,
+             l.released_date, l.time_limit_date,
              c.name as company_name, c.type as company_type,
              cu.name as customer_name, cu.father_name, cu.husband_name, 
              cu.address, cu.occupation, cu.cell_number
@@ -450,7 +452,7 @@ router.patch('/:id/deliver', async (req, res) => {
       SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
              l.item_weight, l.item_description, l.item_type, l.loan_date, 
              l.interest_rate, l.status, l.created_at,
-             l.released_date, l.remarks,
+             l.released_date, l.time_limit_date,
              c.name as company_name, c.type as company_type,
              cu.name as customer_name, cu.father_name, cu.husband_name, 
              cu.address, cu.occupation, cu.cell_number
@@ -514,7 +516,7 @@ router.patch('/:id/release-date', async (req, res) => {
       SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
              l.item_weight, l.item_description, l.item_type, l.loan_date, 
              l.interest_rate, l.status, l.created_at,
-             l.released_date, l.remarks,
+             l.released_date, l.time_limit_date,
              c.name as company_name, c.type as company_type,
              cu.name as customer_name, cu.father_name, cu.husband_name, 
              cu.address, cu.occupation, cu.cell_number
@@ -567,7 +569,7 @@ router.patch('/:id/default', async (req, res) => {
       SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
              l.item_weight, l.item_description, l.item_type, l.loan_date, 
              l.interest_rate, l.status, l.created_at,
-             l.released_date, l.remarks,
+             l.released_date, l.time_limit_date,
              c.name as company_name, c.type as company_type,
              cu.name as customer_name, cu.father_name, cu.husband_name, 
              cu.address, cu.occupation, cu.cell_number
@@ -650,7 +652,7 @@ router.patch('/:id/undo', async (req, res) => {
       SELECT l.id, l.serial_number, l.company_id, l.customer_id, l.loan_amount, 
              l.item_weight, l.item_description, l.item_type, l.loan_date, 
              l.interest_rate, l.status, l.created_at,
-             l.released_date, l.remarks,
+             l.released_date, l.time_limit_date,
              c.name as company_name, c.type as company_type,
              cu.name as customer_name, cu.father_name, cu.husband_name, 
              cu.address, cu.occupation, cu.cell_number

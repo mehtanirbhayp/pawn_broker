@@ -306,6 +306,37 @@ function addRemarksColumn(db, callback) {
   });
 }
 
+function addTimeLimitDateColumn(db, callback) {
+  // Get all column names
+  db.all("PRAGMA table_info(loans)", (err, columns) => {
+    if (err) {
+      return callback(err);
+    }
+
+    const columnNames = columns.map(col => col.name);
+    const hasTimeLimitDate = columnNames.includes('time_limit_date');
+
+    if (hasTimeLimitDate) {
+      // Column already exists, nothing to do
+      return callback();
+    }
+
+    // Add time_limit_date column
+    db.run('ALTER TABLE loans ADD COLUMN time_limit_date DATE', (err) => {
+      if (err) {
+        // Ignore error if column already exists
+        if (err.message && err.message.includes('duplicate column name')) {
+          // Column already exists, continue
+          return callback();
+        } else {
+          return callback(err);
+        }
+      }
+      callback();
+    });
+  });
+}
+
 function ensureCompaniesTable(db, callback) {
   db.run(
     `
@@ -402,12 +433,17 @@ function runMigrations() {
                   return finish(remarksErr);
                 }
 
-                db.get(
-                  "SELECT name, sql FROM sqlite_master WHERE type = 'table' AND name = 'loans'",
-                  (err, row) => {
-                    if (err) {
-                      return finish(err);
-                    }
+                addTimeLimitDateColumn(db, (timeLimitErr) => {
+                  if (timeLimitErr) {
+                    return finish(timeLimitErr);
+                  }
+
+                  db.get(
+                    "SELECT name, sql FROM sqlite_master WHERE type = 'table' AND name = 'loans'",
+                    (err, row) => {
+                      if (err) {
+                        return finish(err);
+                      }
 
                     if (!row) {
                       return finish();
@@ -424,6 +460,7 @@ function runMigrations() {
                     }
                   }
                 );
+                });
               });
             });
           });
