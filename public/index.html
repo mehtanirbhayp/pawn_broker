@@ -13,23 +13,24 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f1f5f9;
             min-height: 100vh;
             padding: 20px;
+            color: #0f172a;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
             overflow: hidden;
         }
         
         .header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            color: white;
+            background: #0f172a;
+            color: #f8fafc;
             padding: 30px;
             text-align: center;
             position: relative;
@@ -38,27 +39,30 @@
         .header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
-            font-weight: 300;
+            font-weight: 600;
         }
         
         .header p {
             font-size: 1.1em;
             opacity: 0.9;
+            color: #cbd5e1;
         }
         
         .header .datetime {
             font-size: 1em;
             margin-top: 15px;
             padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 6px;
             display: inline-block;
             font-weight: 500;
             letter-spacing: 0.5px;
+            color: #f8fafc;
         }
         
         .nav {
-            background: #34495e;
+            background: #1e293b;
             padding: 0;
         }
         
@@ -75,15 +79,16 @@
         .nav a {
             display: block;
             padding: 15px 20px;
-            color: white;
+            color: #e2e8f0;
             text-decoration: none;
             text-align: center;
-            transition: background 0.3s;
-            border-right: 1px solid #2c3e50;
+            transition: background 0.2s, color 0.2s;
+            border-right: 1px solid #334155;
         }
         
         .nav a:hover, .nav a.active {
-            background: #2c3e50;
+            background: #0f172a;
+            color: #ffffff;
         }
         
         .nav li:last-child a {
@@ -93,6 +98,7 @@
         .content {
             padding: 30px;
             min-height: 500px;
+            background: #ffffff;
         }
         
         .section {
@@ -111,21 +117,24 @@
             display: block;
             margin-bottom: 5px;
             font-weight: 600;
-            color: #2c3e50;
+            color: #0f172a;
         }
         
         .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
             font-size: 14px;
-            transition: border-color 0.3s;
+            transition: border-color 0.2s;
+            background: #ffffff;
+            color: #0f172a;
         }
         
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #1d4ed8;
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
         }
         
         .form-row {
@@ -135,84 +144,110 @@
         }
         
         .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: #1d4ed8;
+            color: #ffffff;
             padding: 12px 30px;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 16px;
             font-weight: 600;
-            transition: transform 0.2s;
+            transition: background 0.2s, transform 0.2s;
         }
         
         .btn:hover {
-            transform: translateY(-2px);
+            background: #1e40af;
+            transform: translateY(-1px);
         }
         
         .btn-secondary {
-            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            background: #475569;
+            color: #ffffff;
+        }
+        
+        .btn-secondary:hover {
+            background: #334155;
         }
         
         .btn-success {
-            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            background: #059669;
+            color: #ffffff;
+        }
+        
+        .btn-success:hover {
+            background: #047857;
         }
         
         .btn-danger {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            background: #dc2626;
+            color: #ffffff;
+        }
+        
+        .btn-danger:hover {
+            background: #b91c1c;
         }
         
         .btn-warning {
-            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            background: #d97706;
+            color: #ffffff;
+        }
+        
+        .btn-warning:hover {
+            background: #b45309;
         }
         
         .table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            background: white;
-            border-radius: 8px;
+            background: #ffffff;
+            border-radius: 6px;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
         }
         
         .table th, .table td {
-            padding: 12px;
+            padding: 12px 16px;
             text-align: left;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e2e8f0;
+            color: #0f172a;
         }
         
         .table th {
-            background: #f8f9fa;
+            background: #f8fafc;
             font-weight: 600;
-            color: #2c3e50;
+            color: #0f172a;
+            font-size: 0.8125rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
         }
         
         .table tr:hover {
-            background: #f8f9fa;
+            background: #f8fafc;
         }
         
         .status {
-            padding: 4px 8px;
+            padding: 4px 10px;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
+            letter-spacing: 0.025em;
         }
         
         .status.active {
-            background: #d4edda;
-            color: #155724;
+            background: #dcfce7;
+            color: #166534;
         }
         
         .status.released {
-            background: #cce5ff;
-            color: #004085;
+            background: #dbeafe;
+            color: #1e40af;
         }
         
         .status.unredeemed {
-            background: #f8d7da;
-            color: #721c24;
+            background: #fee2e2;
+            color: #991b1b;
         }
         
         .stats-grid {
@@ -223,11 +258,12 @@
         }
         
         .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: #0f172a;
+            color: #f8fafc;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 6px;
             text-align: center;
+            border: 1px solid #1e293b;
         }
         
         .stat-card h3 {
@@ -246,21 +282,21 @@
         }
         
         .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
         }
         
         .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
         }
         
         .loading {
             text-align: center;
             padding: 20px;
-            color: #666;
+            color: #64748b;
         }
         
         /* Modal Styles */
@@ -272,7 +308,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(15, 23, 42, 0.6);
             overflow: auto;
         }
         
@@ -283,57 +319,60 @@
         }
         
         .modal-content {
-            background-color: white;
+            background-color: #ffffff;
             margin: auto;
-            border-radius: 15px;
+            border-radius: 8px;
             width: 90%;
             max-width: 700px;
             max-height: 90vh;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+            border: 1px solid #e2e8f0;
         }
         
         .modal-body {
             padding: 30px;
             overflow-y: auto;
             flex: 1;
+            color: #0f172a;
         }
         
         .modal-footer {
-            padding: 10px 20px;
-            border-top: 2px solid #eee;
-            background: #f8f9fa;
-            border-radius: 0 0 15px 15px;
+            padding: 16px 24px;
+            border-top: 1px solid #e2e8f0;
+            background: #f8fafc;
+            border-radius: 0 0 8px 8px;
         }
         
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 30px;
-            border-bottom: 2px solid #eee;
-            background: #f8f9fa;
-            border-radius: 15px 15px 0 0;
+            padding: 20px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
+            border-radius: 8px 8px 0 0;
             position: relative;
             z-index: 1;
         }
         
         .modal-header h2 {
             margin: 0;
-            color: #2c3e50;
+            color: #0f172a;
+            font-weight: 600;
         }
         
         .close-modal {
-            font-size: 28px;
-            font-weight: bold;
-            color: #999;
+            font-size: 24px;
+            font-weight: 600;
+            color: #64748b;
             cursor: pointer;
-            transition: color 0.3s;
+            transition: color 0.2s;
         }
         
         .close-modal:hover {
-            color: #000;
+            color: #0f172a;
         }
         
         /* Action Menu Styles */
@@ -344,13 +383,13 @@
         }
         
         .action-menu-btn {
-            background: #f0f0f0;
-            border: 1px solid #ddd;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
             font-size: 20px;
             cursor: pointer;
-            color: #666;
+            color: #475569;
             padding: 8px 12px;
-            border-radius: 4px;
+            border-radius: 6px;
             transition: all 0.3s;
             display: flex;
             align-items: center;
@@ -362,13 +401,13 @@
         }
         
         .action-menu-btn:hover {
-            background: #e0e0e0;
-            color: #333;
-            border-color: #999;
+            background: #e2e8f0;
+            color: #0f172a;
+            border-color: #cbd5e1;
         }
         
         .action-menu-btn:active {
-            background: #d0d0d0;
+            background: #cbd5e1;
             transform: scale(0.95);
         }
         
@@ -382,12 +421,12 @@
         }
         
         .action-menu-btn:focus {
-            outline: 2px solid #667eea;
+            outline: 2px solid #1d4ed8;
             outline-offset: 2px;
         }
         
         .action-menu-btn:focus-visible {
-            outline: 2px solid #667eea;
+            outline: 2px solid #1d4ed8;
             outline-offset: 2px;
         }
         
@@ -395,8 +434,8 @@
             position: absolute;
             top: 100%;
             right: 0;
-            background: white;
-            border: 1px solid #ddd;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             min-width: 180px;
@@ -417,7 +456,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            color: #333;
+            color: #0f172a;
             border: none;
             width: 100%;
             text-align: left;
@@ -426,7 +465,7 @@
         }
         
         .action-menu-item:hover {
-            background: #f5f5f5;
+            background: #f8fafc;
         }
         
         .action-menu-item:first-child {
@@ -451,18 +490,18 @@
         }
         
         .detail-section {
-            background: #f8f9fa;
+            background: #f8fafc;
             padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
+            border-radius: 6px;
+            border-left: 4px solid #1d4ed8;
         }
         
         .detail-section h3 {
             margin: 0 0 10px 0;
-            color: #2c3e50;
+            color: #0f172a;
             font-size: 1em;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.05em;
         }
         
         .detail-item {
@@ -470,18 +509,18 @@
         }
         
         .detail-item strong {
-            color: #555;
+            color: #475569;
             display: inline-block;
             min-width: 120px;
         }
         
         .detail-item span {
-            color: #333;
+            color: #0f172a;
         }
         
         .modal-footer h3 {
             margin-bottom: 8px;
-            color: #2c3e50;
+            color: #0f172a;
             text-align: center;
             font-size: 0.95em;
         }
@@ -511,7 +550,7 @@
             
             .nav a {
                 border-right: none;
-                border-bottom: 1px solid #2c3e50;
+                border-bottom: 1px solid #0f172a;
             }
             
             .nav li:last-child a {
@@ -542,7 +581,7 @@
         .login-overlay {
             position: fixed;
             inset: 0;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
+            background: rgba(15, 23, 42, 0.75);
             display: none;
             align-items: center;
             justify-content: center;
@@ -555,9 +594,10 @@
         }
 
         .login-card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+            border: 1px solid #e2e8f0;
             padding: 40px;
             max-width: 400px;
             width: 100%;
@@ -566,12 +606,13 @@
 
         .login-card h2 {
             margin-bottom: 10px;
-            color: #2c3e50;
+            color: #0f172a;
+            font-weight: 600;
         }
 
         .login-card p {
             margin-bottom: 30px;
-            color: #7f8c8d;
+            color: #64748b;
         }
 
         .login-card .form-group {
@@ -652,15 +693,15 @@
             position: fixed;
             top: 60px;
             left: 15px;
-            background: white;
+            background: #ffffff;
             border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
             min-width: 300px;
             max-width: 500px;
             z-index: 99;
             display: none;
             overflow: hidden;
-            border: 1px solid #e0e0e0;
+            border: 1px solid #e2e8f0;
         }
 
         .settings-menu.active {
@@ -670,13 +711,13 @@
 
         .settings-menu-header {
             padding: 15px 20px;
-            border-bottom: 2px solid #667eea;
-            background: #f8f9fa;
+            border-bottom: 2px solid #1d4ed8;
+            background: #f8fafc;
         }
 
         .settings-menu-header h3 {
             margin: 0;
-            color: #2c3e50;
+            color: #0f172a;
             font-size: 1.2em;
             display: flex;
             align-items: center;
@@ -686,7 +727,7 @@
         .settings-menu-header .back-button {
             background: none;
             border: none;
-            color: #667eea;
+            color: #1d4ed8;
             cursor: pointer;
             font-size: 18px;
             padding: 0;
@@ -700,7 +741,7 @@
         }
 
         .settings-menu-header .back-button:hover {
-            color: #764ba2;
+            color: #1e40af;
         }
 
         .settings-menu-list {
@@ -716,13 +757,13 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            color: #2c3e50;
+            color: #0f172a;
             border-left: 3px solid transparent;
         }
 
         .settings-menu-item:hover {
-            background: #f8f9fa;
-            border-left-color: #667eea;
+            background: #f8fafc;
+            border-left-color: #1d4ed8;
         }
 
         .settings-menu-item .icon {
@@ -737,7 +778,7 @@
         }
 
         .settings-menu-item .arrow {
-            color: #7f8c8d;
+            color: #64748b;
             font-size: 0.9em;
         }
 
@@ -761,21 +802,21 @@
             display: block;
             margin-bottom: 5px;
             font-weight: 600;
-            color: #2c3e50;
+            color: #0f172a;
             font-size: 0.9em;
         }
 
         .settings-item input {
             width: 100%;
             padding: 8px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #e2e8f0;
             border-radius: 6px;
             font-size: 14px;
         }
 
         .settings-item input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #1d4ed8;
         }
 
         .settings-actions {
@@ -783,7 +824,7 @@
             gap: 10px;
             margin-top: 20px;
             padding-top: 15px;
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid #e2e8f0;
         }
 
         .settings-actions .btn {
@@ -794,12 +835,11 @@
 
         /* New Loan Form Redesign */
         .form-section {
-            background: #f8f9fa;
+            background: #f8fafc;
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 15px;
-            border: 1px solid #e9ecef;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
         }
 
         .form-section-header {
@@ -807,12 +847,12 @@
             align-items: center;
             margin-bottom: 12px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid #1d4ed8;
         }
 
         .form-section-header h3 {
             margin: 0;
-            color: #2c3e50;
+            color: #0f172a;
             font-size: 1.1em;
             font-weight: 600;
             display: flex;
@@ -823,7 +863,7 @@
         .form-section-icon {
             width: 28px;
             height: 28px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
             border-radius: 6px;
             display: flex;
             align-items: center;
@@ -848,19 +888,19 @@
             gap: 4px;
             margin-bottom: 5px;
             font-weight: 600;
-            color: #2c3e50;
+            color: #0f172a;
             font-size: 13px;
         }
 
         .required-marker {
-            color: #e74c3c;
+            color: #dc2626;
             font-size: 14px;
         }
 
         .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 10px 12px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #e2e8f0;
             border-radius: 6px;
             font-size: 14px;
             transition: all 0.3s;
@@ -869,8 +909,8 @@
 
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #1d4ed8;
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
         }
 
         .form-group textarea {
@@ -884,7 +924,7 @@
             justify-content: center;
             margin-top: 20px;
             padding-top: 15px;
-            border-top: 2px solid #e9ecef;
+            border-top: 1px solid #e2e8f0;
         }
 
         .form-actions .btn {
@@ -893,16 +933,14 @@
             font-size: 15px;
             font-weight: 600;
             border-radius: 6px;
-            box-shadow: 0 3px 5px rgba(0,0,0,0.1);
         }
 
         .form-actions .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
         }
 
         .form-actions .btn-reset {
-            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            background: #475569;
         }
 
         .form-actions .btn-submit {
@@ -911,14 +949,14 @@
 
         .form-hint {
             font-size: 11px;
-            color: #7f8c8d;
+            color: #64748b;
             margin-top: 3px;
             font-style: italic;
         }
 
         .section-title {
             font-size: 1.6em;
-            color: #2c3e50;
+            color: #0f172a;
             margin-bottom: 8px;
             font-weight: 300;
             display: flex;
@@ -927,7 +965,7 @@
         }
 
         .section-subtitle {
-            color: #7f8c8d;
+            color: #64748b;
             margin-bottom: 20px;
             font-size: 0.9em;
         }
@@ -940,9 +978,9 @@
             gap: 5px;
             margin-top: 20px;
             padding: 10px;
-            background: white;
+            background: #ffffff;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
         }
 
         .pagination button,
@@ -950,10 +988,10 @@
             min-width: 36px;
             height: 36px;
             padding: 8px 12px;
-            border: 1px solid #e0e0e0;
-            background: white;
-            color: #667eea;
-            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
             display: flex;
@@ -963,8 +1001,8 @@
         }
 
         .pagination button:hover:not(:disabled) {
-            background: #f8f9fa;
-            border-color: #667eea;
+            background: #f8fafc;
+            border-color: #1d4ed8;
         }
 
         .pagination button:disabled {
@@ -973,9 +1011,9 @@
         }
 
         .pagination .page-number.active {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
+            background: #1d4ed8;
+            color: #ffffff;
+            border-color: #1d4ed8;
             font-weight: 600;
         }
 
@@ -1175,7 +1213,8 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="cellNumber">Cell Number</label>
-                                    <input type="tel" id="cellNumber" placeholder="Enter contact number" autocomplete="new-password">
+                                    <input type="tel" id="cellNumber" inputmode="numeric" placeholder="10-digit contact number" autocomplete="new-password" maxlength="10" data-cell-input>
+                                    <div class="form-hint">10-digit contact number (optional)</div>
                                 </div>
                             </div>
                             <div class="form-row">
@@ -1188,8 +1227,8 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="aadharNumber">Aadhar Number</label>
-                                    <input type="text" id="aadharNumber" placeholder="Enter Aadhar number" autocomplete="new-password" maxlength="12" pattern="[0-9]{12}">
-                                    <div class="form-hint">12-digit Aadhar number (optional)</div>
+                                    <input type="text" id="aadharNumber" inputmode="numeric" placeholder="XXXX XXXX XXXX" autocomplete="new-password" maxlength="14" data-aadhar-input>
+                                    <div class="form-hint">12 digits in format 4-4-4 (optional)</div>
                                 </div>
                             </div>
                             <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
@@ -1441,8 +1480,8 @@
                 
                 <div style="max-width: 800px; margin: 0 auto;">
                     <!-- Export Section -->
-                    <div style="background: #f8f9fa; padding: 30px; border-radius: 10px; margin-bottom: 30px; border: 2px solid #e9ecef;">
-                        <h3 style="margin-bottom: 15px; color: #2c3e50; display: flex; align-items: center; gap: 10px;">
+                    <div style="background: #f8fafc; padding: 30px; border-radius: 10px; margin-bottom: 30px; border: 2px solid #e9ecef;">
+                        <h3 style="margin-bottom: 15px; color: #0f172a; display: flex; align-items: center; gap: 10px;">
                             <span>📤</span> Export All Data
                         </h3>
                         <p style="color: #6c757d; margin-bottom: 20px; line-height: 1.6;">
@@ -1591,7 +1630,8 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="editCellNumber">Cell Number</label>
-                                    <input type="tel" id="editCellNumber" placeholder="Enter contact number" autocomplete="new-password">
+                                    <input type="tel" id="editCellNumber" inputmode="numeric" placeholder="10-digit contact number" autocomplete="new-password" maxlength="10" data-cell-input>
+                                    <div class="form-hint">10-digit contact number (optional)</div>
                                 </div>
                             </div>
                             <div class="form-row">
@@ -1604,7 +1644,8 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="editAadharNumber">Aadhar Number</label>
-                                    <input type="text" id="editAadharNumber" placeholder="Enter Aadhar number" autocomplete="new-password" maxlength="12" pattern="[0-9]{12}">
+                                    <input type="text" id="editAadharNumber" inputmode="numeric" placeholder="XXXX XXXX XXXX" autocomplete="new-password" maxlength="14" data-aadhar-input>
+                                    <div class="form-hint">12 digits in format 4-4-4 (optional)</div>
                                 </div>
                             </div>
                             <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
@@ -1998,40 +2039,40 @@
             const settingsContent = document.getElementById('settingsContent');
             const config = getColumnConfig();
             
-            let html = '<h4 style="margin: 0 0 20px 0; color: #2c3e50; font-size: 1.1em;">Customize Table Columns</h4>';
+            let html = '<h4 style="margin: 0 0 20px 0; color: #0f172a; font-size: 1.1em;">Customize Table Columns</h4>';
             
             // Current columns configuration
             html += '<div style="margin-bottom: 30px;">';
-            html += '<h5 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 1em;">Current Columns (in order)</h5>';
-            html += '<div id="columnList" style="max-height: 300px; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px;">';
+            html += '<h5 style="margin: 0 0 15px 0; color: #0f172a; font-size: 1em;">Current Columns (in order)</h5>';
+            html += '<div id="columnList" style="max-height: 300px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px;">';
             
             config.forEach((col, index) => {
                 const fieldInfo = availableLoanFields[col.field];
                 html += `
-                    <div id="col_item_${index}" style="margin-bottom: 10px; padding: 12px; background: #f8f9fa; border-radius: 6px; border: 1px solid #e0e0e0; display: flex; align-items: center; gap: 10px;">
+                    <div id="col_item_${index}" style="margin-bottom: 10px; padding: 12px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 10px;">
                         <div style="display: flex; flex-direction: column; gap: 2px;">
-                            <button onclick="moveColumnUp(${index})" ${index === 0 ? 'disabled' : ''} style="background: #667eea; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8em; ${index === 0 ? 'opacity: 0.5; cursor: not-allowed;' : ''}" title="Move up">↑</button>
-                            <button onclick="moveColumnDown(${index})" ${index === config.length - 1 ? 'disabled' : ''} style="background: #667eea; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8em; ${index === config.length - 1 ? 'opacity: 0.5; cursor: not-allowed;' : ''}" title="Move down">↓</button>
+                            <button onclick="moveColumnUp(${index})" ${index === 0 ? 'disabled' : ''} style="background: #1d4ed8; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8em; ${index === 0 ? 'opacity: 0.5; cursor: not-allowed;' : ''}" title="Move up">↑</button>
+                            <button onclick="moveColumnDown(${index})" ${index === config.length - 1 ? 'disabled' : ''} style="background: #1d4ed8; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8em; ${index === config.length - 1 ? 'opacity: 0.5; cursor: not-allowed;' : ''}" title="Move down">↓</button>
                         </div>
                         <div style="flex: 1;">
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                                 <div>
-                                    <label style="font-size: 0.85em; color: #7f8c8d; display: block; margin-bottom: 5px;">Data Field</label>
-                                    <select id="col_field_${index}" onchange="updateColumnField(${index})" style="width: 100%; padding: 6px; border: 2px solid #e0e0e0; border-radius: 4px;">
+                                    <label style="font-size: 0.85em; color: #64748b; display: block; margin-bottom: 5px;">Data Field</label>
+                                    <select id="col_field_${index}" onchange="updateColumnField(${index})" style="width: 100%; padding: 6px; border: 2px solid #e2e8f0; border-radius: 4px;">
                                         ${Object.keys(availableLoanFields).map(field => 
                                             `<option value="${field}" ${col.field === field ? 'selected' : ''}>${availableLoanFields[field].label}</option>`
                                         ).join('')}
                                     </select>
                                 </div>
                                 <div>
-                                    <label style="font-size: 0.85em; color: #7f8c8d; display: block; margin-bottom: 5px;">Column Header</label>
-                                    <input type="text" id="col_header_${index}" value="${col.header}" placeholder="Column name" style="width: 100%; padding: 6px; border: 2px solid #e0e0e0; border-radius: 4px;">
+                                    <label style="font-size: 0.85em; color: #64748b; display: block; margin-bottom: 5px;">Column Header</label>
+                                    <input type="text" id="col_header_${index}" value="${col.header}" placeholder="Column name" style="width: 100%; padding: 6px; border: 2px solid #e2e8f0; border-radius: 4px;">
                                 </div>
                             </div>
                         </div>
                         <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
                             <input type="checkbox" id="col_visible_${index}" ${col.visible ? 'checked' : ''} style="width: 18px; height: 18px;">
-                            <span style="font-size: 0.85em; color: #7f8c8d;">Visible</span>
+                            <span style="font-size: 0.85em; color: #64748b;">Visible</span>
                         </label>
                         <button onclick="removeColumn(${index})" style="background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em;">Remove</button>
                     </div>
@@ -2043,9 +2084,9 @@
             html += '</div>';
             
             // Available fields reference
-            html += '<div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">';
-            html += '<h5 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 0.95em;">Available Data Fields</h5>';
-            html += '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; font-size: 0.85em; color: #7f8c8d;">';
+            html += '<div style="margin-bottom: 20px; padding: 15px; background: #f8fafc; border-radius: 8px;">';
+            html += '<h5 style="margin: 0 0 10px 0; color: #0f172a; font-size: 0.95em;">Available Data Fields</h5>';
+            html += '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; font-size: 0.85em; color: #64748b;">';
             Object.keys(availableLoanFields).forEach(field => {
                 html += `<div style="padding: 5px;">• ${availableLoanFields[field].label}</div>`;
             });
@@ -2165,13 +2206,13 @@
             const today = new Date();
             const todayStr = today.toISOString().split('T')[0];
             
-            let html = '<h4 style="margin: 0 0 20px 0; color: #2c3e50; font-size: 1.1em;">Daily Report Generator</h4>';
-            html += '<p style="margin: 0 0 20px 0; color: #7f8c8d; font-size: 0.9em;">Generate a comprehensive daily report with company-wise breakdown of gold and silver loans.</p>';
+            let html = '<h4 style="margin: 0 0 20px 0; color: #0f172a; font-size: 1.1em;">Daily Report Generator</h4>';
+            html += '<p style="margin: 0 0 20px 0; color: #64748b; font-size: 0.9em;">Generate a comprehensive daily report with company-wise breakdown of gold and silver loans.</p>';
             
             html += '<div style="max-width: 500px;">';
             html += '<div class="form-group" style="margin-bottom: 20px;">';
-            html += '<label for="dailyReportDate" style="display: block; margin-bottom: 8px; font-weight: 500; color: #2c3e50;">Select Date</label>';
-            html += `<input type="date" id="dailyReportDate" value="${todayStr}" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">`;
+            html += '<label for="dailyReportDate" style="display: block; margin-bottom: 8px; font-weight: 500; color: #0f172a;">Select Date</label>';
+            html += `<input type="date" id="dailyReportDate" value="${todayStr}" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px;">`;
             html += '</div>';
             
             html += '<div class="settings-actions" style="margin-top: 30px;">';
@@ -2250,20 +2291,20 @@
                 return;
             }
             
-            let html = '<h4 style="margin: 0 0 20px 0; color: #2c3e50; font-size: 1.1em;">Notice Management</h4>';
-            html += '<p style="margin: 0 0 20px 0; color: #7f8c8d; font-size: 0.9em;">Export loans to Excel, mark notices, and upload to update notice dates.</p>';
+            let html = '<h4 style="margin: 0 0 20px 0; color: #0f172a; font-size: 1.1em;">Notice Management</h4>';
+            html += '<p style="margin: 0 0 20px 0; color: #64748b; font-size: 0.9em;">Export loans to Excel, mark notices, and upload to update notice dates.</p>';
             
             html += '<div style="max-width: 700px;">';
             
             // Export section with filters
-            html += '<div style="margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">';
-            html += '<h5 style="margin: 0 0 15px 0; color: #2c3e50;">Export Loans for Notice Management</h5>';
-            html += '<p style="margin: 0 0 20px 0; color: #7f8c8d; font-size: 0.9em;">Filter loans and download an Excel file. You can mark notices in the Excel file and upload it back.</p>';
+            html += '<div style="margin-bottom: 30px; padding: 20px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #1d4ed8;">';
+            html += '<h5 style="margin: 0 0 15px 0; color: #0f172a;">Export Loans for Notice Management</h5>';
+            html += '<p style="margin: 0 0 20px 0; color: #64748b; font-size: 0.9em;">Filter loans and download an Excel file. You can mark notices in the Excel file and upload it back.</p>';
             
             // Filters
             html += '<div class="form-group" style="margin-bottom: 15px;">';
-            html += '<label for="noticeExportCompany" style="display: block; margin-bottom: 8px; font-weight: 500; color: #2c3e50;">Company (Optional)</label>';
-            html += '<select id="noticeExportCompany" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">';
+            html += '<label for="noticeExportCompany" style="display: block; margin-bottom: 8px; font-weight: 500; color: #0f172a;">Company (Optional)</label>';
+            html += '<select id="noticeExportCompany" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px;">';
             html += '<option value="">All Companies</option>';
             companies.forEach(company => {
                 html += `<option value="${company.id}">${company.name}</option>`;
@@ -2272,8 +2313,8 @@
             html += '</div>';
             
             html += '<div class="form-group" style="margin-bottom: 15px;">';
-            html += '<label for="noticeExportStatus" style="display: block; margin-bottom: 8px; font-weight: 500; color: #2c3e50;">Status (Optional)</label>';
-            html += '<select id="noticeExportStatus" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">';
+            html += '<label for="noticeExportStatus" style="display: block; margin-bottom: 8px; font-weight: 500; color: #0f172a;">Status (Optional)</label>';
+            html += '<select id="noticeExportStatus" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px;">';
             html += '<option value="">All Status</option>';
             html += '<option value="active" selected>Active</option>';
             html += '<option value="released">Released</option>';
@@ -2283,12 +2324,12 @@
             
             html += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">';
             html += '<div class="form-group">';
-            html += '<label for="noticeExportStartDate" style="display: block; margin-bottom: 8px; font-weight: 500; color: #2c3e50;">Start Date (Optional)</label>';
-            html += '<input type="date" id="noticeExportStartDate" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">';
+            html += '<label for="noticeExportStartDate" style="display: block; margin-bottom: 8px; font-weight: 500; color: #0f172a;">Start Date (Optional)</label>';
+            html += '<input type="date" id="noticeExportStartDate" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px;">';
             html += '</div>';
             html += '<div class="form-group">';
-            html += '<label for="noticeExportEndDate" style="display: block; margin-bottom: 8px; font-weight: 500; color: #2c3e50;">End Date (Optional)</label>';
-            html += '<input type="date" id="noticeExportEndDate" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">';
+            html += '<label for="noticeExportEndDate" style="display: block; margin-bottom: 8px; font-weight: 500; color: #0f172a;">End Date (Optional)</label>';
+            html += '<input type="date" id="noticeExportEndDate" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px;">';
             html += '</div>';
             html += '</div>';
             
@@ -2296,9 +2337,9 @@
             html += '</div>';
             
             // Import section
-            html += '<div style="margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #28a745;">';
-            html += '<h5 style="margin: 0 0 15px 0; color: #2c3e50;">Upload Updated Excel File</h5>';
-            html += '<p style="margin: 0 0 15px 0; color: #7f8c8d; font-size: 0.9em;">Upload the Excel file after marking notices. Notice dates will be updated automatically.</p>';
+            html += '<div style="margin-bottom: 30px; padding: 20px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #28a745;">';
+            html += '<h5 style="margin: 0 0 15px 0; color: #0f172a;">Upload Updated Excel File</h5>';
+            html += '<p style="margin: 0 0 15px 0; color: #64748b; font-size: 0.9em;">Upload the Excel file after marking notices. Notice dates will be updated automatically.</p>';
             html += '<input type="file" id="noticeFileInput" accept=".xlsx,.xls" style="display: none;" onchange="handleNoticeFileUpload(event)">';
             html += '<button onclick="document.getElementById(\'noticeFileInput\').click()" class="btn btn-primary" style="width: 100%;">Choose Excel File to Upload</button>';
             html += '<div id="noticeUploadStatus" style="margin-top: 15px;"></div>';
@@ -2458,8 +2499,8 @@
             
             popup.innerHTML = `
                 <div style="margin-bottom: 15px;">
-                    <h3 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 1.2em;">Notice ${noticeNumber} Comment</h3>
-                    <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e0e0e0; min-height: 60px; max-height: 300px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; color: #2c3e50;">
+                    <h3 style="margin: 0 0 10px 0; color: #0f172a; font-size: 1.2em;">Notice ${noticeNumber} Comment</h3>
+                    <div style="padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; min-height: 60px; max-height: 300px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; color: #0f172a;">
                         ${commentText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
                     </div>
                 </div>
@@ -2505,8 +2546,8 @@
                 return;
             }
             
-            let html = '<h4 style="margin: 0 0 20px 0; color: #2c3e50; font-size: 1.1em;">Serial Number Prefixes</h4>';
-            html += '<p style="margin: 0 0 20px 0; color: #7f8c8d; font-size: 0.9em;">Configure serial number prefixes for each company and item type.</p>';
+            let html = '<h4 style="margin: 0 0 20px 0; color: #0f172a; font-size: 1.1em;">Serial Number Prefixes</h4>';
+            html += '<p style="margin: 0 0 20px 0; color: #64748b; font-size: 0.9em;">Configure serial number prefixes for each company and item type.</p>';
             html += '<div style="max-height: 400px; overflow-y: auto;">';
             companies.forEach(company => {
                 const companyPrefixes = prefixes[company.id] || {};
@@ -2514,26 +2555,26 @@
                 const silverPrefix = typeof companyPrefixes === 'string' ? '' : (companyPrefixes.silver || '');
                 
                 html += `
-                    <div class="settings-item" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">
-                        <label style="font-weight: 600; margin-bottom: 10px; display: block; color: #2c3e50;">${company.name}</label>
+                    <div class="settings-item" style="margin-bottom: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #1d4ed8;">
+                        <label style="font-weight: 600; margin-bottom: 10px; display: block; color: #0f172a;">${company.name}</label>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                             <div>
-                                <label style="font-size: 0.85em; color: #7f8c8d; margin-bottom: 5px; display: block;">Gold Prefix</label>
+                                <label style="font-size: 0.85em; color: #64748b; margin-bottom: 5px; display: block;">Gold Prefix</label>
                                 <input type="text" 
                                        id="prefix_${company.id}_gold" 
                                        value="${goldPrefix}" 
                                        placeholder="e.g., DC-" 
                                        maxlength="20"
-                                       style="width: 100%; padding: 8px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                                       style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 14px;">
                             </div>
                             <div>
-                                <label style="font-size: 0.85em; color: #7f8c8d; margin-bottom: 5px; display: block;">Silver Prefix</label>
+                                <label style="font-size: 0.85em; color: #64748b; margin-bottom: 5px; display: block;">Silver Prefix</label>
                                 <input type="text" 
                                        id="prefix_${company.id}_silver" 
                                        value="${silverPrefix}" 
                                        placeholder="e.g., DS-" 
                                        maxlength="20"
-                                       style="width: 100%; padding: 8px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                                       style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 14px;">
                             </div>
                         </div>
                     </div>
@@ -2906,7 +2947,43 @@
             }
         }
 
+        function getAadharDigits(str) {
+            if (!str) return '';
+            return String(str).replace(/\D/g, '').slice(0, 12);
+        }
+        function formatAadharDisplay(digits) {
+            const d = getAadharDigits(digits);
+            if (d.length <= 4) return d;
+            if (d.length <= 8) return d.slice(0, 4) + ' ' + d.slice(4);
+            return d.slice(0, 4) + ' ' + d.slice(4, 8) + ' ' + d.slice(8);
+        }
+        function onAadharInput(e) {
+            const el = e.target;
+            const digits = getAadharDigits(el.value);
+            el.value = formatAadharDisplay(digits);
+        }
+        function setupAadharInputs() {
+            document.querySelectorAll('[data-aadhar-input]').forEach(function(input) {
+                input.addEventListener('input', onAadharInput);
+            });
+        }
+        function getCellDigits(str) {
+            if (!str) return '';
+            return String(str).replace(/\D/g, '').slice(0, 10);
+        }
+        function onCellInput(e) {
+            const el = e.target;
+            el.value = getCellDigits(el.value);
+        }
+        function setupCellInputs() {
+            document.querySelectorAll('[data-cell-input]').forEach(function(input) {
+                input.addEventListener('input', onCellInput);
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', async function() {
+            setupAadharInputs();
+            setupCellInputs();
             setupLoginHandling();
             
             // Setup action menu event delegation immediately
@@ -3303,14 +3380,14 @@
                 post: document.getElementById('post').value,
                 pinCode: document.getElementById('pinCode').value,
                 occupation: document.getElementById('occupation').value,
-                cellNumber: document.getElementById('cellNumber').value,
+                cellNumber: getCellDigits(document.getElementById('cellNumber').value),
                 loanAmount: document.getElementById('loanAmount').value,
                 itemWeight: document.getElementById('itemWeight').value,
                 itemDescription: document.getElementById('itemDescription').value,
                 itemType: document.getElementById('itemType').value,
                 loanDate: document.getElementById('loanDate').value,
                 timeLimitDate: document.getElementById('timeLimitDate').value,
-                aadharNumber: document.getElementById('aadharNumber').value
+                aadharNumber: getAadharDigits(document.getElementById('aadharNumber').value)
             };
             
             console.log('Form data:', formData);
@@ -3319,6 +3396,14 @@
             if (!formData.serialNumber || !formData.companyId || !formData.customerName || !formData.address || 
                 !formData.loanAmount || !formData.itemWeight || !formData.itemDescription || !formData.itemType) {
                 showAlert('Please fill in all required fields', 'error');
+                return;
+            }
+            if (formData.aadharNumber && formData.aadharNumber.length !== 12) {
+                showAlert('Aadhar number must be exactly 12 digits (format 4-4-4)', 'error');
+                return;
+            }
+            if (formData.cellNumber && formData.cellNumber.length !== 10) {
+                showAlert('Contact number must be exactly 10 digits', 'error');
                 return;
             }
             
@@ -3848,8 +3933,8 @@
                 const phoneNumber = loan.cell_number || 'N/A';
                 
                 return `
-                    <div style="background: white; padding: 5px; border-radius: 4px; border: 1px solid #e0e0e0; font-family: 'Courier New', monospace; line-height: 1.1; margin-bottom: 20px; page-break-inside: avoid;">
-                        <div style="font-weight: bold; font-size: 16px; margin-bottom: 2px; padding-bottom: 2px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; width: 100%;">
+                    <div style="background: white; padding: 5px; border-radius: 4px; border: 1px solid #e2e8f0; font-family: 'Courier New', monospace; line-height: 1.1; margin-bottom: 20px; page-break-inside: avoid;">
+                        <div style="font-weight: bold; font-size: 16px; margin-bottom: 2px; padding-bottom: 2px; border-bottom: 1px solid #0f172a; display: flex; justify-content: space-between; width: 100%;">
                             <span>₹${parseFloat(loan.loan_amount).toFixed(2)}</span>
                             <span>${loanDate}</span>
                             <span>${loan.serial_number}</span>
@@ -3969,7 +4054,7 @@
                                 background: white;
                                 padding: 5px;
                                 border-radius: 4px;
-                                border: 1px solid #e0e0e0;
+                                border: 1px solid #e2e8f0;
                                 font-family: 'Courier New', monospace;
                                 line-height: 1.1;
                                 width: calc(50% - 0.05in);
@@ -3986,7 +4071,7 @@
                                 font-size: 14px;
                                 margin-bottom: 2px;
                                 padding-bottom: 2px;
-                                border-bottom: 1px solid #333;
+                                border-bottom: 1px solid #0f172a;
                                 display: flex;
                                 justify-content: space-between;
                                 width: 100%;
@@ -4025,7 +4110,7 @@
                                     box-sizing: border-box;
                                     padding: 5px;
                                     border-radius: 4px;
-                                    border: 1px solid #e0e0e0;
+                                    border: 1px solid #e2e8f0;
                                     line-height: 1.1;
                                 }
                                 .mailing-label.empty {
@@ -4035,7 +4120,7 @@
                                 .mailing-label .header-row {
                                     margin-bottom: 2px;
                                     padding-bottom: 2px;
-                                    border-bottom: 1px solid #333;
+                                    border-bottom: 1px solid #0f172a;
                                 }
                                 .mailing-label .row {
                                     margin-bottom: 1px;
@@ -4739,25 +4824,25 @@
                         ${(loan.notice1_date || loan.notice1Date) ? `
                         <div class="detail-item">
                             <strong>Notice 1:</strong>
-                            <span class="notice-date" onclick="showNoticeComment(${loan.id}, 1, '${(loan.notice1_comment || loan.notice1Comment || '').replace(/'/g, "\\'")}')" style="cursor: pointer; color: #667eea; text-decoration: underline;">${formatDate(loan.notice1_date || loan.notice1Date)}</span>
+                            <span class="notice-date" onclick="showNoticeComment(${loan.id}, 1, '${(loan.notice1_comment || loan.notice1Comment || '').replace(/'/g, "\\'")}')" style="cursor: pointer; color: #1d4ed8; text-decoration: underline;">${formatDate(loan.notice1_date || loan.notice1Date)}</span>
                         </div>
                         ` : ''}
                         ${(loan.notice2_date || loan.notice2Date) ? `
                         <div class="detail-item">
                             <strong>Notice 2:</strong>
-                            <span class="notice-date" onclick="showNoticeComment(${loan.id}, 2, '${(loan.notice2_comment || loan.notice2Comment || '').replace(/'/g, "\\'")}')" style="cursor: pointer; color: #667eea; text-decoration: underline;">${formatDate(loan.notice2_date || loan.notice2Date)}</span>
+                            <span class="notice-date" onclick="showNoticeComment(${loan.id}, 2, '${(loan.notice2_comment || loan.notice2Comment || '').replace(/'/g, "\\'")}')" style="cursor: pointer; color: #1d4ed8; text-decoration: underline;">${formatDate(loan.notice2_date || loan.notice2Date)}</span>
                         </div>
                         ` : ''}
                         ${(loan.notice3_date || loan.notice3Date) ? `
                         <div class="detail-item">
                             <strong>Notice 3:</strong>
-                            <span class="notice-date" onclick="showNoticeComment(${loan.id}, 3, '${(loan.notice3_comment || loan.notice3Comment || '').replace(/'/g, "\\'")}')" style="cursor: pointer; color: #667eea; text-decoration: underline;">${formatDate(loan.notice3_date || loan.notice3Date)}</span>
+                            <span class="notice-date" onclick="showNoticeComment(${loan.id}, 3, '${(loan.notice3_comment || loan.notice3Comment || '').replace(/'/g, "\\'")}')" style="cursor: pointer; color: #1d4ed8; text-decoration: underline;">${formatDate(loan.notice3_date || loan.notice3Date)}</span>
                         </div>
                         ` : ''}
                         ${(loan.notice4_date || loan.notice4Date) ? `
                         <div class="detail-item">
                             <strong>Notice 4:</strong>
-                            <span class="notice-date" onclick="showNoticeComment(${loan.id}, 4, '${(loan.notice4_comment || loan.notice4Comment || '').replace(/'/g, "\\'")}')" style="cursor: pointer; color: #667eea; text-decoration: underline;">${formatDate(loan.notice4_date || loan.notice4Date)}</span>
+                            <span class="notice-date" onclick="showNoticeComment(${loan.id}, 4, '${(loan.notice4_comment || loan.notice4Comment || '').replace(/'/g, "\\'")}')" style="cursor: pointer; color: #1d4ed8; text-decoration: underline;">${formatDate(loan.notice4_date || loan.notice4Date)}</span>
                         </div>
                         ` : ''}
                     </div>
@@ -4945,7 +5030,7 @@
                 document.getElementById('editPinCode').value = loan.pin_code || loan.pinCode || '';
                 document.getElementById('editOccupation').value = loan.occupation || '';
                 document.getElementById('editCellNumber').value = loan.cell_number || loan.cellNumber || '';
-                document.getElementById('editAadharNumber').value = loan.aadhar_number || loan.aadharNumber || '';
+                document.getElementById('editAadharNumber').value = formatAadharDisplay(loan.aadhar_number || loan.aadharNumber || '');
                 document.getElementById('editLoanAmount').value = loan.loan_amount || loan.loanAmount || '';
                 document.getElementById('editItemWeight').value = loan.item_weight || loan.itemWeight || '';
                 document.getElementById('editItemDescription').value = loan.item_description || loan.itemDescription || '';
@@ -5012,14 +5097,14 @@
                         post: document.getElementById('editPost').value.trim(),
                         pinCode: document.getElementById('editPinCode').value.trim(),
                         occupation: document.getElementById('editOccupation').value.trim(),
-                        cellNumber: document.getElementById('editCellNumber').value.trim(),
+                        cellNumber: getCellDigits(document.getElementById('editCellNumber').value),
                         loanAmount: document.getElementById('editLoanAmount').value,
                         itemWeight: document.getElementById('editItemWeight').value,
                         itemDescription: document.getElementById('editItemDescription').value.trim(),
                         itemType: document.getElementById('editItemType').value,
                         loanDate: document.getElementById('editLoanDate').value,
                         timeLimitDate: document.getElementById('editTimeLimitDate').value,
-                        aadharNumber: document.getElementById('editAadharNumber').value.trim()
+                        aadharNumber: getAadharDigits(document.getElementById('editAadharNumber').value)
                     };
                     
                     // Validate
@@ -5027,6 +5112,14 @@
                         !formData.address || !formData.loanAmount || !formData.itemWeight || 
                         !formData.itemDescription || !formData.itemType) {
                         showAlert('Please fill in all required fields', 'error');
+                        return;
+                    }
+                    if (formData.aadharNumber && formData.aadharNumber.length !== 12) {
+                        showAlert('Aadhar number must be exactly 12 digits (format 4-4-4)', 'error');
+                        return;
+                    }
+                    if (formData.cellNumber && formData.cellNumber.length !== 10) {
+                        showAlert('Contact number must be exactly 10 digits', 'error');
                         return;
                     }
                     
